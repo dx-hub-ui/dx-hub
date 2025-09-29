@@ -9,6 +9,9 @@ export interface DxButtonProps
   extends Omit<ComponentProps<typeof Button>, "kind" | "size" | "color">,
     DxComponentBaseProps {
   as?: ElementType;
+  href?: string;
+  target?: string;
+  rel?: string;
 }
 
 type ButtonSize = ComponentProps<typeof Button>["size"];

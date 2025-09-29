@@ -26,4 +26,6 @@ Este diretório organiza as referências necessárias para construir interfaces 
 ## Operações
 - [`foundations.md`](foundations.md): fundamentos de infraestrutura (CI, previews, Supabase) para garantir entregas consistentes.
 
+
 > Referencie estes documentos ao planejar ou revisar qualquer trabalho de UI.
+

@@ -10,6 +10,10 @@ export interface DxInputProps
     DxComponentBaseProps {
   onChange?: (value: string) => void;
   validationStatus?: "success" | "error";
+  label?: string;
+  helperText?: string;
+  multiline?: boolean;
+  rows?: number;
 }
 
 type TextFieldSize = ComponentProps<typeof TextField>["size"];
