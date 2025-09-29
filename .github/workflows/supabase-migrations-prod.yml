@@ -1,4 +1,4 @@
-name: Supabase Migrations (prod - simples)
+name: Supabase Migrations (prod)
 
 on:
   push:
@@ -17,10 +17,12 @@ jobs:
         with:
           version: latest
 
-      - name: Apply migrations to PROD (URL direta)
+      - name: Apply migrations to PROD (via --db-url)
         env:
           SUPABASE_DB_URL_PROD: ${{ secrets.SUPABASE_DB_URL_PROD }}
         run: |
-          # opcional: ver o plano antes
-          # supabase db push --db-url "$SUPABASE_DB_URL_PROD" --dry-run --debug
+          if [ -z "${SUPABASE_DB_URL_PROD}" ]; then
+            echo "❌ SUPABASE_DB_URL_PROD não definido."
+            exit 1
+          fi
           supabase db push --db-url "$SUPABASE_DB_URL_PROD" --include-all
