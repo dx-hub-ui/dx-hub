@@ -138,11 +138,11 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <AppLayoutContext.Provider value={contextValue}>
-      <div className="flex min-h-screen bg-[var(--dx-color-page-background)] text-[var(--dx-color-text-primary)]">
-        <aside className="hidden w-64 shrink-0 flex-col border-r border-[var(--dx-color-border)] bg-[var(--dx-color-surface)] px-4 py-6 lg:flex">
+      <div className="flex min-h-screen bg-[#f6f7fb] text-[#1f2430]">
+        <aside className="hidden w-64 shrink-0 flex-col border-r border-[#111522] bg-[#181b2c] px-4 py-6 text-white lg:flex">
           {config.sidebar.sections.map((section) => (
             <div key={section.id} className="mb-6 last:mb-0">
-              <div className="px-2 text-xs font-semibold uppercase tracking-wide text-[var(--dx-color-text-tertiary)]">
+              <div className="px-2 text-xs font-semibold uppercase tracking-wide text-white/50">
                 {section.label}
               </div>
               <div className="mt-3 flex flex-col gap-1 text-sm">
@@ -152,16 +152,16 @@ export function AppShell({ children }: { children: ReactNode }) {
                     <button
                       key={item.id}
                       type="button"
-                      className={`flex items-center justify-between rounded-md px-3 py-2 text-left transition-colors ${
+                      className={`flex items-center justify-between rounded-lg px-3 py-2 text-left transition-colors ${
                         isActive
-                          ? "bg-[var(--dx-color-page-background)] font-semibold text-[var(--dx-color-text-primary)]"
-                          : "text-[var(--dx-color-text-secondary)] hover:bg-[var(--dx-color-page-background)] hover:text-[var(--dx-color-text-primary)]"
+                          ? "bg-white/10 font-semibold text-white"
+                          : "text-white/70 hover:bg-white/10 hover:text-white"
                       }`}
                       aria-pressed={isActive}
                     >
                       <span>{item.label}</span>
                       {isActive ? (
-                        <span aria-hidden="true" className="h-2 w-2 rounded-full bg-[var(--dx-color-accent)]" />
+                        <span aria-hidden="true" className="h-2 w-2 rounded-full bg-[#00c875]" />
                       ) : null}
                     </button>
                   );
@@ -170,27 +170,21 @@ export function AppShell({ children }: { children: ReactNode }) {
             </div>
           ))}
           {config.sidebar.footer ? (
-            <div className="mt-auto rounded-lg bg-[var(--dx-color-page-background)] p-3 text-xs text-[var(--dx-color-text-secondary)]">
-              {config.sidebar.footer.title ? (
-                <p className="font-semibold text-[var(--dx-color-text-primary)]">{config.sidebar.footer.title}</p>
-              ) : null}
+            <div className="mt-auto rounded-lg bg-white/5 p-3 text-xs text-white/70">
+              {config.sidebar.footer.title ? <p className="font-semibold text-white">{config.sidebar.footer.title}</p> : null}
               {config.sidebar.footer.description ? <p>{config.sidebar.footer.description}</p> : null}
             </div>
           ) : null}
         </aside>
         <div className="flex min-h-screen flex-1 flex-col">
-          <header className="flex flex-col gap-4 border-b border-[var(--dx-color-border)] bg-[var(--dx-color-surface)] px-4 py-4 shadow-sm md:flex-row md:items-center md:justify-between md:px-6">
+          <header className="flex flex-col gap-4 border-b border-[#d4d9e6] bg-white px-6 py-4 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--dx-color-accent)] text-sm font-semibold uppercase tracking-wide text-white">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#0073ea] text-sm font-semibold uppercase tracking-wide text-white">
                 {appAcronym}
               </div>
               <div className="flex flex-col">
-                {config.workspace.title ? (
-                  <span className="text-sm font-semibold text-[var(--dx-color-text-primary)]">{config.workspace.title}</span>
-                ) : null}
-                {config.workspace.board ? (
-                  <span className="text-xs text-[var(--dx-color-text-tertiary)]">{config.workspace.board}</span>
-                ) : null}
+                {config.workspace.title ? <span className="text-sm font-semibold text-[#1f2430]">{config.workspace.title}</span> : null}
+                {config.workspace.board ? <span className="text-xs text-[#6b7185]">{config.workspace.board}</span> : null}
               </div>
             </div>
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
@@ -226,18 +220,18 @@ export function AppShell({ children }: { children: ReactNode }) {
                 {config.workspace.profile ? (
                   <button
                     type="button"
-                    className="flex items-center gap-2 rounded-full border border-[var(--dx-color-border)] bg-[var(--dx-color-surface)] px-3 py-1 text-left transition-shadow hover:shadow-sm"
+                    className="flex items-center gap-2 rounded-full border border-[#d4d9e6] bg-white px-3 py-1 text-left transition-colors hover:border-[#c2c7d6]"
                     aria-label={config.workspace.profile.label}
                   >
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--dx-color-accent)] text-sm font-semibold uppercase text-white">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0073ea] text-sm font-semibold uppercase text-white">
                       {config.workspace.profile.initials}
                     </span>
                     <span className="hidden flex-col leading-tight sm:flex">
-                      <span className="text-sm font-medium text-[var(--dx-color-text-primary)]">
+                      <span className="text-sm font-medium text-[#1f2430]">
                         {config.workspace.profile.name}
                       </span>
                       {config.workspace.profile.role ? (
-                        <span className="text-xs text-[var(--dx-color-text-tertiary)]">{config.workspace.profile.role}</span>
+                        <span className="text-xs text-[#6b7185]">{config.workspace.profile.role}</span>
                       ) : null}
                     </span>
                   </button>
@@ -245,7 +239,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               </div>
             </div>
           </header>
-          <main className="flex-1 overflow-y-auto bg-[var(--dx-color-page-background)]">{children}</main>
+          <main className="flex-1 overflow-y-auto bg-[#f6f7fb]">{children}</main>
         </div>
       </div>
     </AppLayoutContext.Provider>

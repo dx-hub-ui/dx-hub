@@ -1,4 +1,4 @@
-import { CONTACT_STAGE_ORDER, DEMO_ORG_ID, type ContactRecord } from "./types";
+import { CONTACT_STAGE_ORDER, DEMO_ORG_ID, type ContactRecord, type ContactStage } from "./types";
 
 const now = new Date();
 
@@ -179,7 +179,7 @@ export const CRM_CONTACTS_SEED: ContactRecord[] = [
   },
 ];
 
-export const CONTACT_STAGE_VARIANTS: Record<string, "primary" | "secondary" | "ghost" | "danger"> = {
+export const CONTACT_STAGE_VARIANTS: Record<ContactStage, "primary" | "secondary" | "ghost" | "danger"> = {
   prospecting: "secondary",
   discovery: "primary",
   negotiation: "primary",
