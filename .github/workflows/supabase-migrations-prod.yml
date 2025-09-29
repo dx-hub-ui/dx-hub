@@ -1,13 +1,10 @@
-name: Apply Supabase Migrations (production)
+name: Supabase Migrations (prod - simples)
 
 on:
   push:
     branches: [ "main" ]
     paths:
-      - "supabase/migrations/**"   # roda só quando houver migrações
-
-env:
-  SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF_PROD }}
+      - "supabase/migrations/**"
 
 jobs:
   migrate:
@@ -20,14 +17,10 @@ jobs:
         with:
           version: latest
 
-      - name: Link project (prod)
+      - name: Apply migrations to PROD (URL direta)
         env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD_PROD }}  # 🔑 evita prompt
-        run: supabase link --project-ref "$SUPABASE_PROJECT_REF"
-
-      - name: Apply migrations to PROD
-        env:
-          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD_PROD }}  # 🔑 necessário no push
-        run: supabase db push --linked --include-all
-        # --include-all garante aplicar todas as migrações pendentes
+          SUPABASE_DB_URL_PROD: ${{ secrets.SUPABASE_DB_URL_PROD }}
+        run: |
+          # opcional: ver o plano antes
+          # supabase db push --db-url "$SUPABASE_DB_URL_PROD" --dry-run --debug
+          supabase db push --db-url "$SUPABASE_DB_URL_PROD" --include-all
