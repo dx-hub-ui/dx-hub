@@ -1,0 +1,13 @@
+# Node / pnpm
+node_modules
+.pnpm-store
+.vercel
+dist
+build
+.next
+.expo
+.expo-shared
+
+# Env
+.env
+.env.*
