@@ -1,5 +1,4 @@
-# .github/workflows/supabase-migrations-check.yml
-name: Supabase Migrations Check (non-blocking)
+name: Supabase Migrations Check
 
 on:
   pull_request:
@@ -7,34 +6,13 @@ on:
     paths:
       - "supabase/migrations/**"
 
-permissions:
-  contents: read
-
 jobs:
   lint-migrations:
     runs-on: ubuntu-latest
-    continue-on-error: true   # 👈 soft fail — não bloqueia PR
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup Supabase CLI
-        uses: supabase/setup-cli@v1
+      - uses: supabase/setup-cli@v1
         with:
           version: latest
-
-      - name: Lint SQL (via --db-url)
-        env:
-          SUPABASE_DB_URL_PROD: ${{ secrets.SUPABASE_DB_URL_PROD }}
-        run: |
-          if [ -z "${SUPABASE_DB_URL_PROD}" ]; then
-            echo "❌ SUPABASE_DB_URL_PROD não definido nos Secrets."
-            echo "⚠️ Lint marcado como falho, mas não bloqueante." >> $GITHUB_STEP_SUMMARY
-            exit 0
-          fi
-
-          if supabase db lint --db-url "$SUPABASE_DB_URL_PROD"; then
-            echo "✅ Migrations check passed (lint remoto)." >> $GITHUB_STEP_SUMMARY
-          else
-            echo "⚠️ Lint falhou, revise as migrações. (Não bloqueia merge)" >> $GITHUB_STEP_SUMMARY
-            # não propaga erro para não bloquear
-          fi
+      - name: Check SQL syntax only
+        run: supabase db lint --schema-only
