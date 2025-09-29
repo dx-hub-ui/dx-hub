@@ -1,8 +1,28 @@
 "use client";
 
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
-import { DxButton, DxInput } from "@dx/ui";
+import { DxButton } from "@dx/ui";
+import {
+  Avatar,
+  Flex,
+  Heading,
+  Icon,
+  IconButton,
+  Search,
+  Text,
+  type SubIcon,
+} from "@vibe/core";
+import {
+  Apps as AppsIcon,
+  Board as BoardIcon,
+  Chart as ChartIcon,
+  Dashboard as DashboardIcon,
+  Integrations as IntegrationsIcon,
+  Invite as InviteIcon,
+  Notifications as NotificationsIcon,
+} from "@vibe/icons";
 import { useTranslation } from "@/i18n/I18nProvider";
+import styles from "./AppShell.module.css";
 
 type NavigationItem = {
   id: string;
@@ -77,6 +97,14 @@ const fallbackContext: AppLayoutContextValue = {
   setConfig: () => undefined,
 };
 
+const NAVIGATION_ICONS: Record<string, SubIcon> = {
+  overview: DashboardIcon,
+  crm: BoardIcon,
+  automations: IntegrationsIcon,
+  dashboards: ChartIcon,
+  marketing: AppsIcon,
+};
+
 function mergeConfig(base: AppLayoutConfig, patch: PartialAppLayoutConfig): AppLayoutConfig {
   const result: AppLayoutConfig = {
     sidebar: { ...base.sidebar },
@@ -142,108 +170,110 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <AppLayoutContext.Provider value={contextValue}>
-      <div className="flex min-h-screen bg-[#f6f7fb] text-[#1f2430]">
-        <aside className="hidden w-64 shrink-0 flex-col border-r border-[#111522] bg-[#181b2c] px-4 py-6 text-white lg:flex">
+      <div className={styles.root}>
+        <aside className={styles.sidebar} aria-label={tCommon("navigation") ?? "Navigation"}>
           {config.sidebar.sections.map((section) => (
-            <div key={section.id} className="mb-6 last:mb-0">
-              <div className="px-2 text-xs font-semibold uppercase tracking-wide text-white/50">
+            <div key={section.id} className={styles.sidebarHeader}>
+              <Text type={Text.types.TEXT2} weight={Text.weights.MEDIUM} className={styles.sidebarTitle} aria-hidden>
                 {section.label}
-              </div>
-              <div className="mt-3 flex flex-col gap-1 text-sm">
+              </Text>
+              <nav className={styles.navList} aria-label={section.label}>
                 {section.items.map((item) => {
                   const isActive = item.id === config.sidebar.activeItemId;
+                  const IconComponent = NAVIGATION_ICONS[item.id];
+                  const buttonClassName = [
+                    styles.navItemButton,
+                    isActive ? styles.navItemButtonActive : undefined,
+                  ]
+                    .filter(Boolean)
+                    .join(" ");
+
                   return (
                     <button
                       key={item.id}
                       type="button"
-                      className={`flex items-center justify-between rounded-lg px-3 py-2 text-left transition-colors ${
-                        isActive
-                          ? "bg-white/10 font-semibold text-white"
-                          : "text-white/70 hover:bg-white/10 hover:text-white"
-                      }`}
+                      className={buttonClassName}
                       aria-pressed={isActive}
                     >
-                      <span>{item.label}</span>
-                      {isActive ? (
-                        <span aria-hidden="true" className="h-2 w-2 rounded-full bg-[#00c875]" />
-                      ) : null}
+                      {IconComponent ? <Icon icon={IconComponent} aria-hidden iconSize={18} /> : null}
+                      <span className={styles.navItemLabel}>{item.label}</span>
                     </button>
                   );
                 })}
-              </div>
+              </nav>
             </div>
           ))}
           {config.sidebar.footer ? (
-            <div className="mt-auto rounded-lg bg-white/5 p-3 text-xs text-white/70">
-              {config.sidebar.footer.title ? <p className="font-semibold text-white">{config.sidebar.footer.title}</p> : null}
+            <div className={styles.sidebarFooter}>
+              {config.sidebar.footer.title ? (
+                <p className={styles.sidebarFooterTitle}>{config.sidebar.footer.title}</p>
+              ) : null}
               {config.sidebar.footer.description ? <p>{config.sidebar.footer.description}</p> : null}
             </div>
           ) : null}
         </aside>
-        <div className="flex min-h-screen flex-1 flex-col">
-          <header className="flex flex-col gap-4 border-b border-[#d4d9e6] bg-white px-6 py-4 md:flex-row md:items-center md:justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#0073ea] text-sm font-semibold uppercase tracking-wide text-white">
-                {appAcronym}
+        <div className={styles.layout}>
+          <header className={styles.topbar}>
+            <Flex align={Flex.align.CENTER} gap={Flex.gaps.MEDIUM} className={styles.topbarInfo} aria-live="polite">
+              <div className={styles.appBadge}>{appAcronym}</div>
+              <div className={styles.topbarTitles}>
+                {config.workspace.title ? (
+                  <Heading type={Heading.types.H3} weight={Heading.weights.BOLD} color={Heading.colors.PRIMARY}>
+                    {config.workspace.title}
+                  </Heading>
+                ) : null}
+                {config.workspace.board ? (
+                  <Text type={Text.types.TEXT2} color={Text.colors.SECONDARY}>
+                    {config.workspace.board}
+                  </Text>
+                ) : null}
               </div>
-              <div className="flex flex-col">
-                {config.workspace.title ? <span className="text-sm font-semibold text-[#1f2430]">{config.workspace.title}</span> : null}
-                {config.workspace.board ? <span className="text-xs text-[#6b7185]">{config.workspace.board}</span> : null}
-              </div>
-            </div>
-            <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
+            </Flex>
+            <div className={styles.topbarActions}>
               {config.workspace.search ? (
-                <DxInput
-                  name="workspace-search"
+                <Search
                   value={config.workspace.search.value}
                   onChange={(value) => config.workspace.search?.onChange?.(value)}
                   placeholder={config.workspace.search.placeholder}
-                  telemetryId={config.workspace.search.telemetryId}
-                  density="compact"
-                  className="w-full md:w-72"
+                  className={styles.search}
+                  size="small"
                 />
               ) : null}
-              <div className="flex items-center gap-2">
-                {config.workspace.inviteLabel ? (
-                  <DxButton variant="secondary" size="sm" telemetryId="workspace.invite">
-                    {config.workspace.inviteLabel}
-                  </DxButton>
-                ) : null}
-                {config.workspace.notificationsLabel ? (
-                  <DxButton
-                    variant="ghost"
-                    size="sm"
-                    telemetryId="workspace.notifications"
-                    aria-label={config.workspace.notificationsLabel}
-                  >
-                    <span aria-hidden="true" role="img">
-                      {config.workspace.notificationsIcon}
-                    </span>
-                  </DxButton>
-                ) : null}
-                {config.workspace.profile ? (
-                  <button
-                    type="button"
-                    className="flex items-center gap-2 rounded-full border border-[#d4d9e6] bg-white px-3 py-1 text-left transition-colors hover:border-[#c2c7d6]"
-                    aria-label={config.workspace.profile.label}
-                  >
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0073ea] text-sm font-semibold uppercase text-white">
-                      {config.workspace.profile.initials}
-                    </span>
-                    <span className="hidden flex-col leading-tight sm:flex">
-                      <span className="text-sm font-medium text-[#1f2430]">
-                        {config.workspace.profile.name}
-                      </span>
-                      {config.workspace.profile.role ? (
-                        <span className="text-xs text-[#6b7185]">{config.workspace.profile.role}</span>
-                      ) : null}
-                    </span>
-                  </button>
-                ) : null}
-              </div>
+              {config.workspace.inviteLabel ? (
+                <DxButton
+                  variant="secondary"
+                  size="sm"
+                  telemetryId="workspace.invite"
+                  leftIcon={InviteIcon}
+                >
+                  {config.workspace.inviteLabel}
+                </DxButton>
+              ) : null}
+              {config.workspace.notificationsLabel ? (
+                <IconButton
+                  icon={NotificationsIcon}
+                  ariaLabel={config.workspace.notificationsLabel}
+                  tooltipContent={config.workspace.notificationsLabel}
+                />
+              ) : null}
+              {config.workspace.profile ? (
+                <div className={styles.profile} aria-label={config.workspace.profile.label} role="group">
+                  <Avatar
+                    text={config.workspace.profile.initials}
+                    withoutTooltip
+                    ariaLabel={config.workspace.profile.name}
+                  />
+                  <div className={styles.profileDetails}>
+                    <span className={styles.profileName}>{config.workspace.profile.name}</span>
+                    {config.workspace.profile.role ? (
+                      <span className={styles.profileRole}>{config.workspace.profile.role}</span>
+                    ) : null}
+                  </div>
+                </div>
+              ) : null}
             </div>
           </header>
-          <main className="flex-1 overflow-y-auto bg-[#f6f7fb]">{children}</main>
+          <main className={styles.main}>{children}</main>
         </div>
       </div>
     </AppLayoutContext.Provider>

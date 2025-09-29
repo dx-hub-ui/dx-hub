@@ -48,12 +48,29 @@ const STAGE_ACCENT_COLORS: Record<ContactStage, string> = {
   lost: "#8f73ff",
 };
 
+const TOKENS = {
+  textPrimary: "var(--primary-text-color)",
+  textSecondary: "var(--secondary-text-color)",
+  textMuted: "var(--disabled-text-color)",
+  textOnPrimary: "var(--text-color-on-primary)",
+  border: "var(--ui-border-color)",
+  borderStrong: "var(--layout-border-color)",
+  surface: "var(--primary-background-color)",
+  surfaceSubtle: "var(--ui-background-color)",
+  primary: "var(--primary-color)",
+  primarySelected: "var(--primary-selected-color)",
+  primaryHover: "var(--primary-selected-hover-color)",
+  primaryFocus: "var(--primary-hover-color)",
+  positive: "var(--positive-color)",
+  negative: "var(--negative-color)",
+};
+
 const STAGE_HEADER_TEXT: Record<ContactStage, string> = {
-  prospecting: "#1f2430",
-  discovery: "#1f2430",
-  negotiation: "#ffffff",
-  won: "#ffffff",
-  lost: "#ffffff",
+  prospecting: TOKENS.textPrimary,
+  discovery: TOKENS.textPrimary,
+  negotiation: TOKENS.textOnPrimary,
+  won: TOKENS.textOnPrimary,
+  lost: TOKENS.textOnPrimary,
 };
 
 type BadgeVariant = ComponentProps<typeof DxBadge>["variant"];
@@ -487,19 +504,25 @@ export default function HomePage() {
         {announcement}
       </p>
       <section className="flex flex-col gap-8 pb-12">
-        <div className="border-b border-[#d4d9e6] bg-white px-6 pb-10 pt-12 sm:px-10 lg:px-16">
+        <div
+          className="border-b px-6 pb-10 pt-12 sm:px-10 lg:px-16"
+          style={{ backgroundColor: TOKENS.surface, borderColor: TOKENS.borderStrong }}
+        >
           <div className="flex flex-col gap-10">
             <div className="flex flex-wrap items-start justify-between gap-6">
               <div className="flex max-w-3xl flex-col gap-3">
-                <h1 className="text-3xl font-semibold text-[#1f2430]">
+                <h1 className="text-3xl font-semibold" style={{ color: TOKENS.textPrimary }}>
                   {tContacts("hero.title")}
                 </h1>
-                <p className="text-base text-[#6b7185]">
+                <p className="text-base" style={{ color: TOKENS.textSecondary }}>
                   {tContacts("hero.subtitle")}
                 </p>
               </div>
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-                <div className="flex items-center gap-1 rounded-full border border-[#d4d9e6] bg-[#f6f7fb] p-1">
+                <div
+                  className="flex items-center gap-1 rounded-full border p-1"
+                  style={{ borderColor: TOKENS.border, backgroundColor: TOKENS.surfaceSubtle }}
+                >
                   {VIEW_MODES.map((mode) => {
                     const isActive = view === mode;
                     return (
@@ -507,10 +530,14 @@ export default function HomePage() {
                         key={mode}
                         type="button"
                         onClick={() => handleViewChange(mode)}
-                        className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0073ea] ${
-                          isActive ? "bg-white text-[#1f2430]" : "text-[#6b7185] hover:text-[#1f2430]"
+                        className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[color:var(--primary-color)] ${
+                          isActive ? "" : "hover:text-[color:var(--primary-text-color)]"
                         }`}
                         aria-pressed={isActive}
+                        style={{
+                          backgroundColor: isActive ? TOKENS.surface : "transparent",
+                          color: isActive ? TOKENS.textPrimary : TOKENS.textSecondary,
+                        }}
                       >
                         {mode === "table"
                           ? tContacts("views.table")
@@ -547,14 +574,18 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
-            <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-[#6b7185]">
+            <div
+              className="flex flex-wrap items-center justify-between gap-3 text-sm"
+              style={{ color: TOKENS.textSecondary }}
+            >
               <span>{tContacts("summary.total", { values: { count: contacts.length } })}</span>
             </div>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
               {CONTACT_STAGE_ORDER.map((stage) => (
                 <div
                   key={stage}
-                  className="flex items-center justify-between rounded-xl border border-[#d4d9e6] bg-white px-4 py-3"
+                  className="flex items-center justify-between rounded-xl border px-4 py-3"
+                  style={{ borderColor: TOKENS.borderStrong, backgroundColor: TOKENS.surface }}
                 >
                   <div className="flex items-center gap-3">
                     <span
@@ -563,17 +594,17 @@ export default function HomePage() {
                       style={{ backgroundColor: STAGE_ACCENT_COLORS[stage] }}
                     />
                     <div className="flex flex-col">
-                      <span className="text-sm font-semibold text-[#1f2430]">
+                      <span className="text-sm font-semibold" style={{ color: TOKENS.textPrimary }}>
                         {stageLabels[stage]}
                       </span>
-                      <span className="text-xs text-[#6b7185]">
+                      <span className="text-xs" style={{ color: TOKENS.textSecondary }}>
                         {tContacts("summary.stageChip", {
                           values: { stage: stageLabels[stage], count: stageTotals[stage] ?? 0 },
                         })}
                       </span>
                     </div>
                   </div>
-                  <span className="text-2xl font-semibold text-[#1f2430]">
+                  <span className="text-2xl font-semibold" style={{ color: TOKENS.textPrimary }}>
                     {stageTotals[stage] ?? 0}
                   </span>
                 </div>
@@ -583,7 +614,7 @@ export default function HomePage() {
         </div>
 
         <div className="flex flex-col gap-6 px-6 sm:px-10 lg:px-16">
-          <div className="flex flex-col gap-4 rounded-2xl border border-[#e2e6f2] bg-white px-5 py-4">
+          <div className="flex flex-col gap-4 rounded-2xl border dx-border-soft dx-bg-surface px-5 py-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex flex-wrap items-center gap-2">
                 <DxInput
@@ -655,7 +686,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              <span className="text-xs font-semibold uppercase tracking-wide text-[#9aa0b9]">
+              <span className="text-xs font-semibold uppercase tracking-wide dx-text-muted">
                 {tContacts("filters.stageGroupLabel")}
               </span>
               <div
@@ -712,13 +743,13 @@ export default function HomePage() {
           {view === "table" ? (
             <div className="flex flex-col gap-6">
               {groupedContacts.map((group) => {
-                const accentColor = group.id === "inactive" ? "#9aa0b9" : "#00c875";
+                const accentColor = group.id === "inactive" ? TOKENS.textMuted : TOKENS.positive;
                 return (
                   <section
                     key={group.id}
-                    className="overflow-hidden rounded-2xl border border-[#d4d9e6] bg-white"
+                    className="overflow-hidden rounded-2xl border dx-border-strong dx-bg-surface"
                   >
-                    <header className="flex flex-wrap items-center justify-between gap-3 border-b border-[#e2e6f2] bg-[#f6f7fb] px-6 py-4">
+                    <header className="flex flex-wrap items-center justify-between gap-3 border-b dx-border-soft dx-bg-subtle px-6 py-4">
                       <div className="flex items-center gap-3">
                         <span
                           aria-hidden="true"
@@ -726,8 +757,8 @@ export default function HomePage() {
                           style={{ backgroundColor: accentColor }}
                         />
                         <div className="flex flex-col">
-                          <h2 className="text-sm font-semibold text-[#1f2430]">{group.title}</h2>
-                          <span className="text-xs text-[#6b7185]">
+                          <h2 className="text-sm font-semibold dx-text-primary">{group.title}</h2>
+                          <span className="text-xs dx-text-secondary">
                             {tContacts("table.groups.count", { values: { count: group.contacts.length } })}
                           </span>
                         </div>
@@ -742,13 +773,13 @@ export default function HomePage() {
                       </DxButton>
                     </header>
                     {group.contacts.length === 0 ? (
-                      <div className="px-6 py-10 text-sm text-[#6b7185]">
+                      <div className="px-6 py-10 text-sm dx-text-secondary">
                         {tContacts("table.empty")}
                       </div>
                     ) : (
                       <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-[#e2e6f2] text-left">
-                          <thead className="bg-[#f6f7fb] text-xs font-semibold uppercase tracking-wide text-[#6b7185]">
+                        <table className="min-w-full divide-y divide-[color:var(--ui-border-color)] text-left">
+                          <thead className="dx-bg-subtle text-xs font-semibold uppercase tracking-wide dx-text-secondary">
                             <tr>
                               <th scope="col" className="px-6 py-3 font-semibold">
                                 {tContacts("table.headers.contact")}
@@ -776,7 +807,7 @@ export default function HomePage() {
                               </th>
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-[#f0f2f9]">
+                          <tbody className="divide-y divide-[color:var(--ui-border-color)]">
                             {group.contacts.map((contact) => {
                               const isSelected = contact.id === selectedContactId;
                               const timelineCount = contact.activities.length;
@@ -786,7 +817,7 @@ export default function HomePage() {
                                 <tr
                                   key={contact.id}
                                   className={`cursor-pointer transition-colors ${
-                                    isSelected ? "bg-[#eaf3ff]" : "hover:bg-[#f6faff]"
+                                    isSelected ? "bg-[color:var(--primary-selected-color)]" : "hover:bg-[color:var(--primary-selected-hover-color)]"
                                   }`}
                                   onClick={() => handleSelectContact(contact.id)}
                                   onKeyDown={(event) => {
@@ -800,23 +831,23 @@ export default function HomePage() {
                                 >
                                   <td className="px-6 py-4 align-middle">
                                     <div className="flex flex-col gap-1">
-                                      <span className="text-sm font-semibold text-[#0073ea]">
+                                      <span className="text-sm font-semibold dx-text-accent">
                                         {contact.name}
                                       </span>
-                                      <span className="text-xs text-[#6b7185]">{contact.company}</span>
+                                      <span className="text-xs dx-text-secondary">{contact.company}</span>
                                     </div>
                                   </td>
-                                  <td className="px-6 py-4 align-middle text-sm text-[#1f2430]">
+                                  <td className="px-6 py-4 align-middle text-sm dx-text-primary">
                                     {contact.email}
                                   </td>
                                   <td className="px-6 py-4 align-middle">
-                                    <span className="inline-flex items-center gap-2 rounded-full border border-[#d4d9e6] bg-white px-3 py-1 text-xs font-medium text-[#1f2430]">
-                                      <span className="h-2 w-2 rounded-full bg-[#0073ea]" aria-hidden="true" />
+                                    <span className="inline-flex items-center gap-2 rounded-full border dx-border-strong dx-bg-surface px-3 py-1 text-xs font-medium dx-text-primary">
+                                      <span className="h-2 w-2 rounded-full bg-[color:var(--primary-color)]" aria-hidden="true" />
                                       {tContacts("timeline.count", { values: { count: timelineCount } })}
                                     </span>
                                   </td>
                                   <td className="px-6 py-4 align-middle">
-                                    <span className="inline-flex items-center rounded-full bg-[#f6faff] px-3 py-1 text-xs font-medium text-[#1f2430]">
+                                    <span className="inline-flex items-center rounded-full dx-bg-highlight-hover px-3 py-1 text-xs font-medium dx-text-primary">
                                       {contact.company}
                                     </span>
                                   </td>
@@ -828,10 +859,10 @@ export default function HomePage() {
                                       {stageLabels[contact.stage]}
                                     </span>
                                   </td>
-                                  <td className="px-6 py-4 align-middle text-sm text-[#1f2430]">
+                                  <td className="px-6 py-4 align-middle text-sm dx-text-primary">
                                     {contact.phone}
                                   </td>
-                                  <td className="px-6 py-4 align-middle text-sm text-[#1f2430]">
+                                  <td className="px-6 py-4 align-middle text-sm dx-text-primary">
                                     {contact.assignedTo}
                                   </td>
                                   <td className="px-6 py-4 align-middle text-right">
@@ -870,7 +901,7 @@ export default function HomePage() {
                     aria-label={tContacts("kanban.columnLabel", {
                       values: { stage: stageLabels[stage], count: stageContacts.length },
                     })}
-                    className="flex min-h-[420px] flex-col overflow-hidden rounded-2xl border border-[#d4d9e6] bg-white"
+                    className="flex min-h-[420px] flex-col overflow-hidden rounded-2xl border dx-border-strong dx-bg-surface"
                   >
                     <header
                       className="flex items-center justify-between px-4 py-3"
@@ -902,7 +933,7 @@ export default function HomePage() {
                       }}
                     >
                       {stageContacts.length === 0 ? (
-                        <p className="rounded-xl border border-dashed border-[#d4d9e6] bg-[#f6f7fb] px-4 py-6 text-xs text-[#6b7185]">
+                        <p className="rounded-xl border border-dashed dx-border-strong dx-bg-subtle px-4 py-6 text-xs dx-text-secondary">
                           {tContacts("kanban.empty")}
                         </p>
                       ) : (
@@ -913,8 +944,8 @@ export default function HomePage() {
                             <article
                               key={contact.id}
                               role="listitem"
-                              className={`flex flex-col gap-3 rounded-xl border border-[#e2e6f2] bg-white p-4 transition-colors ${
-                                draggedContactId === contact.id ? "border-[#0073ea]" : "hover:border-[#c7ccda]"
+                              className={`flex flex-col gap-3 rounded-xl border dx-border-soft dx-bg-surface p-4 transition-colors ${
+                                draggedContactId === contact.id ? "border-[color:var(--primary-color)]" : "hover:border-[color:var(--ui-border-color)]"
                               }`}
                               draggable
                               onDragStart={(event) => {
@@ -931,8 +962,8 @@ export default function HomePage() {
                                   onClick={() => handleSelectContact(contact.id)}
                                   className="text-left"
                                 >
-                                  <h3 className="text-sm font-semibold text-[#1f2430]">{contact.name}</h3>
-                                  <p className="text-xs text-[#6b7185]">{contact.company}</p>
+                                  <h3 className="text-sm font-semibold dx-text-primary">{contact.name}</h3>
+                                  <p className="text-xs dx-text-secondary">{contact.company}</p>
                                 </button>
                                 <span
                                   className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
@@ -941,16 +972,16 @@ export default function HomePage() {
                                   {stageLabels[contact.stage]}
                                 </span>
                               </div>
-                              <p id={`contact-${contact.id}-meta`} className="text-xs text-[#6b7185]">
+                              <p id={`contact-${contact.id}-meta`} className="text-xs dx-text-secondary">
                                 {tContacts("kanban.lastInteraction", {
                                   values: { timestamp: formatDateTime(contact.lastInteraction, locale) },
                                 })}
                               </p>
                               <div className="flex flex-wrap gap-2">
-                                <span className="inline-flex items-center rounded-full bg-[#f6f7fb] px-3 py-1 text-xs font-medium text-[#1f2430]">
+                                <span className="inline-flex items-center rounded-full dx-bg-subtle px-3 py-1 text-xs font-medium dx-text-primary">
                                   {contact.assignedTo}
                                 </span>
-                                <span className="inline-flex items-center rounded-full bg-[#f6f7fb] px-3 py-1 text-xs font-medium text-[#1f2430]">
+                                <span className="inline-flex items-center rounded-full dx-bg-subtle px-3 py-1 text-xs font-medium dx-text-primary">
                                   {contact.email}
                                 </span>
                               </div>
@@ -966,7 +997,7 @@ export default function HomePage() {
                                   })}
                                 </DxButton>
                               ) : (
-                                <span className="text-xs font-semibold text-[#00c875]">
+                                <span className="text-xs font-semibold dx-text-positive">
                                   {tContacts("kanban.actions.completed")}
                                 </span>
                               )}
@@ -982,11 +1013,11 @@ export default function HomePage() {
           )}
         </div>
 
-        <footer className="flex flex-col gap-3 px-6 pb-4 text-sm text-[#6b7185] sm:px-10 lg:px-16">
+        <footer className="flex flex-col gap-3 px-6 pb-4 text-sm dx-text-secondary sm:px-10 lg:px-16">
           <span>{tContacts("footer.title")}</span>
           <Link
             href="https://monday.com/vibe"
-            className="w-fit text-sm font-medium text-[#0073ea] hover:underline"
+            className="w-fit text-sm font-medium dx-text-accent hover:underline"
           >
             {tContacts("footer.link")}
           </Link>
@@ -1008,20 +1039,20 @@ export default function HomePage() {
           size="sm"
           classNames={{
             modal:
-              "fixed inset-y-0 right-0 h-full w-[420px] max-w-[420px] rounded-none border-l border-[#d4d9e6] shadow-none !bg-white !p-0",
+              "fixed inset-y-0 right-0 h-full w-[420px] max-w-[420px] rounded-none border-l dx-border-strong shadow-none dx-bg-surface !p-0",
           }}
           title={selectedContact.name}
           aria-labelledby="contact-details-title"
         >
-          <div className="flex h-full flex-col bg-white" id="contact-details-title">
-            <header className="flex flex-col gap-3 border-b border-[#d4d9e6] bg-[#f6f7fb] px-6 py-5">
+          <div className="flex h-full flex-col dx-bg-surface" id="contact-details-title">
+            <header className="flex flex-col gap-3 border-b dx-border-strong dx-bg-subtle px-6 py-5">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex flex-col gap-1">
-                  <span className="text-xs font-semibold uppercase tracking-wide text-[#9aa0b9]">
+                  <span className="text-xs font-semibold uppercase tracking-wide dx-text-muted">
                     {tContacts("details.title")}
                   </span>
-                  <h2 className="text-2xl font-semibold text-[#1f2430]">{selectedContact.name}</h2>
-                  <span className="text-sm text-[#6b7185]">{selectedContact.company}</span>
+                  <h2 className="text-2xl font-semibold dx-text-primary">{selectedContact.name}</h2>
+                  <span className="text-sm dx-text-secondary">{selectedContact.company}</span>
                 </div>
                 <div className="flex flex-col items-end gap-2">
                   <DxBadge density="compact" variant={STAGE_BADGE_VARIANTS[selectedContact.stage]}>
@@ -1035,46 +1066,46 @@ export default function HomePage() {
                 </div>
               </div>
             </header>
-            <div className="flex flex-1 flex-col gap-6 overflow-y-auto bg-white px-6 py-6">
+            <div className="flex flex-1 flex-col gap-6 overflow-y-auto dx-bg-surface px-6 py-6">
               <div className="grid gap-3">
-                <div className="flex flex-col gap-2 rounded-xl border border-[#e2e6f2] bg-[#f9faff] px-4 py-3">
-                  <span className="text-xs font-semibold uppercase tracking-wide text-[#9aa0b9]">
+                <div className="flex flex-col gap-2 rounded-xl border dx-border-soft dx-bg-highlight-hover px-4 py-3">
+                  <span className="text-xs font-semibold uppercase tracking-wide dx-text-muted">
                     {tContacts("details.stage")}
                   </span>
                   <DxBadge density="compact" variant={STAGE_BADGE_VARIANTS[selectedContact.stage]}>
                     {stageLabels[selectedContact.stage]}
                   </DxBadge>
                 </div>
-                <div className="flex flex-col gap-2 rounded-xl border border-[#e2e6f2] bg-[#f9faff] px-4 py-3">
-                  <span className="text-xs font-semibold uppercase tracking-wide text-[#9aa0b9]">
+                <div className="flex flex-col gap-2 rounded-xl border dx-border-soft dx-bg-highlight-hover px-4 py-3">
+                  <span className="text-xs font-semibold uppercase tracking-wide dx-text-muted">
                     {tContacts("details.email")}
                   </span>
-                  <span className="text-sm font-medium text-[#1f2430]">{selectedContact.email}</span>
+                  <span className="text-sm font-medium dx-text-primary">{selectedContact.email}</span>
                 </div>
-                <div className="flex flex-col gap-2 rounded-xl border border-[#e2e6f2] bg-[#f9faff] px-4 py-3">
-                  <span className="text-xs font-semibold uppercase tracking-wide text-[#9aa0b9]">
+                <div className="flex flex-col gap-2 rounded-xl border dx-border-soft dx-bg-highlight-hover px-4 py-3">
+                  <span className="text-xs font-semibold uppercase tracking-wide dx-text-muted">
                     {tContacts("details.phone")}
                   </span>
-                  <span className="text-sm font-medium text-[#1f2430]">{selectedContact.phone}</span>
+                  <span className="text-sm font-medium dx-text-primary">{selectedContact.phone}</span>
                 </div>
-                <div className="flex flex-col gap-2 rounded-xl border border-[#e2e6f2] bg-[#f9faff] px-4 py-3">
-                  <span className="text-xs font-semibold uppercase tracking-wide text-[#9aa0b9]">
+                <div className="flex flex-col gap-2 rounded-xl border dx-border-soft dx-bg-highlight-hover px-4 py-3">
+                  <span className="text-xs font-semibold uppercase tracking-wide dx-text-muted">
                     {tContacts("details.assigned")}
                   </span>
-                  <span className="text-sm font-medium text-[#1f2430]">{selectedContact.assignedTo}</span>
+                  <span className="text-sm font-medium dx-text-primary">{selectedContact.assignedTo}</span>
                 </div>
-                <div className="flex flex-col gap-2 rounded-xl border border-[#e2e6f2] bg-[#f9faff] px-4 py-3">
-                  <span className="text-xs font-semibold uppercase tracking-wide text-[#9aa0b9]">
+                <div className="flex flex-col gap-2 rounded-xl border dx-border-soft dx-bg-highlight-hover px-4 py-3">
+                  <span className="text-xs font-semibold uppercase tracking-wide dx-text-muted">
                     {tContacts("details.lastInteraction")}
                   </span>
-                  <span className="text-sm font-medium text-[#1f2430]">
+                  <span className="text-sm font-medium dx-text-primary">
                     {formatDateTime(selectedContact.lastInteraction, locale)}
                   </span>
                 </div>
               </div>
               <div className="flex flex-col gap-3">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-semibold text-[#1f2430]">
+                  <h3 className="text-sm font-semibold dx-text-primary">
                     {tContacts("timeline.title")}
                   </h3>
                   <DxBadge density="compact" variant="ghost">
@@ -1082,7 +1113,7 @@ export default function HomePage() {
                   </DxBadge>
                 </div>
                 {orderedActivities.length === 0 ? (
-                  <p className="rounded-xl border border-dashed border-[#d4d9e6] bg-[#f9faff] px-4 py-6 text-xs text-[#9aa0b9]">
+                  <p className="rounded-xl border border-dashed dx-border-strong dx-bg-highlight-hover px-4 py-6 text-xs dx-text-muted">
                     {tContacts("timeline.empty")}
                   </p>
                 ) : (
@@ -1090,17 +1121,17 @@ export default function HomePage() {
                     {orderedActivities.map((activity) => (
                       <li
                         key={activity.id}
-                        className="rounded-xl border border-[#e2e6f2] bg-[#f6f7fb] px-4 py-3"
+                        className="rounded-xl border dx-border-soft dx-bg-subtle px-4 py-3"
                       >
                         <div className="flex items-center justify-between">
                           <DxBadge density="compact" variant="ghost">
                             {tContacts(`timeline.types.${activity.type}`)}
                           </DxBadge>
-                          <span className="text-xs text-[#9aa0b9]">
+                          <span className="text-xs dx-text-muted">
                             {formatDateTime(activity.timestamp, locale)}
                           </span>
                         </div>
-                        <p className="mt-2 text-sm text-[#1f2430]">
+                        <p className="mt-2 text-sm dx-text-primary">
                           {renderActivityMessage(activity.summaryKey, activity.actor, activity.summaryValues)}
                         </p>
                       </li>
@@ -1129,8 +1160,8 @@ export default function HomePage() {
         aria-labelledby="new-contact-title"
       >
         <div className="flex flex-col gap-4 p-6" id="new-contact-title">
-          <h2 className="text-xl font-semibold text-[#1f2430]">{tContacts("form.title")}</h2>
-          <p className="text-sm text-[#6b7185]">{tContacts("form.subtitle")}</p>
+          <h2 className="text-xl font-semibold dx-text-primary">{tContacts("form.title")}</h2>
+          <p className="text-sm dx-text-secondary">{tContacts("form.subtitle")}</p>
           <form
             className="flex flex-col gap-4"
             onSubmit={(event) => {
@@ -1140,7 +1171,7 @@ export default function HomePage() {
           >
             <div className="grid gap-3">
               <label className="flex flex-col gap-1 text-sm">
-                <span className="text-xs font-medium uppercase tracking-wide text-[#9aa0b9]">
+                <span className="text-xs font-medium uppercase tracking-wide dx-text-muted">
                   {tContacts("form.fields.name")}
                 </span>
                 <DxInput
@@ -1151,13 +1182,13 @@ export default function HomePage() {
                   validationStatus={validationErrors.name ? "error" : undefined}
                 />
                 {validationErrors.name ? (
-                  <span className="text-xs text-[#e2445c]" role="alert">
+                  <span className="text-xs dx-text-negative" role="alert">
                     {validationErrors.name}
                   </span>
                 ) : null}
               </label>
               <label className="flex flex-col gap-1 text-sm">
-                <span className="text-xs font-medium uppercase tracking-wide text-[#9aa0b9]">
+                <span className="text-xs font-medium uppercase tracking-wide dx-text-muted">
                   {tContacts("form.fields.company")}
                 </span>
                 <DxInput
@@ -1168,13 +1199,13 @@ export default function HomePage() {
                   validationStatus={validationErrors.company ? "error" : undefined}
                 />
                 {validationErrors.company ? (
-                  <span className="text-xs text-[#e2445c]" role="alert">
+                  <span className="text-xs dx-text-negative" role="alert">
                     {validationErrors.company}
                   </span>
                 ) : null}
               </label>
               <label className="flex flex-col gap-1 text-sm">
-                <span className="text-xs font-medium uppercase tracking-wide text-[#9aa0b9]">
+                <span className="text-xs font-medium uppercase tracking-wide dx-text-muted">
                   {tContacts("form.fields.email")}
                 </span>
                 <DxInput
@@ -1185,13 +1216,13 @@ export default function HomePage() {
                   validationStatus={validationErrors.email ? "error" : undefined}
                 />
                 {validationErrors.email ? (
-                  <span className="text-xs text-[#e2445c]" role="alert">
+                  <span className="text-xs dx-text-negative" role="alert">
                     {validationErrors.email}
                   </span>
                 ) : null}
               </label>
               <label className="flex flex-col gap-1 text-sm">
-                <span className="text-xs font-medium uppercase tracking-wide text-[#9aa0b9]">
+                <span className="text-xs font-medium uppercase tracking-wide dx-text-muted">
                   {tContacts("form.fields.phone")}
                 </span>
                 <DxInput
@@ -1202,14 +1233,14 @@ export default function HomePage() {
                   validationStatus={validationErrors.phone ? "error" : undefined}
                 />
                 {validationErrors.phone ? (
-                  <span className="text-xs text-[#e2445c]" role="alert">
+                  <span className="text-xs dx-text-negative" role="alert">
                     {validationErrors.phone}
                   </span>
                 ) : null}
               </label>
             </div>
             <div className="flex flex-col gap-2">
-              <span className="text-xs font-medium uppercase tracking-wide text-[#9aa0b9]">
+              <span className="text-xs font-medium uppercase tracking-wide dx-text-muted">
                 {tContacts("form.fields.stage")}
               </span>
               <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={tContacts("form.fields.stage")}>
@@ -1253,7 +1284,7 @@ export default function HomePage() {
                 </DxButton>
               </div>
               {Object.keys(validationErrors).length > 0 ? (
-                <span className="text-xs text-[#e2445c]" role="alert">
+                <span className="text-xs dx-text-negative" role="alert">
                   {tErrors("validation")}
                 </span>
               ) : null}

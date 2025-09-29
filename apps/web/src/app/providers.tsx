@@ -1,6 +1,7 @@
 "use client";
 
 import { DxThemeProvider } from "@dx/ui";
+import { AppShell } from "@/components/app-shell/AppShell";
 import { I18nProvider } from "@/i18n/I18nProvider";
 import { useEffect, type ReactNode } from "react";
 import { initSentryLite } from "@/monitoring/sentry-lite";
@@ -18,7 +19,9 @@ export function AppProviders({ children }: { children: ReactNode }) {
       density="compact"
       telemetry={telemetryKey ? { apiKey: telemetryKey, host: telemetryHost } : undefined}
     >
-      <I18nProvider locale="pt-BR">{children}</I18nProvider>
+      <I18nProvider locale="pt-BR">
+        <AppShell>{children}</AppShell>
+      </I18nProvider>
     </DxThemeProvider>
   );
 }
