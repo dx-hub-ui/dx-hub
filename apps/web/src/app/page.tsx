@@ -112,7 +112,7 @@ export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [view, setView] = useState<"table" | "kanban">("table");
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [detailsOpen, setDetailsOpen] = useState(true);
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const [formState, setFormState] = useState<ContactFormState>(defaultFormState);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [toastOpen, setToastOpen] = useState(false);
@@ -338,6 +338,11 @@ export default function HomePage() {
     telemetry.capture("ui_clear_filters", { entity: "crm_contacts" });
   }, [telemetry]);
 
+  const resetForm = useCallback(() => {
+    setFormState(defaultFormState());
+    setFormSubmitted(false);
+  }, []);
+
   const openNewContact = useCallback(() => {
     resetForm();
     setDialogOpen(true);
@@ -361,11 +366,6 @@ export default function HomePage() {
       borderLeft: "1px solid #d4d9e6",
       boxShadow: "none",
     };
-  }, []);
-
-  const resetForm = useCallback(() => {
-    setFormState(defaultFormState());
-    setFormSubmitted(false);
   }, []);
 
   const handleStageChange = useCallback(
