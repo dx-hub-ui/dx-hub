@@ -16,6 +16,10 @@ O Storybook deve refletir fielmente os componentes do Vibe utilizados via `@dx/u
 - `CRM/Board` — demonstra o Kanban acessível com arrastar/soltar, anúncio de ARIA e call-to-action de avanço de etapa.
 - `CRM/DetailsPanel` — ilustra timeline traduzida, badges de estágio e tokens do Vibe aplicados à ficha do contato.
 
+## Cenários Sprint 4
+- `Microsites/Fluxo — AdminDashboard` — cobre o CRUD completo de microsites com badges de status, diálogo de edição e geração de QR code (eventos `microsite_created`, `microsite_published`, `microsite_qr_downloaded`).
+- `Microsites/Fluxo — PublicForm` — demonstra o formulário público com anti-spam, captura de lead (`microsite_lead_submitted`) e integração de telemetria/a11y.
+
 ## Snippet sugerido (`.storybook/preview.ts`)
 ```ts
 import type { Preview } from '@storybook/react';
