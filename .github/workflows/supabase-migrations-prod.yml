@@ -1,5 +1,4 @@
-# .github/workflows/supabase-migrate-prod.yml
-name: Supabase Migrations (prod - non-blocking)
+name: Supabase Migrations (prod - simples)
 
 on:
   push:
@@ -7,13 +6,9 @@ on:
     paths:
       - "supabase/migrations/**"
 
-permissions:
-  contents: read
-
 jobs:
   migrate:
     runs-on: ubuntu-latest
-    continue-on-error: true    # 👈 soft fail — não bloqueia nada
     steps:
       - uses: actions/checkout@v4
 
@@ -22,21 +17,19 @@ jobs:
         with:
           version: latest
 
-      - name: Apply migrations to PROD (via --db-url)
+      - name: Quick DB connectivity test
         env:
           SUPABASE_DB_URL_PROD: ${{ secrets.SUPABASE_DB_URL_PROD }}
         run: |
           if [ -z "${SUPABASE_DB_URL_PROD}" ]; then
             echo "❌ SUPABASE_DB_URL_PROD não definido."
-            echo "⚠️ Migração não executada (secret ausente). Rodar manualmente." >> $GITHUB_STEP_SUMMARY
-            exit 0
+            exit 1
           fi
+          sudo apt-get update -y && sudo apt-get install -y postgresql-client
+          psql "$SUPABASE_DB_URL_PROD" -c "select version();"
 
-          # opcional: supabase db push --db-url "$SUPABASE_DB_URL_PROD" --dry-run || true
-
-          if supabase db push --db-url "$SUPABASE_DB_URL_PROD" --include-all; then
-            echo "✅ Migrations completed em PROD." >> $GITHUB_STEP_SUMMARY
-          else
-            echo "⚠️ Migrações falharam. Não bloqueia deploy. Rode manualmente depois." >> $GITHUB_STEP_SUMMARY
-            # não falha o job (soft fail)
-          fi
+      - name: Apply migrations to PROD (URL direta)
+        env:
+          SUPABASE_DB_URL_PROD: ${{ secrets.SUPABASE_DB_URL_PROD }}
+        run: |
+          supabase db push --db-url "$SUPABASE_DB_URL_PROD" --include-all
