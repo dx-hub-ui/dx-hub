@@ -3,6 +3,8 @@ name: Apply Supabase Migrations (production)
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - "supabase/migrations/**"   # roda só quando houver migrações
 
 env:
   SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF_PROD }}
@@ -21,7 +23,11 @@ jobs:
       - name: Link project (prod)
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-        run: supabase link --project-ref $SUPABASE_PROJECT_REF
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD_PROD }}  # 🔑 evita prompt
+        run: supabase link --project-ref "$SUPABASE_PROJECT_REF"
 
       - name: Apply migrations to PROD
-        run: supabase db push --linked
+        env:
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD_PROD }}  # 🔑 necessário no push
+        run: supabase db push --linked --include-all
+        # --include-all garante aplicar todas as migrações pendentes
