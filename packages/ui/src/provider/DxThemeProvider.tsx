@@ -1,7 +1,7 @@
 "use client";
 
 import { type ReactElement, useEffect, useMemo } from "react";
-import ThemeProvider from "@vibe/core/dist/components/ThemeProvider";
+import { ThemeProvider } from "@vibe/core";
 import { DxTelemetryProvider, type TelemetryConfig } from "../telemetry/TelemetryProvider";
 import type { DxDensity } from "../components/types";
 

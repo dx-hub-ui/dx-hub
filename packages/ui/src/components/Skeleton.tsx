@@ -1,6 +1,6 @@
 "use client";
 
-import Skeleton from "@vibe/core/dist/components/Skeleton/Skeleton";
+import { Skeleton } from "@vibe/core";
 import type { ComponentProps } from "react";
 import type { DxComponentBaseProps } from "./types";
 

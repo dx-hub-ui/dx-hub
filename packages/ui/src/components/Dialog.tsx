@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import Modal from "@vibe/core/dist/components/Modal/Modal";
-import type { ModalProps } from "@vibe/core/dist/components/Modal/Modal/Modal.types";
+import { Modal, type ModalProps } from "@vibe/core";
 import { useInteractionEvents } from "../telemetry/events";
 import type { DxComponentBaseProps, DxSize } from "./types";
 

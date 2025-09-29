@@ -1,13 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
-import Table from "@vibe/core/dist/components/Table/Table/Table";
-import type { TableProps } from "@vibe/core/dist/components/Table/Table/Table";
-import TableHeader from "@vibe/core/dist/components/Table/TableHeader/TableHeader";
-import TableHeaderCell from "@vibe/core/dist/components/Table/TableHeaderCell/TableHeaderCell";
-import TableBody from "@vibe/core/dist/components/Table/TableBody/TableBody";
-import TableRow from "@vibe/core/dist/components/Table/TableRow/TableRow";
-import TableCell from "@vibe/core/dist/components/Table/TableCell/TableCell";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableHeaderCell,
+  TableRow,
+  type TableProps,
+} from "@vibe/core";
 import { useInteractionEvents } from "../telemetry/events";
 import type { DxComponentBaseProps } from "./types";
 

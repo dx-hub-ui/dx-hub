@@ -1,6 +1,6 @@
 "use client";
 
-import Box from "@vibe/core/dist/components/Box/Box";
+import { Box } from "@vibe/core";
 import type { ComponentProps } from "react";
 import type { DxComponentBaseProps } from "./types";
 

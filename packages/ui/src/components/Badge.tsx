@@ -1,7 +1,6 @@
 "use client";
 
-import Badge from "@vibe/core/dist/components/Badge/Badge";
-import type { BadgeProps } from "@vibe/core/dist/components/Badge/Badge";
+import { Badge, type BadgeProps } from "@vibe/core";
 import type { ReactNode } from "react";
 import type { DxComponentBaseProps } from "./types";
 

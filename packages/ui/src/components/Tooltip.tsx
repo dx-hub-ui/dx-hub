@@ -1,7 +1,6 @@
 "use client";
 
-import Tooltip from "@vibe/core/dist/components/Tooltip/Tooltip";
-import type { TooltipProps } from "@vibe/core/dist/components/Tooltip/Tooltip";
+import { Tooltip, type TooltipProps } from "@vibe/core";
 import { useInteractionEvents } from "../telemetry/events";
 import type { DxComponentBaseProps } from "./types";
 
