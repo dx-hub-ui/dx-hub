@@ -2,13 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  type CSSProperties,
-} from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   DxBadge,
   DxButton,
@@ -352,21 +346,6 @@ export default function HomePage() {
       entity: "crm_contacts",
     });
   }, [resetForm, telemetry]);
-
-  const detailsDialogStyle = useMemo<CSSProperties>(() => {
-    return {
-      position: "fixed",
-      inset: "0 0 0 auto",
-      width: "420px",
-      maxWidth: "420px",
-      maxHeight: "100%",
-      height: "100%",
-      transform: "none",
-      borderRadius: 0,
-      borderLeft: "1px solid #d4d9e6",
-      boxShadow: "none",
-    };
-  }, []);
 
   const handleStageChange = useCallback(
     (contactId: string, nextStage: ContactStage) => {
@@ -1022,8 +1001,10 @@ export default function HomePage() {
               });
             }}
             size="sm"
-            classNames={{ content: "!bg-white !p-0" }}
-            style={detailsDialogStyle}
+            classNames={{
+              modal:
+                "fixed inset-y-0 right-0 h-full w-[420px] max-w-[420px] rounded-none border-l border-[#d4d9e6] shadow-none !bg-white !p-0",
+            }}
             aria-labelledby="contact-details-title"
           >
             <div className="flex h-full flex-col bg-white" id="contact-details-title">
