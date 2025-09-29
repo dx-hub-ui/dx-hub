@@ -24,6 +24,62 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.dx-text-primary {
+  color: var(--primary-text-color);
+}
+
+.dx-text-secondary {
+  color: var(--secondary-text-color);
+}
+
+.dx-text-muted {
+  color: var(--disabled-text-color);
+}
+
+.dx-text-on-primary {
+  color: var(--text-color-on-primary);
+}
+
+.dx-text-negative {
+  color: var(--negative-color);
+}
+
+.dx-text-positive {
+  color: var(--positive-color);
+}
+
+.dx-text-accent {
+  color: var(--primary-color);
+}
+
+.dx-bg-surface {
+  background-color: var(--primary-background-color);
+}
+
+.dx-bg-subtle {
+  background-color: var(--ui-background-color);
+}
+
+.dx-bg-highlight {
+  background-color: var(--primary-selected-color);
+}
+
+.dx-bg-highlight-hover {
+  background-color: var(--primary-selected-hover-color);
+}
+
+.dx-border-strong {
+  border-color: var(--layout-border-color);
+}
+
+.dx-border-soft {
+  border-color: var(--ui-border-color);
+}
+
+.dx-shadow-elevated {
+  box-shadow: var(--box-shadow-small);
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
