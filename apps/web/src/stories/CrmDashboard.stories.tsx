@@ -128,6 +128,12 @@ function TableScenario() {
         columns={columns}
         rows={rows}
         dataState={{ isLoading: false, isError: false }}
+        emptyState={<div className="px-4 py-6 text-sm text-[#64748b]">{t("table.empty")}</div>}
+        errorState={
+          <div role="alert" className="px-4 py-6 text-sm text-[#b91c1c]">
+            {t("table.error")}
+          </div>
+        }
         telemetryId="story.crm.table"
       />
       <div className="text-xs text-[#64748b]">
