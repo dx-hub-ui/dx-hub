@@ -1,10 +1,11 @@
 import { Label } from "@vibe/core";
+import type { LabelColor } from "@vibe/core/dist/components/Label";
 
 import type { ContactStage } from "./types";
 
 export type ContactStageTheme = {
   /** Color token used by Vibe Label component */
-  labelColor: string;
+  labelColor: LabelColor;
   /** Primary accent color for the column */
   accentColor: string;
   /** Soft background tint applied to the column */
