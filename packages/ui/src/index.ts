@@ -1,1 +1,1 @@
-﻿export * from "./provider/DxThemeProvider";
+export * from "./provider/DxThemeProvider";
