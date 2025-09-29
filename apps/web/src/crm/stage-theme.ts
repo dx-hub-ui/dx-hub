@@ -1,5 +1,4 @@
-import { Label } from "@vibe/core";
-import type { LabelColor } from "@vibe/core/dist/components/Label";
+import { Label, type LabelColor } from "@vibe/core";
 
 import type { ContactStage } from "./types";
 
