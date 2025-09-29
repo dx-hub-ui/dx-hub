@@ -2,6 +2,7 @@ export const CONTACT_STAGE_ORDER = [
   "prospecting",
   "discovery",
   "negotiation",
+  "blocked",
   "won",
   "lost",
 ] as const;
