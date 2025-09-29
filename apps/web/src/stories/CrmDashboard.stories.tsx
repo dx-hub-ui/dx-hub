@@ -1,23 +1,14 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useMemo } from "react";
-import {
-  DxBadge,
-  DxButton,
-  DxCard,
-  DxInput,
-  DxTable,
-  DxTooltip,
-} from "@dx/ui";
+import { DxBadge, DxButton, DxCard, DxInput, DxTable, DxTooltip } from "@dx/ui";
+import { Label } from "@vibe/core";
 import { useTranslation } from "@/i18n/I18nProvider";
 import {
   CONTACT_STAGE_ORDER,
   type ContactStage,
 } from "@/crm/types";
-import {
-  BOARD_COLUMN_ORDER,
-  CONTACT_STAGE_VARIANTS,
-  CRM_CONTACTS_SEED,
-} from "@/crm/mock-data";
+import { BOARD_COLUMN_ORDER, CRM_CONTACTS_SEED } from "@/crm/mock-data";
+import { CONTACT_STAGE_THEME } from "@/crm/stage-theme";
 
 const meta = {
   title: "CRM/Scenarios",
@@ -28,7 +19,7 @@ const meta = {
         component: [
           "📚 [Vibe Docs — Table](https://monday.com/vibe/components/table)",
           "📚 [Vibe Docs — Card](https://monday.com/vibe/components/card)",
-          "📚 [Vibe Docs — Badge](https://monday.com/vibe/components/badge)"
+          "📚 [Vibe Docs — Label](https://monday.com/vibe/components/label)"
         ].join("\n"),
       },
     },
@@ -99,11 +90,8 @@ function TableScenario() {
         if (!contact) {
           return null;
         }
-        return (
-          <DxBadge density="compact" variant={CONTACT_STAGE_VARIANTS[contact.stage]}>
-            {stageLabels[contact.stage]}
-          </DxBadge>
-        );
+        const theme = CONTACT_STAGE_THEME[contact.stage];
+        return <Label color={theme.labelColor} kind="fill" size="small" text={stageLabels[contact.stage]} />;
       },
     },
     {
@@ -152,40 +140,62 @@ function BoardScenario() {
     <div className="flex gap-4 bg-[#f5f6f8] p-6">
       {BOARD_COLUMN_ORDER.map((stage) => {
         const items = CRM_CONTACTS_SEED.filter((contact) => contact.stage === stage);
+        const theme = CONTACT_STAGE_THEME[stage];
+        const countStyles =
+          theme.headerTextColor.toLowerCase() === "#ffffff"
+            ? { backgroundColor: "rgba(255, 255, 255, 0.18)", color: "#ffffff" }
+            : { backgroundColor: "rgba(255, 255, 255, 0.7)", color: theme.headerTextColor };
         return (
-          <DxCard key={stage} className="min-w-[240px] flex-1 bg-white p-4" data-stage={stage}>
-            <header className="mb-3 flex items-center justify-between">
-              <span className="text-sm font-semibold text-[#0f172a]">{stageLabels[stage]}</span>
-              <DxBadge density="compact" variant="ghost">
+          <div
+            key={stage}
+            className="flex min-h-[280px] w-64 flex-col overflow-hidden rounded-2xl border shadow-sm"
+            style={{ backgroundColor: theme.backgroundColor, borderColor: theme.borderColor }}
+            data-stage={stage}
+          >
+            <header
+              className="flex items-start justify-between gap-3 px-4 py-3 shadow-[inset_0_-1px_0_rgba(15,23,42,0.08)]"
+              style={{ backgroundColor: theme.accentColor, color: theme.headerTextColor }}
+            >
+              <div className="flex flex-col">
+                <span className="text-sm font-semibold">{stageLabels[stage]}</span>
+                <span className="text-xs opacity-80">{t("kanban.listLabel", { values: { stage: stageLabels[stage] } })}</span>
+              </div>
+              <span className="rounded-full px-3 py-1 text-xs font-semibold" style={countStyles}>
                 {items.length}
-              </DxBadge>
+              </span>
             </header>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-1 flex-col gap-3 p-4">
               {items.map((contact) => (
-                <article key={contact.id} className="rounded-md border border-[#e2e8f0] p-3">
-                  <div className="flex items-start justify-between gap-2">
+                <article
+                  key={contact.id}
+                  className="flex flex-col gap-3 rounded-2xl border border-transparent bg-white p-4 shadow-[0_6px_14px_rgba(15,23,42,0.12)]"
+                  style={{ borderLeft: `6px solid ${theme.accentColor}` }}
+                >
+                  <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-sm font-semibold text-[#0f172a]">{contact.name}</p>
                       <p className="text-xs text-[#64748b]">{contact.company}</p>
                     </div>
-                    <DxBadge density="compact" variant={CONTACT_STAGE_VARIANTS[contact.stage]}>
-                      {stageLabels[contact.stage]}
-                    </DxBadge>
+                    <Label color={theme.labelColor} kind="fill" size="small" text={stageLabels[contact.stage]} />
                   </div>
-                  <p className="mt-3 text-xs text-[#475569]">
+                  <p className="text-xs text-[#475569]">
                     {t("kanban.lastInteraction", {
                       values: { timestamp: formatDateTime(contact.lastInteraction, locale) },
                     })}
                   </p>
+                  <div className="flex flex-wrap gap-2 text-xs font-medium text-[#475569]">
+                    <span className="rounded-full bg-[#e2e8f0] px-2 py-1">{contact.assignedTo}</span>
+                    <span className="rounded-full bg-[#e2e8f0] px-2 py-1">{contact.email}</span>
+                  </div>
                   <DxTooltip content={t("kanban.actions.advance", { values: { stage: stageLabels[stage] } })}>
-                    <DxButton size="sm" variant="secondary" telemetryId="story.crm.board.cta">
+                    <DxButton size="sm" variant="ghost" telemetryId="story.crm.board.cta">
                       {t("kanban.actions.advance", { values: { stage: stageLabels[stage] } })}
                     </DxButton>
                   </DxTooltip>
                 </article>
               ))}
             </div>
-          </DxCard>
+          </div>
         );
       })}
     </div>
@@ -216,9 +226,7 @@ function DetailsScenario() {
     <DxCard className="max-w-md bg-white p-6">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-[#0f172a]">{t("details.title")}</h3>
-        <DxBadge density="compact" variant={CONTACT_STAGE_VARIANTS[contact.stage]}>
-          {stageLabels[contact.stage]}
-        </DxBadge>
+        <Label color={CONTACT_STAGE_THEME[contact.stage].labelColor} kind="fill" size="small" text={stageLabels[contact.stage]} />
       </div>
       <div className="mt-4 flex flex-col gap-2 text-sm text-[#1f2937]">
         <span className="text-base font-semibold text-[#0f172a]">{contact.name}</span>
