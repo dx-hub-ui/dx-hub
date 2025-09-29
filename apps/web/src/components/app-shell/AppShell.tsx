@@ -12,13 +12,15 @@ import {
   Text,
   type SubIcon,
 } from "@vibe/core";
-import InviteIcon from "@vibe/icons/dist/react/Invite";
-import NotificationsIcon from "@vibe/icons/dist/react/Notifications";
-import DashboardIcon from "@vibe/icons/dist/react/Dashboard";
-import BoardIcon from "@vibe/icons/dist/react/Board";
-import IntegrationsIcon from "@vibe/icons/dist/react/Integrations";
-import ChartIcon from "@vibe/icons/dist/react/Chart";
-import AppsIcon from "@vibe/icons/dist/react/Apps";
+import {
+  Apps as AppsIcon,
+  Board as BoardIcon,
+  Chart as ChartIcon,
+  Dashboard as DashboardIcon,
+  Integrations as IntegrationsIcon,
+  Invite as InviteIcon,
+  Notifications as NotificationsIcon,
+} from "@vibe/icons";
 import { useTranslation } from "@/i18n/I18nProvider";
 import styles from "./AppShell.module.css";
 
