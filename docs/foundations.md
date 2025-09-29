@@ -21,4 +21,6 @@
 - PostHog Lite (configurado em `DxThemeProvider`) publica eventos padronizados (`page_view`, `ui_click_*`, `ui_open_overlay`, etc.).
 - Ative `productionBrowserSourceMaps` para permitir upload de sourcemaps no pipeline.
 
+
 > Estes fundamentos garantem que a ausência do MCP seja compensada por processos sólidos e verificáveis.
+

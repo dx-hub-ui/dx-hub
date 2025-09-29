@@ -3,35 +3,12 @@
     "title": "CRM com componentes Vibe, pronto para produção",
     "subtitle": "Gerencie contatos, acompanhe movimentações no quadro Kanban e valide etapas com telemetria e A11y conectadas."
   },
-  "navigation": {
-    "main": "Favoritos",
-    "workspace": "Workspace",
-    "overview": "Visão geral",
-    "crm": "CRM de contatos",
-    "automations": "Automações",
-    "dashboards": "Dashboards",
-    "marketing": "Marketing"
-  },
-  "workspace": {
-    "title": "Workspace DX Hub",
-    "board": "CRM de contatos",
-    "members": "Contatos ativos: {{count}}"
-  },
-  "header": {
-    "searchPlaceholder": "Pesquisar no workspace",
-    "invite": "Convidar membros",
-    "notifications": "Abrir notificações",
-    "notificationsIcon": "🔔",
-    "profile": "Abrir perfil de {{name}}",
-    "role": {
-      "owner": "Administrador"
-    }
-  },
   "actions": {
     "newContact": "Novo contato",
     "newContactTooltip": "Registrar contato com telemetria e RLS",
     "viewKanban": "Ver Kanban",
-    "viewTable": "Ver tabela"
+    "viewTable": "Ver tabela",
+    "viewMicrosites": "Abrir microsites"
   },
   "summary": {
     "total": "{{count}} contato(s) ativos",
@@ -141,8 +118,5 @@
   },
   "toast": {
     "created": "Contato {{name}} cadastrado com sucesso."
-  },
-  "footer": {
-    "title": "Referências rápidas"
   }
 }
