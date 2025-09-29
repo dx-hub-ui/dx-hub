@@ -1,0 +1,122 @@
+{
+  "hero": {
+    "title": "CRM com componentes Vibe, pronto para produção",
+    "subtitle": "Gerencie contatos, acompanhe movimentações no quadro Kanban e valide etapas com telemetria e A11y conectadas."
+  },
+  "actions": {
+    "newContact": "Novo contato",
+    "newContactTooltip": "Registrar contato com telemetria e RLS",
+    "viewKanban": "Ver Kanban",
+    "viewTable": "Ver tabela",
+    "viewMicrosites": "Abrir microsites"
+  },
+  "summary": {
+    "total": "{{count}} contato(s) ativos",
+    "stageChip": "{{stage}} ({{count}})"
+  },
+  "filters": {
+    "stageGroupLabel": "Filtrar por etapa",
+    "stages": {
+      "all": "Todas"
+    }
+  },
+  "stages": {
+    "prospecting": "Prospecção",
+    "discovery": "Descoberta",
+    "negotiation": "Negociação",
+    "won": "Ganho",
+    "lost": "Perdido"
+  },
+  "table": {
+    "title": "Contatos",
+    "empty": "Nenhum contato cadastrado ainda.",
+    "error": "Não foi possível carregar os contatos.",
+    "headers": {
+      "name": "Nome",
+      "stage": "Etapa",
+      "owner": "Responsável"
+    },
+    "labels": {
+      "owner": "Responsável"
+    },
+    "filters": {
+      "searchPlaceholder": "Buscar por nome, empresa ou e-mail"
+    },
+    "pagination": {
+      "summary": "Exibindo {{start}}-{{end}} de {{total}}",
+      "previous": "Anterior",
+      "next": "Próxima",
+      "current": "{{page}} / {{total}}"
+    }
+  },
+  "kanban": {
+    "columnLabel": "Coluna {{stage}} com {{count}} contato(s)",
+    "listLabel": "Contatos na etapa {{stage}}",
+    "empty": "Sem cartões nesta etapa.",
+    "lastInteraction": "Última interação em {{timestamp}}",
+    "actions": {
+      "advance": "Avançar para {{stage}}",
+      "completed": "Funil concluído"
+    },
+    "announcement": {
+      "stageChanged": "{{name}} movido para {{stage}}"
+    }
+  },
+  "details": {
+    "title": "Detalhes do contato",
+    "mode": {
+      "table": "Tabela",
+      "kanban": "Kanban"
+    },
+    "stage": "Etapa atual",
+    "email": "E-mail",
+    "phone": "Telefone",
+    "assigned": "Responsável",
+    "lastInteraction": "Última interação",
+    "empty": "Selecione um contato para visualizar detalhes."
+  },
+  "timeline": {
+    "title": "Timeline",
+    "empty": "Sem atividades registradas.",
+    "types": {
+      "created": "Criação",
+      "stage": "Etapa",
+      "email": "E-mail",
+      "meeting": "Reunião",
+      "note": "Nota"
+    },
+    "events": {
+      "created": "{{actor}} criou o contato",
+      "stageChanged": "{{actor}} moveu o contato de {{from}} para {{stage}}",
+      "discoveryCall": "{{actor}} conduziu call de descoberta",
+      "proposalSent": "{{actor}} enviou proposta comercial",
+      "demoCompleted": "{{actor}} apresentou a demo",
+      "qualifyNote": "{{actor}} registrou nota de qualificação"
+    }
+  },
+  "form": {
+    "title": "Novo contato",
+    "subtitle": "Preencha os campos obrigatórios para registrar um contato dentro da organização.",
+    "fields": {
+      "name": "Nome",
+      "company": "Empresa",
+      "email": "E-mail",
+      "phone": "Telefone",
+      "stage": "Etapa"
+    },
+    "actions": {
+      "submit": "Salvar contato",
+      "cancel": "Cancelar"
+    },
+    "validation": {
+      "nameRequired": "Informe o nome do contato.",
+      "companyRequired": "Informe a empresa.",
+      "emailRequired": "Informe o e-mail.",
+      "emailInvalid": "Formato de e-mail inválido.",
+      "phoneRequired": "Informe um telefone de contato."
+    }
+  },
+  "toast": {
+    "created": "Contato {{name}} cadastrado com sucesso."
+  }
+}

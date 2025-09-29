@@ -1,0 +1,131 @@
+{
+  "page": {
+    "title": "Microsites públicos",
+    "subtitle": "Crie landing pages Vibe-only para captar leads com telemetria e notificações automáticas.",
+    "activeMember": "Gerenciando como {{name}}",
+    "roleSwitcher": "Visualize o catálogo sob diferentes papéis da equipe"
+  },
+  "roles": {
+    "owner": "Owner",
+    "leader": "Líder",
+    "rep": "Representante"
+  },
+  "status": {
+    "draft": "Rascunho",
+    "published": "Publicado",
+    "archived": "Arquivado"
+  },
+  "actions": {
+    "newMicrosite": "Novo microsite",
+    "previewStorybook": "Abrir guia no Storybook",
+    "openStorybook": "Consultar padrões no Storybook",
+    "openDetails": "Ver detalhes de {{title}}",
+    "edit": "Editar",
+    "publish": "Publicar",
+    "republish": "Republicar",
+    "openPublic": "Abrir microsite",
+    "view": "Ver",
+    "downloadPng": "Baixar QR (PNG)",
+    "downloadSvg": "Baixar QR (SVG)"
+  },
+  "table": {
+    "columns": {
+      "title": "Microsite",
+      "owner": "Responsável",
+      "status": "Status",
+      "leads": "Leads",
+      "updated": "Publicado em",
+      "actions": "Ações"
+    },
+    "lastLead": "último: {{value}}"
+  },
+  "details": {
+    "status": "Status",
+    "lastPublished": "Última publicação",
+    "leads": "Total de leads",
+    "lastLead": "Último lead",
+    "share": "Compartilhar link público"
+  },
+  "activity": {
+    "title": "Linha do tempo",
+    "created": "Microsite {{title}} criado",
+    "updated": "Microsite {{title}} atualizado",
+    "published": "Microsite {{title}} publicado",
+    "leadViaMicrosite": "Lead via microsite — {{name}}"
+  },
+  "leads": {
+    "title": "Caixa de entrada de leads"
+  },
+  "notifications": {
+    "title": "Notificações Resend",
+    "empty": "Nenhuma notificação enviada ainda.",
+    "email": "E-mail",
+    "inApp": "In-app",
+    "newLeadEmail": "E-mail enviado para notificar o lead {{name}}",
+    "newLeadInApp": "Alerta no app para o lead {{name}}"
+  },
+  "empty": {
+    "noMicrosites": "Nenhum microsite disponível para este perfil. Crie um novo ou solicite acesso."
+  },
+  "errors": {
+    "table": "Não foi possível carregar os microsites."
+  },
+  "form": {
+    "createTitle": "Criar microsite",
+    "editTitle": "Editar microsite",
+    "title": "Nome",
+    "titlePlaceholder": "Microsite Campanha Norte",
+    "slug": "Slug",
+    "headline": "Headline",
+    "headlinePlaceholder": "Apresente sua oferta em poucos segundos",
+    "description": "Descrição",
+    "descriptionPlaceholder": "Explique o objetivo do microsite, público-alvo e call-to-action.",
+    "preferences": "Preferências",
+    "showPhone": "Solicitar telefone do lead",
+    "enableCaptcha": "Habilitar captcha anti-spam",
+    "create": "Criar microsite",
+    "save": "Salvar alterações",
+    "errors": {
+      "required": "Campo obrigatório",
+      "slugFormat": "Use apenas letras minúsculas, números e hífens.",
+      "slugUnique": "Este slug já está em uso."
+    }
+  },
+  "toast": {
+    "created": "Microsite criado com sucesso.",
+    "updated": "Microsite atualizado.",
+    "published": "Microsite publicado.",
+    "qrGenerated": "Arquivo de QR code gerado.",
+    "qrError": "Não foi possível gerar o QR code. Tente novamente."
+  },
+  "public": {
+    "assignedTo": "Responsável: {{member}}",
+    "responseSla": "Tempo médio de resposta: {{time}}",
+    "rateLimit": "Aguarde alguns instantes antes de enviar outro formulário.",
+    "success": "Recebemos suas informações! Nossa equipe entrará em contato em breve.",
+    "genericError": "Ocorreu um erro ao enviar. Tente novamente.",
+    "errors": {
+      "required": "Campo obrigatório",
+      "email": "Informe um e-mail válido",
+      "captcha": "Resposta incorreta"
+    },
+    "form": {
+      "name": "Nome completo",
+      "namePlaceholder": "Maria Silva",
+      "email": "E-mail",
+      "phone": "Telefone",
+      "message": "Mensagem",
+      "messagePlaceholder": "Conte brevemente o que você precisa...",
+      "captcha": "Resolva o desafio: {{challenge}}",
+      "tryAnother": "Gerar outro desafio",
+      "submit": "Enviar formulário"
+    },
+    "share": {
+      "title": "Compartilhar",
+      "copy": "Divulgue o link acima ou utilize o QR code disponível na área administrativa.",
+      "separator": "•",
+      "internal": "Voltar para a Home",
+      "manage": "Gerenciar microsites"
+    }
+  }
+}
