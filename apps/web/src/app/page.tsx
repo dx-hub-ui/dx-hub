@@ -283,7 +283,10 @@ export default function HomePage() {
     [telemetry],
   );
 
-  const selectedContact = selectedContactId ? contactMap.get(selectedContactId) ?? null : null;
+  const selectedContact = useMemo(
+    () => (selectedContactId ? contactMap.get(selectedContactId) ?? null : null),
+    [contactMap, selectedContactId]
+  );
 
   const orderedActivities = useMemo(() => {
     if (!selectedContact) {
@@ -361,12 +364,8 @@ export default function HomePage() {
     (contactId: string, nextStage: ContactStage) => {
       setContacts((previous) => {
         return previous.map((contact) => {
-          if (contact.id !== contactId) {
-            return contact;
-          }
-          if (contact.stage === nextStage) {
-            return contact;
-          }
+          if (contact.id !== contactId) return contact;
+          if (contact.stage === nextStage) return contact;
 
           const updatedActivities = [
             ...contact.activities,
@@ -415,9 +414,7 @@ export default function HomePage() {
 
   const handleSubmit = useCallback(() => {
     setFormSubmitted(true);
-    if (Object.keys(validationErrors).length > 0) {
-      return;
-    }
+    if (Object.keys(validationErrors).length > 0) return;
 
     const newContact: ContactRecord = {
       id: `contact-${crypto.randomUUID()}`,
@@ -472,10 +469,7 @@ export default function HomePage() {
 
   const renderActivityMessage = useCallback(
     (summaryKey: string, actor: string, values?: Record<string, string>) => {
-      const resolvedValues: Record<string, string> = {
-        actor,
-        ...values,
-      };
+      const resolvedValues: Record<string, string> = { actor, ...values };
       if (values?.stage && stageLabels[values.stage as ContactStage]) {
         resolvedValues.stage = stageLabels[values.stage as ContactStage];
       }
@@ -998,281 +992,284 @@ export default function HomePage() {
           </Link>
         </footer>
       </section>
-        {detailsOpen && selectedContact && (
-          <DxDialog
-            id="contact-details-dialog"
-            show={detailsOpen}
-            onClose={() => {
-              setDetailsOpen(false);
-              telemetry.capture("ui_open_overlay", {
-                overlay: "contact_details_panel",
-                state: "close",
-                entity: "crm_contacts",
-              });
-            }}
-            size="sm"
-            classNames={{
-              modal:
-                "fixed inset-y-0 right-0 h-full w-[420px] max-w-[420px] rounded-none border-l border-[#d4d9e6] shadow-none !bg-white !p-0",
-            }}
-            aria-labelledby="contact-details-title"
-          >
-            <div className="flex h-full flex-col bg-white" id="contact-details-title">
-              <header className="flex flex-col gap-3 border-b border-[#d4d9e6] bg-[#f6f7fb] px-6 py-5">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex flex-col gap-1">
-                    <span className="text-xs font-semibold uppercase tracking-wide text-[#9aa0b9]">
-                      {tContacts("details.title")}
-                    </span>
-                    <h2 className="text-2xl font-semibold text-[#1f2430]">{selectedContact.name}</h2>
-                    <span className="text-sm text-[#6b7185]">{selectedContact.company}</span>
-                  </div>
-                  <div className="flex flex-col items-end gap-2">
-                    <DxBadge density="compact" variant={STAGE_BADGE_VARIANTS[selectedContact.stage]}>
-                      {stageLabels[selectedContact.stage]}
-                    </DxBadge>
-                    <DxBadge density="compact" variant="ghost">
-                      {view === "table"
-                        ? tContacts("details.mode.table")
-                        : tContacts("details.mode.kanban")}
-                    </DxBadge>
-                  </div>
-                </div>
-              </header>
-              <div className="flex flex-1 flex-col gap-6 overflow-y-auto bg-white px-6 py-6">
-                <div className="grid gap-3">
-                  <div className="flex flex-col gap-2 rounded-xl border border-[#e2e6f2] bg-[#f9faff] px-4 py-3">
-                    <span className="text-xs font-semibold uppercase tracking-wide text-[#9aa0b9]">
-                      {tContacts("details.stage")}
-                    </span>
-                    <DxBadge density="compact" variant={STAGE_BADGE_VARIANTS[selectedContact.stage]}>
-                      {stageLabels[selectedContact.stage]}
-                    </DxBadge>
-                  </div>
-                  <div className="flex flex-col gap-2 rounded-xl border border-[#e2e6f2] bg-[#f9faff] px-4 py-3">
-                    <span className="text-xs font-semibold uppercase tracking-wide text-[#9aa0b9]">
-                      {tContacts("details.email")}
-                    </span>
-                    <span className="text-sm font-medium text-[#1f2430]">{selectedContact.email}</span>
-                  </div>
-                  <div className="flex flex-col gap-2 rounded-xl border border-[#e2e6f2] bg-[#f9faff] px-4 py-3">
-                    <span className="text-xs font-semibold uppercase tracking-wide text-[#9aa0b9]">
-                      {tContacts("details.phone")}
-                    </span>
-                    <span className="text-sm font-medium text-[#1f2430]">{selectedContact.phone}</span>
-                  </div>
-                  <div className="flex flex-col gap-2 rounded-xl border border-[#e2e6f2] bg-[#f9faff] px-4 py-3">
-                    <span className="text-xs font-semibold uppercase tracking-wide text-[#9aa0b9]">
-                      {tContacts("details.assigned")}
-                    </span>
-                    <span className="text-sm font-medium text-[#1f2430]">{selectedContact.assignedTo}</span>
-                  </div>
-                  <div className="flex flex-col gap-2 rounded-xl border border-[#e2e6f2] bg-[#f9faff] px-4 py-3">
-                    <span className="text-xs font-semibold uppercase tracking-wide text-[#9aa0b9]">
-                      {tContacts("details.lastInteraction")}
-                    </span>
-                    <span className="text-sm font-medium text-[#1f2430]">
-                      {formatDateTime(selectedContact.lastInteraction, locale)}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex flex-col gap-3">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-semibold text-[#1f2430]">
-                      {tContacts("timeline.title")}
-                    </h3>
-                    <DxBadge density="compact" variant="ghost">
-                      {tContacts("timeline.count", { values: { count: orderedActivities.length } })}
-                    </DxBadge>
-                  </div>
-                  {orderedActivities.length === 0 ? (
-                    <p className="rounded-xl border border-dashed border-[#d4d9e6] bg-[#f9faff] px-4 py-6 text-xs text-[#9aa0b9]">
-                      {tContacts("timeline.empty")}
-                    </p>
-                  ) : (
-                    <ol className="flex flex-col gap-3">
-                      {orderedActivities.map((activity) => (
-                        <li
-                          key={activity.id}
-                          className="rounded-xl border border-[#e2e6f2] bg-[#f6f7fb] px-4 py-3"
-                        >
-                          <div className="flex items-center justify-between">
-                            <DxBadge density="compact" variant="ghost">
-                              {tContacts(`timeline.types.${activity.type}`)}
-                            </DxBadge>
-                            <span className="text-xs text-[#9aa0b9]">
-                              {formatDateTime(activity.timestamp, locale)}
-                            </span>
-                          </div>
-                          <p className="mt-2 text-sm text-[#1f2430]">
-                            {renderActivityMessage(activity.summaryKey, activity.actor, activity.summaryValues)}
-                          </p>
-                        </li>
-                      ))}
-                    </ol>
-                  )}
-                </div>
-              </div>
-            </div>
-          </DxDialog>
-        )}
+
+      {detailsOpen && selectedContact && (
         <DxDialog
-          id="new-contact-dialog"
-          show={dialogOpen}
+          id="contact-details-dialog"
+          show={detailsOpen}
           onClose={() => {
-            setDialogOpen(false);
+            setDetailsOpen(false);
             telemetry.capture("ui_open_overlay", {
-              overlay: "new_contact_dialog",
+              overlay: "contact_details_panel",
               state: "close",
               entity: "crm_contacts",
             });
           }}
-          size="md"
-          title={tContacts("form.title")}
-          aria-labelledby="new-contact-title"
+          size="sm"
+          classNames={{
+            modal:
+              "fixed inset-y-0 right-0 h-full w-[420px] max-w-[420px] rounded-none border-l border-[#d4d9e6] shadow-none !bg-white !p-0",
+          }}
+          title={selectedContact.name}
+          aria-labelledby="contact-details-title"
         >
-          <div className="flex flex-col gap-4 p-6" id="new-contact-title">
-            <h2 className="text-xl font-semibold text-[#1f2430]">{tContacts("form.title")}</h2>
-            <p className="text-sm text-[#6b7185]">{tContacts("form.subtitle")}</p>
-            <form
-              className="flex flex-col gap-4"
-              onSubmit={(event) => {
-                event.preventDefault();
-                handleSubmit();
-              }}
-            >
+          <div className="flex h-full flex-col bg-white" id="contact-details-title">
+            <header className="flex flex-col gap-3 border-b border-[#d4d9e6] bg-[#f6f7fb] px-6 py-5">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs font-semibold uppercase tracking-wide text-[#9aa0b9]">
+                    {tContacts("details.title")}
+                  </span>
+                  <h2 className="text-2xl font-semibold text-[#1f2430]">{selectedContact.name}</h2>
+                  <span className="text-sm text-[#6b7185]">{selectedContact.company}</span>
+                </div>
+                <div className="flex flex-col items-end gap-2">
+                  <DxBadge density="compact" variant={STAGE_BADGE_VARIANTS[selectedContact.stage]}>
+                    {stageLabels[selectedContact.stage]}
+                  </DxBadge>
+                  <DxBadge density="compact" variant="ghost">
+                    {view === "table"
+                      ? tContacts("details.mode.table")
+                      : tContacts("details.mode.kanban")}
+                  </DxBadge>
+                </div>
+              </div>
+            </header>
+            <div className="flex flex-1 flex-col gap-6 overflow-y-auto bg-white px-6 py-6">
               <div className="grid gap-3">
-                <label className="flex flex-col gap-1 text-sm">
-                  <span className="text-xs font-medium uppercase tracking-wide text-[#9aa0b9]">
-                    {tContacts("form.fields.name")}
+                <div className="flex flex-col gap-2 rounded-xl border border-[#e2e6f2] bg-[#f9faff] px-4 py-3">
+                  <span className="text-xs font-semibold uppercase tracking-wide text-[#9aa0b9]">
+                    {tContacts("details.stage")}
                   </span>
-                  <DxInput
-                    name="contact-name"
-                    value={formState.name}
-                    onChange={(value) => setFormState((prev) => ({ ...prev, name: value }))}
-                    telemetryId="form.contact_name"
-                    validationStatus={validationErrors.name ? "error" : undefined}
-                  />
-                  {validationErrors.name ? (
-                    <span className="text-xs text-[#e2445c]" role="alert">
-                      {validationErrors.name}
-                    </span>
-                  ) : null}
-                </label>
-                <label className="flex flex-col gap-1 text-sm">
-                  <span className="text-xs font-medium uppercase tracking-wide text-[#9aa0b9]">
-                    {tContacts("form.fields.company")}
+                  <DxBadge density="compact" variant={STAGE_BADGE_VARIANTS[selectedContact.stage]}>
+                    {stageLabels[selectedContact.stage]}
+                  </DxBadge>
+                </div>
+                <div className="flex flex-col gap-2 rounded-xl border border-[#e2e6f2] bg-[#f9faff] px-4 py-3">
+                  <span className="text-xs font-semibold uppercase tracking-wide text-[#9aa0b9]">
+                    {tContacts("details.email")}
                   </span>
-                  <DxInput
-                    name="contact-company"
-                    value={formState.company}
-                    onChange={(value) => setFormState((prev) => ({ ...prev, company: value }))}
-                    telemetryId="form.contact_company"
-                    validationStatus={validationErrors.company ? "error" : undefined}
-                  />
-                  {validationErrors.company ? (
-                    <span className="text-xs text-[#e2445c]" role="alert">
-                      {validationErrors.company}
-                    </span>
-                  ) : null}
-                </label>
-                <label className="flex flex-col gap-1 text-sm">
-                  <span className="text-xs font-medium uppercase tracking-wide text-[#9aa0b9]">
-                    {tContacts("form.fields.email")}
+                  <span className="text-sm font-medium text-[#1f2430]">{selectedContact.email}</span>
+                </div>
+                <div className="flex flex-col gap-2 rounded-xl border border-[#e2e6f2] bg-[#f9faff] px-4 py-3">
+                  <span className="text-xs font-semibold uppercase tracking-wide text-[#9aa0b9]">
+                    {tContacts("details.phone")}
                   </span>
-                  <DxInput
-                    name="contact-email"
-                    value={formState.email}
-                    onChange={(value) => setFormState((prev) => ({ ...prev, email: value }))}
-                    telemetryId="form.contact_email"
-                    validationStatus={validationErrors.email ? "error" : undefined}
-                  />
-                  {validationErrors.email ? (
-                    <span className="text-xs text-[#e2445c]" role="alert">
-                      {validationErrors.email}
-                    </span>
-                  ) : null}
-                </label>
-                <label className="flex flex-col gap-1 text-sm">
-                  <span className="text-xs font-medium uppercase tracking-wide text-[#9aa0b9]">
-                    {tContacts("form.fields.phone")}
+                  <span className="text-sm font-medium text-[#1f2430]">{selectedContact.phone}</span>
+                </div>
+                <div className="flex flex-col gap-2 rounded-xl border border-[#e2e6f2] bg-[#f9faff] px-4 py-3">
+                  <span className="text-xs font-semibold uppercase tracking-wide text-[#9aa0b9]">
+                    {tContacts("details.assigned")}
                   </span>
-                  <DxInput
-                    name="contact-phone"
-                    value={formState.phone}
-                    onChange={(value) => setFormState((prev) => ({ ...prev, phone: value }))}
-                    telemetryId="form.contact_phone"
-                    validationStatus={validationErrors.phone ? "error" : undefined}
-                  />
-                  {validationErrors.phone ? (
-                    <span className="text-xs text-[#e2445c]" role="alert">
-                      {validationErrors.phone}
-                    </span>
-                  ) : null}
-                </label>
-              </div>
-              <div className="flex flex-col gap-2">
-                <span className="text-xs font-medium uppercase tracking-wide text-[#9aa0b9]">
-                  {tContacts("form.fields.stage")}
-                </span>
-                <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={tContacts("form.fields.stage")}> 
-                  {CONTACT_STAGE_ORDER.map((stage) => (
-                    <DxButton
-                      key={stage}
-                      size="sm"
-                      variant={formState.stage === stage ? "secondary" : "ghost"}
-                      onClick={(event) => {
-                        event.preventDefault();
-                        setFormState((prev) => ({ ...prev, stage }));
-                      }}
-                      telemetryId={`form.stage_${stage}`}
-                      aria-pressed={formState.stage === stage}
-                    >
-                      {stageLabels[stage]}
-                    </DxButton>
-                  ))}
+                  <span className="text-sm font-medium text-[#1f2430]">{selectedContact.assignedTo}</span>
+                </div>
+                <div className="flex flex-col gap-2 rounded-xl border border-[#e2e6f2] bg-[#f9faff] px-4 py-3">
+                  <span className="text-xs font-semibold uppercase tracking-wide text-[#9aa0b9]">
+                    {tContacts("details.lastInteraction")}
+                  </span>
+                  <span className="text-sm font-medium text-[#1f2430]">
+                    {formatDateTime(selectedContact.lastInteraction, locale)}
+                  </span>
                 </div>
               </div>
-              <div className="flex flex-col gap-2">
-                <div className="flex flex-wrap gap-2">
-                  <DxButton type="submit" variant="primary" telemetryId="form.submit_contact">
-                    {tContacts("form.actions.submit")}
-                  </DxButton>
-                  <DxButton
-                    type="button"
-                    variant="ghost"
-                    onClick={() => {
-                      resetForm();
-                      setDialogOpen(false);
-                      telemetry.capture("ui_open_overlay", {
-                        overlay: "new_contact_dialog",
-                        state: "close",
-                        entity: "crm_contacts",
-                      });
-                    }}
-                    telemetryId="form.cancel_contact"
-                  >
-                    {tContacts("form.actions.cancel")}
-                  </DxButton>
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-semibold text-[#1f2430]">
+                    {tContacts("timeline.title")}
+                  </h3>
+                  <DxBadge density="compact" variant="ghost">
+                    {tContacts("timeline.count", { values: { count: orderedActivities.length } })}
+                  </DxBadge>
                 </div>
-                {Object.keys(validationErrors).length > 0 ? (
-                  <span className="text-xs text-[#e2445c]" role="alert">
-                    {tErrors("validation")}
-                  </span>
-                ) : null}
+                {orderedActivities.length === 0 ? (
+                  <p className="rounded-xl border border-dashed border-[#d4d9e6] bg-[#f9faff] px-4 py-6 text-xs text-[#9aa0b9]">
+                    {tContacts("timeline.empty")}
+                  </p>
+                ) : (
+                  <ol className="flex flex-col gap-3">
+                    {orderedActivities.map((activity) => (
+                      <li
+                        key={activity.id}
+                        className="rounded-xl border border-[#e2e6f2] bg-[#f6f7fb] px-4 py-3"
+                      >
+                        <div className="flex items-center justify-between">
+                          <DxBadge density="compact" variant="ghost">
+                            {tContacts(`timeline.types.${activity.type}`)}
+                          </DxBadge>
+                          <span className="text-xs text-[#9aa0b9]">
+                            {formatDateTime(activity.timestamp, locale)}
+                          </span>
+                        </div>
+                        <p className="mt-2 text-sm text-[#1f2430]">
+                          {renderActivityMessage(activity.summaryKey, activity.actor, activity.summaryValues)}
+                        </p>
+                      </li>
+                    ))}
+                  </ol>
+                )}
               </div>
-            </form>
+            </div>
           </div>
         </DxDialog>
+      )}
 
-        <DxToast
-          open={toastOpen}
-          variant="success"
-          onClose={() => setToastOpen(false)}
-          telemetryId="toast.crm_contact"
-        >
-          {toastMessage || tAuth("login.success")}
-        </DxToast>
-  </>
+      <DxDialog
+        id="new-contact-dialog"
+        show={dialogOpen}
+        onClose={() => {
+          setDialogOpen(false);
+          telemetry.capture("ui_open_overlay", {
+            overlay: "new_contact_dialog",
+            state: "close",
+            entity: "crm_contacts",
+          });
+        }}
+        size="md"
+        title={tContacts("form.title")}
+        aria-labelledby="new-contact-title"
+      >
+        <div className="flex flex-col gap-4 p-6" id="new-contact-title">
+          <h2 className="text-xl font-semibold text-[#1f2430]">{tContacts("form.title")}</h2>
+          <p className="text-sm text-[#6b7185]">{tContacts("form.subtitle")}</p>
+          <form
+            className="flex flex-col gap-4"
+            onSubmit={(event) => {
+              event.preventDefault();
+              handleSubmit();
+            }}
+          >
+            <div className="grid gap-3">
+              <label className="flex flex-col gap-1 text-sm">
+                <span className="text-xs font-medium uppercase tracking-wide text-[#9aa0b9]">
+                  {tContacts("form.fields.name")}
+                </span>
+                <DxInput
+                  name="contact-name"
+                  value={formState.name}
+                  onChange={(value) => setFormState((prev) => ({ ...prev, name: value }))}
+                  telemetryId="form.contact_name"
+                  validationStatus={validationErrors.name ? "error" : undefined}
+                />
+                {validationErrors.name ? (
+                  <span className="text-xs text-[#e2445c]" role="alert">
+                    {validationErrors.name}
+                  </span>
+                ) : null}
+              </label>
+              <label className="flex flex-col gap-1 text-sm">
+                <span className="text-xs font-medium uppercase tracking-wide text-[#9aa0b9]">
+                  {tContacts("form.fields.company")}
+                </span>
+                <DxInput
+                  name="contact-company"
+                  value={formState.company}
+                  onChange={(value) => setFormState((prev) => ({ ...prev, company: value }))}
+                  telemetryId="form.contact_company"
+                  validationStatus={validationErrors.company ? "error" : undefined}
+                />
+                {validationErrors.company ? (
+                  <span className="text-xs text-[#e2445c]" role="alert">
+                    {validationErrors.company}
+                  </span>
+                ) : null}
+              </label>
+              <label className="flex flex-col gap-1 text-sm">
+                <span className="text-xs font-medium uppercase tracking-wide text-[#9aa0b9]">
+                  {tContacts("form.fields.email")}
+                </span>
+                <DxInput
+                  name="contact-email"
+                  value={formState.email}
+                  onChange={(value) => setFormState((prev) => ({ ...prev, email: value }))}
+                  telemetryId="form.contact_email"
+                  validationStatus={validationErrors.email ? "error" : undefined}
+                />
+                {validationErrors.email ? (
+                  <span className="text-xs text-[#e2445c]" role="alert">
+                    {validationErrors.email}
+                  </span>
+                ) : null}
+              </label>
+              <label className="flex flex-col gap-1 text-sm">
+                <span className="text-xs font-medium uppercase tracking-wide text-[#9aa0b9]">
+                  {tContacts("form.fields.phone")}
+                </span>
+                <DxInput
+                  name="contact-phone"
+                  value={formState.phone}
+                  onChange={(value) => setFormState((prev) => ({ ...prev, phone: value }))}
+                  telemetryId="form.contact_phone"
+                  validationStatus={validationErrors.phone ? "error" : undefined}
+                />
+                {validationErrors.phone ? (
+                  <span className="text-xs text-[#e2445c]" role="alert">
+                    {validationErrors.phone}
+                  </span>
+                ) : null}
+              </label>
+            </div>
+            <div className="flex flex-col gap-2">
+              <span className="text-xs font-medium uppercase tracking-wide text-[#9aa0b9]">
+                {tContacts("form.fields.stage")}
+              </span>
+              <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={tContacts("form.fields.stage")}>
+                {CONTACT_STAGE_ORDER.map((stage) => (
+                  <DxButton
+                    key={stage}
+                    size="sm"
+                    variant={formState.stage === stage ? "secondary" : "ghost"}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      setFormState((prev) => ({ ...prev, stage }));
+                    }}
+                    telemetryId={`form.stage_${stage}`}
+                    aria-pressed={formState.stage === stage}
+                  >
+                    {stageLabels[stage]}
+                  </DxButton>
+                ))}
+              </div>
+            </div>
+            <div className="flex flex-col gap-2">
+              <div className="flex flex-wrap gap-2">
+                <DxButton type="submit" variant="primary" telemetryId="form.submit_contact">
+                  {tContacts("form.actions.submit")}
+                </DxButton>
+                <DxButton
+                  type="button"
+                  variant="ghost"
+                  onClick={() => {
+                    resetForm();
+                    setDialogOpen(false);
+                    telemetry.capture("ui_open_overlay", {
+                      overlay: "new_contact_dialog",
+                      state: "close",
+                      entity: "crm_contacts",
+                    });
+                  }}
+                  telemetryId="form.cancel_contact"
+                >
+                  {tContacts("form.actions.cancel")}
+                </DxButton>
+              </div>
+              {Object.keys(validationErrors).length > 0 ? (
+                <span className="text-xs text-[#e2445c]" role="alert">
+                  {tErrors("validation")}
+                </span>
+              ) : null}
+            </div>
+          </form>
+        </div>
+      </DxDialog>
+
+      <DxToast
+        open={toastOpen}
+        variant="success"
+        onClose={() => setToastOpen(false)}
+        telemetryId="toast.crm_contact"
+      >
+        {toastMessage || tAuth("login.success")}
+      </DxToast>
+    </>
   );
 }
