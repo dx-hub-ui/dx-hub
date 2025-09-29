@@ -179,12 +179,4 @@ export const CRM_CONTACTS_SEED: ContactRecord[] = [
   },
 ];
 
-export const CONTACT_STAGE_VARIANTS: Record<string, "primary" | "secondary" | "ghost" | "danger"> = {
-  prospecting: "secondary",
-  discovery: "primary",
-  negotiation: "primary",
-  won: "secondary",
-  lost: "danger",
-};
-
 export const BOARD_COLUMN_ORDER = CONTACT_STAGE_ORDER;
