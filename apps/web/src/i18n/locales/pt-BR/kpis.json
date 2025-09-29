@@ -1,0 +1,30 @@
+{
+  "headline": {
+    "newLeads": "Novos leads",
+    "newContacts": "Novos contatos",
+    "meetings": "Reuniões marcadas",
+    "whatsappResponse": "Taxa de resposta WhatsApp 24h",
+    "conversion": "Conversão lead→contato"
+  },
+  "owner": {
+    "funnel": "Funil",
+    "heatmap": "Heatmap",
+    "leaders": "Líderes",
+    "microsites": "Microsites",
+    "cadence": "Cadências",
+    "quality": "Qualidade",
+    "goals": "Metas"
+  },
+  "leader": {
+    "funnel": "Funil",
+    "load": "Carga",
+    "comparison": "Comparativo"
+  },
+  "rep": {
+    "goals": "Metas",
+    "cadences": "Cadências",
+    "whatsapp": "WhatsApp",
+    "microsite": "Microsite",
+    "events": "Eventos"
+  }
+}

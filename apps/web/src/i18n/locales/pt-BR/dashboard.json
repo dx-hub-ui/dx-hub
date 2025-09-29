@@ -1,0 +1,139 @@
+{
+  "navigation": {
+    "section": "Insights",
+    "items": {
+      "overview": "Visão geral",
+      "dashboards": "Dashboards",
+      "attention": "Avisos"
+    }
+  },
+  "workspace": {
+    "title": "Dashboards DX Hub",
+    "board": "Painéis e avisos"
+  },
+  "hero": {
+    "title": "Painéis estratégicos por papel",
+    "description": "Acompanhe KPIs acionáveis, atenção boxes e cadências alinhadas ao Vibe.",
+    "roleHint": "Selecione o papel para visualizar o recorte correspondente."
+  },
+  "filters": {
+    "role": "Papel",
+    "period": "Período",
+    "scope": "Escopo",
+    "funnelStage": "Estágio do funil",
+    "periodOptions": {
+      "today": "Hoje",
+      "7d": "Últimos 7 dias",
+      "30d": "Últimos 30 dias",
+      "currentMonth": "Mês atual"
+    },
+    "scopeOptions": {
+      "org": "Organização",
+      "team": "Minha equipe",
+      "self": "Meu desempenho"
+    },
+    "funnelOptions": {
+      "all": "Todos os estágios",
+      "lead": "Leads",
+      "contact": "Contatos",
+      "meeting": "Reuniões",
+      "sale": "Vendas"
+    },
+    "roleOptions": {
+      "owner": "Org Owner",
+      "leader": "Leader",
+      "rep": "Rep"
+    }
+  },
+  "sections": {
+    "attention": {
+      "title": "Avisos importantes",
+      "description": "Avisos enviados pelo Org Owner aparecem primeiro e respeitam o público definido."
+    },
+    "headline": {
+      "title": "KPIs principais",
+      "description": "Métricas operacionais do período selecionado com suporte a drill-down."
+    },
+    "owner": {
+      "funnel": {
+        "title": "Funil da organização",
+        "description": "Distribuição Visitantes → Leads → Contatos → Reuniões → Vendas (30d)."
+      },
+      "heatmap": {
+        "title": "Heatmap de atividade",
+        "description": "Volume por hora/dia para identificar janelas de maior conversão."
+      },
+      "leaders": {
+        "title": "Performance por líder",
+        "description": "Top 10 subárvores com leads, respostas 24h, reuniões e conversão."
+      },
+      "microsites": {
+        "title": "Microsites da organização",
+        "description": "Visitas, conversões por slug e reps destaque."
+      },
+      "cadence": {
+        "title": "Eficiência de cadências",
+        "description": "Taxa de conclusão por cadência e gargalos."
+      },
+      "quality": {
+        "title": "Qualidade de dados",
+        "description": "Alertas sobre contatos sem follow-up e duplicidades."
+      },
+      "goals": {
+        "title": "Metas & Ranks",
+        "description": "Percentual de reps batendo metas no mês e leaderboard geral."
+      }
+    },
+    "leader": {
+      "funnel": {
+        "title": "Funil da subárvore",
+        "description": "Indicadores filtrados para sua downline e você."
+      },
+      "load": {
+        "title": "Distribuição de carga",
+        "description": "Tarefas pendentes por rep e cadência."
+      },
+      "comparison": {
+        "title": "Comparativo com a org",
+        "description": "Tendência semanal vs média da organização."
+      }
+    },
+    "rep": {
+      "goals": {
+        "title": "Minhas metas",
+        "description": "Progresso mensal, badges recentes e próximas conquistas."
+      },
+      "cadences": {
+        "title": "Minhas cadências",
+        "description": "Tarefas due/overdue e taxa de conclusão semanal."
+      },
+      "whatsapp": {
+        "title": "WhatsApp First",
+        "description": "Taxa de resposta 24h e tempo até o primeiro contato."
+      },
+      "microsite": {
+        "title": "Meu microsite",
+        "description": "Visitas, conversões e downloads de QR."
+      },
+      "events": {
+        "title": "Próximos eventos",
+        "description": "Inscrições e check-ins pessoais."
+      }
+    },
+    "tasks": {
+      "title": "Tarefas do dia",
+      "description": "Próximas ações de cadência com CTA direto."
+    },
+    "common": {
+      "events": {
+        "title": "Próximos eventos",
+        "description": "Inscrições e check-ins pendentes por papel."
+      }
+    }
+  },
+  "placeholders": {
+    "draft": "Rascunho de layout preparado para implementação de dados reais.",
+    "drilldown": "Clique para abrir uma visão detalhada com a query filtrada.",
+    "a11y": "Todos os gráficos terão descrições textuais e suporte a teclado."
+  }
+}
