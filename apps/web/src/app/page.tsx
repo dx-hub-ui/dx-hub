@@ -184,6 +184,7 @@ export default function HomePage() {
         show={dialogOpen}
         onClose={() => setDialogOpen(false)}
         size="md"
+        title={tCommon("dialog.title")}
         aria-labelledby="dialog-title"
       >
         <div className="flex flex-col gap-4 p-6" id="dialog-title">

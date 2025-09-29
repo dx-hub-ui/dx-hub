@@ -59,7 +59,8 @@ export function initServerSentry(dsn: string | undefined) {
     const stacktrace = error instanceof Error ? error.stack : undefined;
     let requestHeaders: Record<string, string> | undefined;
     try {
-      requestHeaders = Object.fromEntries(headers().entries());
+      const headerList = await headers();
+      requestHeaders = Object.fromEntries(headerList.entries());
     } catch {
       requestHeaders = undefined;
     }
