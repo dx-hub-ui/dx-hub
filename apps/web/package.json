@@ -8,9 +8,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@vibe/core": "^3.69.0",
+    "@vibe/icons": "^1.11.0",
     "geist": "^1.5.1",
     "next": "15.0.0",
     "react": "18.3.1",
     "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.13",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.13"
   }
 }
