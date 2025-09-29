@@ -1,3 +1,4 @@
+# .github/workflows/supabase-migrations-check.yml
 name: Supabase Migrations Check
 
 on:
@@ -5,15 +6,25 @@ on:
     branches: [ "main" ]
     paths:
       - "supabase/migrations/**"
-      # - "supabase/seed.sql" # (opcional) inclua se quiser
 
 jobs:
   lint-migrations:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: supabase/setup-cli@v1
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
         with:
           version: latest
-      - name: Lint SQL
-        run: supabase db lint
+
+      - name: Lint SQL (via --db-url)
+        env:
+          SUPABASE_DB_URL_PROD: ${{ secrets.SUPABASE_DB_URL_PROD }}
+        run: |
+          if [ -z "${SUPABASE_DB_URL_PROD}" ]; then
+            echo "❌ SUPABASE_DB_URL_PROD não definido nos Secrets."
+            exit 1
+          fi
+          supabase db lint --db-url "$SUPABASE_DB_URL_PROD"
+          echo "✅ Migrations check passed (lint) contra URL remota." >> $GITHUB_STEP_SUMMARY
