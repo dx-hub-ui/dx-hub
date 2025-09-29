@@ -9,4 +9,6 @@ Monorepo (web + mobile) com pnpm + Turbo. Supabase para Auth/DB/Storage.
 ## Observabilidade & Telemetria
 - `@dx/ui` encapsula wrappers do Vibe com telemetria automática (`ui_click_*`, `ui_open_overlay`, `ui_submit_form`, `ui_dd_reorder`).
 - PostHog Lite é inicializado via `DxThemeProvider` (configure `NEXT_PUBLIC_POSTHOG_KEY` / `NEXT_PUBLIC_POSTHOG_HOST`).
+
 - Sentry Lite captura erros em client/server (`NEXT_PUBLIC_SENTRY_DSN` / `SENTRY_DSN`) e remove PII antes do envio.
+

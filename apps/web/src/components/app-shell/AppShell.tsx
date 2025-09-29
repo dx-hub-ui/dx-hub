@@ -72,6 +72,10 @@ const defaultLayout: AppLayoutConfig = {
 };
 
 const AppLayoutContext = createContext<AppLayoutContextValue | undefined>(undefined);
+const fallbackContext: AppLayoutContextValue = {
+  config: defaultLayout,
+  setConfig: () => undefined,
+};
 
 function mergeConfig(base: AppLayoutConfig, patch: PartialAppLayoutConfig): AppLayoutConfig {
   const result: AppLayoutConfig = {
@@ -249,7 +253,11 @@ export function AppShell({ children }: { children: ReactNode }) {
 export function useAppLayout() {
   const context = useContext(AppLayoutContext);
   if (!context) {
-    throw new Error("useAppLayout must be used within an AppShell");
+    if (typeof window !== "undefined" && process.env.NODE_ENV !== "production") {
+      // eslint-disable-next-line no-console -- surfaced only during development to help with debugging
+      console.warn("useAppLayout was called outside of an AppShell provider. Falling back to default layout context.");
+    }
+    return fallbackContext;
   }
   return context;
 }
