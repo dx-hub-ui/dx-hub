@@ -1,6 +1,22 @@
 import { nanoid } from "nanoid";
 import type { MicrositeActivity, MicrositeLead, MicrositeMember, MicrositeRecord, MicrositeRole } from "./types";
 
+const MICROSITES_REFERENCE_TIME = Date.UTC(2024, 2, 11, 12, 0, 0);
+const MINUTE_IN_MS = 1000 * 60;
+const HOUR_IN_MS = MINUTE_IN_MS * 60;
+
+function minutesAgo(minutes: number) {
+  return new Date(MICROSITES_REFERENCE_TIME - minutes * MINUTE_IN_MS).toISOString();
+}
+
+function hoursAgo(hours: number) {
+  return new Date(MICROSITES_REFERENCE_TIME - hours * HOUR_IN_MS).toISOString();
+}
+
+function daysAgo(days: number) {
+  return hoursAgo(days * 24);
+}
+
 export const DEMO_ORG_ID = "org-demo-001";
 
 export const MICROSITE_MEMBERS: MicrositeMember[] = [
@@ -24,9 +40,9 @@ export const MICROSITES_SEED: MicrositeRecord[] = [
       "Apresente seus serviços de consultoria com formulários acessíveis, integrações nativas e acompanhamento em tempo real.",
     status: "published",
     theme: "light",
-    lastPublishedAt: new Date(Date.now() - 1000 * 60 * 60 * 8).toISOString(),
+    lastPublishedAt: hoursAgo(8),
     totalLeads: 18,
-    lastLeadAt: new Date(Date.now() - 1000 * 60 * 20).toISOString(),
+    lastLeadAt: minutesAgo(20),
     showContactPhone: true,
     enableCaptcha: true,
   },
@@ -45,7 +61,7 @@ export const MICROSITES_SEED: MicrositeRecord[] = [
     theme: "dark",
     lastPublishedAt: null,
     totalLeads: 6,
-    lastLeadAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
+    lastLeadAt: daysAgo(1),
     showContactPhone: false,
     enableCaptcha: false,
   },
@@ -62,9 +78,9 @@ export const MICROSITES_SEED: MicrositeRecord[] = [
       "Agende uma conversa rápida com nosso time e descubra como aumentar a taxa de conversão com cadência personalizada.",
     status: "published",
     theme: "light",
-    lastPublishedAt: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(),
+    lastPublishedAt: daysAgo(2),
     totalLeads: 12,
-    lastLeadAt: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
+    lastLeadAt: hoursAgo(5),
     showContactPhone: true,
     enableCaptcha: false,
   },
@@ -75,7 +91,7 @@ export const MICROSITE_ACTIVITIES: MicrositeActivity[] = [
     id: "act-001",
     micrositeId: "ms-001",
     type: "lead",
-    createdAt: new Date(Date.now() - 1000 * 60 * 20).toISOString(),
+    createdAt: minutesAgo(20),
     actorId: "member-rep-1",
     actorName: "Marcos Lima",
     summary: "Lead via microsite — estágio atualizado para 'Novo'.",
@@ -84,7 +100,7 @@ export const MICROSITE_ACTIVITIES: MicrositeActivity[] = [
     id: "act-002",
     micrositeId: "ms-002",
     type: "updated",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(),
+    createdAt: hoursAgo(3),
     actorId: "member-leader",
     actorName: "Ana Souza",
     summary: "Layout atualizado com novas perguntas obrigatórias.",
@@ -93,7 +109,7 @@ export const MICROSITE_ACTIVITIES: MicrositeActivity[] = [
     id: "act-003",
     micrositeId: "ms-003",
     type: "published",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 30).toISOString(),
+    createdAt: hoursAgo(30),
     actorId: "member-rep-1",
     actorName: "Marcos Lima",
     summary: "Microsite republicado com imagens otimizadas.",
@@ -108,7 +124,7 @@ export const MICROSITE_LEADS: MicrositeLead[] = [
     email: "fernanda@empresa.com",
     phone: "+55 11 98800-1020",
     message: "Gostaria de uma demonstração ainda esta semana.",
-    createdAt: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
+    createdAt: minutesAgo(15),
     assignedMemberId: "member-rep-2",
   },
   {
@@ -116,7 +132,7 @@ export const MICROSITE_LEADS: MicrositeLead[] = [
     micrositeId: "ms-003",
     name: "Ricardo Alves",
     email: "ricardo@startup.com",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
+    createdAt: hoursAgo(5),
     assignedMemberId: "member-rep-1",
   },
 ];
