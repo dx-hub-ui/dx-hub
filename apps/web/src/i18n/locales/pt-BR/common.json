@@ -1,0 +1,24 @@
+{
+  "appName": "DX Hub",
+  "welcome": {
+    "title": "Governança com Vibe, hoje",
+    "subtitle": "Construa componentes alinhados ao design system, com observabilidade e acessibilidade desde o início."
+  },
+  "actions": {
+    "start": "Começar agora",
+    "openStorybook": "Abrir Storybook",
+    "simulateLogin": "Simular login",
+    "toggleKanban": "Kanban",
+    "toggleTable": "Tabela"
+  },
+  "dialog": {
+    "title": "Governança Sprint 2",
+    "close": "Fechar"
+  },
+  "footer": {
+    "docs": "Docs oficiais do Vibe"
+  },
+  "preview": {
+    "title": "Preview de componentes"
+  }
+}
