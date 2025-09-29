@@ -7,9 +7,21 @@ import contacts from "./locales/pt-BR/contacts.json" assert { type: "json" };
 import microsites from "./locales/pt-BR/microsites.json" assert { type: "json" };
 import playbooks from "./locales/pt-BR/playbooks.json" assert { type: "json" };
 import errors from "./locales/pt-BR/errors.json" assert { type: "json" };
+import dashboard from "./locales/pt-BR/dashboard.json" assert { type: "json" };
+import attention from "./locales/pt-BR/attention.json" assert { type: "json" };
+import kpis from "./locales/pt-BR/kpis.json" assert { type: "json" };
 
 type Locale = "pt-BR";
-type Namespace = "common" | "auth" | "contacts" | "microsites" | "playbooks" | "errors";
+type Namespace =
+  | "common"
+  | "auth"
+  | "contacts"
+  | "microsites"
+  | "playbooks"
+  | "errors"
+  | "dashboard"
+  | "attention"
+  | "kpis";
 
 type ResourceMap = Record<Locale, Record<Namespace, Record<string, unknown>>>;
 
@@ -21,6 +33,9 @@ const resources: ResourceMap = {
     microsites,
     playbooks,
     errors,
+    dashboard,
+    attention,
+    kpis,
   },
 };
 

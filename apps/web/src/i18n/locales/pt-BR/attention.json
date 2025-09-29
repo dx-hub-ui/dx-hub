@@ -1,0 +1,26 @@
+{
+  "preview": {
+    "title": "Preview do Attention Box",
+    "pinned": "Fixado pelo Org Owner",
+    "description": "Use markdown seguro para destacar avisos críticos e acionar squads rapidamente."
+  },
+  "meta": {
+    "audience": "Público",
+    "period": "Período",
+    "from": "Início",
+    "until": "Fim",
+    "summary": "{{label}}: {{value}}"
+  },
+  "audiences": {
+    "org": "Toda a organização",
+    "leaders": "Owners e leaders",
+    "reps": "Todos os reps",
+    "custom": "Segmento personalizado"
+  },
+  "actions": {
+    "manage": "Gerenciar avisos",
+    "markAsRead": "Marcar como lido"
+  },
+  "empty": "Nenhum aviso ativo para o filtro atual.",
+  "live": "Atualizações são exibidas automaticamente com aria-live para leitores de tela."
+}
