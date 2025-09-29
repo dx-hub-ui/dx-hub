@@ -20,15 +20,17 @@ import {
   DxTooltip,
   useTelemetry,
 } from "@dx/ui";
+import { Label } from "@vibe/core";
 import { useAppLayout } from "@/components/app-shell/AppShell";
 import { useTranslation } from "@/i18n/I18nProvider";
-import { CONTACT_STAGE_VARIANTS, CRM_CONTACTS_SEED } from "@/crm/mock-data";
+import { CRM_CONTACTS_SEED } from "@/crm/mock-data";
 import {
   CONTACT_STAGE_ORDER,
   DEMO_ORG_ID,
   type ContactRecord,
   type ContactStage,
 } from "@/crm/types";
+import { CONTACT_STAGE_THEME } from "@/crm/stage-theme";
 
 const PAGE_SIZE = 5;
 const CURRENT_MEMBER = {
@@ -302,16 +304,15 @@ export default function HomePage() {
           if (!contact) {
             return null;
           }
-          const variant = CONTACT_STAGE_VARIANTS[contact.stage] ?? "secondary";
+          const theme = CONTACT_STAGE_THEME[contact.stage];
           return (
-            <DxBadge
-              density="compact"
-              variant={variant}
-              telemetryId={`table-stage-${contact.stage}`}
-              type="indicator"
-            >
-              {stageLabels[contact.stage]}
-            </DxBadge>
+            <Label
+              color={theme.labelColor}
+              kind="fill"
+              size="small"
+              text={stageLabels[contact.stage]}
+              data-telemetry-id={`table-stage-${contact.stage}`}
+            />
           );
         },
       },
@@ -600,18 +601,21 @@ export default function HomePage() {
                       <DxBadge density="compact" variant="primary" telemetryId="summary.total_contacts">
                         {tContacts("summary.total", { values: { count: contacts.length } })}
                       </DxBadge>
-                      {CONTACT_STAGE_ORDER.map((stage) => (
-                        <DxBadge
-                          key={stage}
-                          density="compact"
-                          variant={CONTACT_STAGE_VARIANTS[stage]}
-                          telemetryId={`summary.stage_${stage}`}
-                        >
-                          {tContacts("summary.stageChip", {
-                            values: { stage: stageLabels[stage], count: stageTotals[stage] ?? 0 },
-                          })}
-                        </DxBadge>
-                      ))}
+                      {CONTACT_STAGE_ORDER.map((stage) => {
+                        const theme = CONTACT_STAGE_THEME[stage];
+                        return (
+                          <Label
+                            key={stage}
+                            color={theme.labelColor}
+                            kind="line"
+                            size="small"
+                            text={tContacts("summary.stageChip", {
+                              values: { stage: stageLabels[stage], count: stageTotals[stage] ?? 0 },
+                            })}
+                            data-telemetry-id={`summary.stage_${stage}`}
+                          />
+                        );
+                      })}
                     </div>
                     <DxTooltip content={tContacts("table.filters.searchPlaceholder")}
                       telemetryId="tooltip.search_contacts"
@@ -725,45 +729,61 @@ export default function HomePage() {
                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                     {CONTACT_STAGE_ORDER.map((stage) => {
                       const stageContacts = filteredContacts.filter((contact) => contact.stage === stage);
+                      const theme = CONTACT_STAGE_THEME[stage];
+                      const countStyles =
+                        theme.headerTextColor.toLowerCase() === "#ffffff"
+                          ? { backgroundColor: "rgba(255, 255, 255, 0.18)", color: "#ffffff" }
+                          : { backgroundColor: "rgba(255, 255, 255, 0.7)", color: theme.headerTextColor };
                       return (
                         <section
                           key={stage}
                           aria-label={tContacts("kanban.columnLabel", {
                             values: { stage: stageLabels[stage], count: stageContacts.length },
                           })}
-                          className="flex flex-col gap-3 rounded-lg bg-[var(--dx-color-page-background)] p-4"
+                          className="flex min-h-[360px] flex-col overflow-hidden rounded-2xl border shadow-sm"
+                          style={{ backgroundColor: theme.backgroundColor, borderColor: theme.borderColor }}
                         >
-                          <header className="flex items-center justify-between">
+                          <header
+                            className="flex items-start justify-between gap-3 px-4 py-3 shadow-[inset_0_-1px_0_rgba(15,23,42,0.1)]"
+                            style={{ backgroundColor: theme.accentColor, color: theme.headerTextColor }}
+                          >
                             <div className="flex flex-col">
-                              <h2 className="text-sm font-semibold text-[var(--dx-color-text-primary)]">{stageLabels[stage]}</h2>
-                              <span className="text-xs text-[var(--dx-color-text-tertiary)]">
+                              <h2 className="text-sm font-semibold">{stageLabels[stage]}</h2>
+                              <span className="text-xs opacity-80">
                                 {tContacts("kanban.listLabel", {
                                   values: { stage: stageLabels[stage] },
                                 })}
                               </span>
                             </div>
-                            <DxBadge density="compact" variant={CONTACT_STAGE_VARIANTS[stage]}>
+                            <span
+                              className="rounded-full px-3 py-1 text-xs font-semibold"
+                              style={countStyles}
+                            >
                               {stageTotals[stage] ?? 0}
-                            </DxBadge>
+                            </span>
                           </header>
                           <div
                             role="list"
                             aria-label={tContacts("kanban.listLabel", {
                               values: { stage: stageLabels[stage] },
                             })}
-                            className="flex flex-col gap-3"
+                            className="flex flex-1 flex-col gap-3 p-4"
                           >
                             {stageContacts.length === 0 ? (
-                              <p className="text-xs text-[var(--dx-color-text-tertiary)]">{tContacts("kanban.empty")}</p>
+                              <div className="flex flex-1 items-center justify-center rounded-2xl border border-dashed border-white/60 bg-white/60 p-6 text-center text-xs font-medium text-[var(--dx-color-text-tertiary)]">
+                                {tContacts("kanban.empty")}
+                              </div>
                             ) : (
                               stageContacts.map((contact) => {
                                 const nextStageIndex = CONTACT_STAGE_ORDER.indexOf(contact.stage) + 1;
                                 const nextStage = CONTACT_STAGE_ORDER[nextStageIndex];
+                                const cardTheme = CONTACT_STAGE_THEME[contact.stage];
                                 return (
                                   <article
                                     key={contact.id}
                                     role="listitem"
-                                    className="flex flex-col gap-3 rounded-md bg-[var(--dx-color-surface)] p-4 shadow-sm"
+                                    className="group flex flex-col gap-3 rounded-2xl border border-transparent bg-white p-4 shadow-[0_6px_14px_rgba(15,23,42,0.12)] transition-all hover:-translate-y-0.5 hover:shadow-[0_16px_30px_rgba(15,23,42,0.16)]"
+                                    style={{ borderLeft: `6px solid ${cardTheme.accentColor}` }}
                                     draggable
                                     onDragStart={(event) => {
                                       event.dataTransfer.setData("text/plain", contact.id);
@@ -784,38 +804,50 @@ export default function HomePage() {
                                         </h3>
                                         <p className="text-xs text-[var(--dx-color-text-tertiary)]">{contact.company}</p>
                                       </button>
-                                      <DxBadge density="compact" variant={CONTACT_STAGE_VARIANTS[contact.stage]}>
-                                        {stageLabels[contact.stage]}
-                                      </DxBadge>
+                                      <Label
+                                        color={cardTheme.labelColor}
+                                        kind="fill"
+                                        size="small"
+                                        text={stageLabels[contact.stage]}
+                                      />
                                     </div>
-                                    <p id={`contact-${contact.id}-meta`} className="text-xs text-[var(--dx-color-text-secondary)]">
-                                      {tContacts("kanban.lastInteraction", {
-                                        values: { timestamp: formatDateTime(contact.lastInteraction, locale) },
-                                      })}
-                                    </p>
-                                    <div className="flex flex-wrap gap-2">
-                                      <DxBadge density="compact" variant="ghost">
+                                    <div
+                                      id={`contact-${contact.id}-meta`}
+                                      className="flex flex-wrap items-center gap-2 text-xs text-[var(--dx-color-text-secondary)]"
+                                    >
+                                      <span>
+                                        {tContacts("kanban.lastInteraction", {
+                                          values: { timestamp: formatDateTime(contact.lastInteraction, locale) },
+                                        })}
+                                      </span>
+                                    </div>
+                                    <div className="flex flex-wrap gap-2 text-xs font-medium text-[var(--dx-color-text-secondary)]">
+                                      <span className="rounded-full bg-[rgba(15,23,42,0.06)] px-2 py-1">
                                         {contact.assignedTo}
-                                      </DxBadge>
-                                      <DxBadge density="compact" variant="ghost">
+                                      </span>
+                                      <span className="rounded-full bg-[rgba(15,23,42,0.06)] px-2 py-1">
                                         {contact.email}
-                                      </DxBadge>
+                                      </span>
                                     </div>
                                     {nextStage ? (
                                       <DxButton
                                         size="sm"
-                                        variant="secondary"
+                                        variant="ghost"
                                         onClick={() => handleStageChange(contact.id, nextStage)}
                                         telemetryId={`kanban.advance_${contact.id}`}
+                                        className="self-start"
                                       >
                                         {tContacts("kanban.actions.advance", {
                                           values: { stage: stageLabels[nextStage] },
                                         })}
                                       </DxButton>
                                     ) : (
-                                      <span className="text-xs text-[var(--color-success)]">
-                                        {tContacts("kanban.actions.completed")}
-                                      </span>
+                                      <Label
+                                        color={Label.colors.DONE_GREEN}
+                                        kind="fill"
+                                        size="small"
+                                        text={tContacts("kanban.actions.completed")}
+                                      />
                                     )}
                                   </article>
                                 );
@@ -849,9 +881,12 @@ export default function HomePage() {
                         <span className="text-xs uppercase tracking-wide text-[var(--dx-color-text-tertiary)]">
                           {tContacts("details.stage")}
                         </span>
-                        <DxBadge density="compact" variant={CONTACT_STAGE_VARIANTS[selectedContact.stage]}>
-                          {stageLabels[selectedContact.stage]}
-                        </DxBadge>
+                        <Label
+                          color={CONTACT_STAGE_THEME[selectedContact.stage].labelColor}
+                          kind="fill"
+                          size="small"
+                          text={stageLabels[selectedContact.stage]}
+                        />
                       </div>
                       <div className="flex flex-col">
                         <span className="text-xs uppercase tracking-wide text-[var(--dx-color-text-tertiary)]">
