@@ -2,5 +2,9 @@ packages:
   - apps/*
   - packages/*
 
+onlyBuiltDependencies:
+  - core-js-pure
+  - esbuild
+
 patchedDependencies:
   react-select-module@3.4.0: patches/react-select-module@3.4.0.patch

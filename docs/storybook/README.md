@@ -11,6 +11,11 @@ O Storybook deve refletir fielmente os componentes do Vibe utilizados via `@dx/u
 - Gere preview por PR (Vercel) e compartilhe o link na descrição para revisão de UI.
 - Configure o Chromatic/Argos para bloquear merges até aprovação de snapshots visuais (`pnpm chromatic`).
 
+## Cenários Sprint 3
+- `CRM/Table` — mostra filtros, paginação e estados de carregamento da tabela de contatos (com telemetria `ui_dd_reorder`).
+- `CRM/Board` — demonstra o Kanban acessível com arrastar/soltar, anúncio de ARIA e call-to-action de avanço de etapa.
+- `CRM/DetailsPanel` — ilustra timeline traduzida, badges de estágio e tokens do Vibe aplicados à ficha do contato.
+
 ## Snippet sugerido (`.storybook/preview.ts`)
 ```ts
 import type { Preview } from '@storybook/react';
