@@ -20,6 +20,9 @@ Este diretório organiza as referências necessárias para construir interfaces 
 ## Internacionalização
 - [`i18n/glossario.md`](i18n/glossario.md): termos padronizados PT-BR para novas traduções.
 
+## Observabilidade
+- [`observability/posthog.md`](observability/posthog.md): eventos obrigatórios e dashboards sugeridos no PostHog.
+
 ## Operações
 - [`foundations.md`](foundations.md): fundamentos de infraestrutura (CI, previews, Supabase) para garantir entregas consistentes.
 

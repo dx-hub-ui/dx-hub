@@ -16,4 +16,9 @@
 - Versione alterações de schema em `supabase/migrations/*.sql`.
 - Teste policies RLS no Supabase Studio e registre resultados na descrição do PR quando afetarem permissões.
 
+## Observabilidade
+- Sentry Lite captura erros no cliente/servidor via `NEXT_PUBLIC_SENTRY_DSN` / `SENTRY_DSN`. O envio remove headers sensíveis automaticamente.
+- PostHog Lite (configurado em `DxThemeProvider`) publica eventos padronizados (`page_view`, `ui_click_*`, `ui_open_overlay`, etc.).
+- Ative `productionBrowserSourceMaps` para permitir upload de sourcemaps no pipeline.
+
 > Estes fundamentos garantem que a ausência do MCP seja compensada por processos sólidos e verificáveis.

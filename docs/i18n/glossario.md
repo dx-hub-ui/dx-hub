@@ -10,5 +10,10 @@ Padronize traduções utilizando estes termos-base. Expanda conforme novas featu
 | Rep | `Representante` | Evitar abreviações em UI. |
 | Microsite | `Microsite` | Sempre capitalizado. |
 | Stage | `Etapa` | Utilizar em Kanban e tabelas. |
+| Playbook | `Playbook` | Utilizar no masculino. |
+| Badge | `Distintivo` | Preferir em descrições; rotule botões como "Adicionar distintivo". |
+| Density | `Densidade` | Valores: `compacta`, `confortável`. |
+| Storybook | `Storybook` | Manter maiúscula inicial. |
+| Telemetry | `Telemetria` | Para eventos PostHog/Sentry. |
 
 > Atualize este glossário antes de criar novas chaves de tradução.

@@ -7,7 +7,9 @@ O Storybook deve refletir fielmente os componentes do Vibe utilizados via `@dx/u
 - Adicione controles (`argTypes`) que respeitem a API padronizada (`size`, `variant`, `density`).
 - Publique variações nos temas `light` e `dark`, densidade `compact` como padrão e estados (`default`, `hover`, `focus`, `disabled`, `error`, `loading`).
 - Configure os addons `@storybook/addon-a11y`, `@storybook/addon-essentials` (Controls/Docs) e `@storybook/addon-viewport`.
+- Adicione `@storybook/addon-interactions` para simular fluxos críticos (ex.: submit) diretamente nas stories.
 - Gere preview por PR (Vercel) e compartilhe o link na descrição para revisão de UI.
+- Configure o Chromatic/Argos para bloquear merges até aprovação de snapshots visuais (`pnpm chromatic`).
 
 ## Snippet sugerido (`.storybook/preview.ts`)
 ```ts
@@ -50,3 +52,5 @@ export default preview;
 ```
 
 > Atualize o repositório com exemplos reais conforme novos componentes forem adicionados.
+
+> Para executar o Storybook localmente, instale os pacotes `@storybook/*` e `storybook` de acordo com as versões suportadas pelo time (scripts omitidos neste repositório por restrição de ambiente).

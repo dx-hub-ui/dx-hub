@@ -1,0 +1,4 @@
+allowedBuiltDependencies:
+  - "@tailwindcss/oxide"
+  - "sharp"
+  - "unrs-resolver"

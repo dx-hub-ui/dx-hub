@@ -1,0 +1,15 @@
+{
+  "table": {
+    "title": "Contatos",
+    "empty": "Nenhum contato cadastrado ainda.",
+    "error": "Não foi possível carregar os contatos.",
+    "headers": {
+      "name": "Nome",
+      "stage": "Etapa",
+      "owner": "Responsável"
+    },
+    "filters": {
+      "searchPlaceholder": "Filtrar por nome"
+    }
+  }
+}
