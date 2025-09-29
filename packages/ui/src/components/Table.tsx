@@ -1,6 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ComponentProps,
+  type DragEvent as ReactDragEvent,
+  type HTMLAttributes,
+  type ReactNode,
+} from "react";
 import {
   Table,
   TableBody,
@@ -8,12 +17,13 @@ import {
   TableHeader,
   TableHeaderCell,
   TableRow,
+  type TableColumn,
   type TableProps,
 } from "@vibe/core";
 import { useInteractionEvents } from "../telemetry/events";
-import type { DxComponentBaseProps } from "./types";
+import type { DxComponentBaseProps, DxSize } from "./types";
 
-export interface DxTableColumn extends TableProps["columns"][number] {
+export interface DxTableColumn extends TableColumn {
   accessor: string;
   render?: (row: DxTableRow) => ReactNode;
 }
@@ -32,10 +42,15 @@ export interface DxTableProps
   onReorder?: (from: number, to: number, rows: DxTableRow[]) => void;
 }
 
-const sizeMap = {
+type TableSize = ComponentProps<typeof Table>["size"];
+type VibeTableRowProps = ComponentProps<typeof TableRow> & HTMLAttributes<HTMLDivElement>;
+
+const sizeMap: Record<DxSize, TableSize> = {
   sm: Table.sizes.SMALL,
   md: Table.sizes.MEDIUM,
-} as const;
+};
+
+type RowDragEvent = ReactDragEvent<HTMLDivElement>;
 
 export function DxTable({
   size = "md",
@@ -83,13 +98,10 @@ export function DxTable({
     [density, onReorder, telemetryId, trackReorder, variant],
   );
 
+  const vibeColumns = columns.map(({ accessor, render, ...column }): TableColumn => column);
+
   return (
-    <Table
-      columns={columns.map(({ accessor, render, ...column }) => column)}
-      size={sizeMap[size]}
-      data-density={density}
-      {...rest}
-    >
+    <Table columns={vibeColumns} size={sizeMap[size]} data-density={density} {...rest}>
       <TableHeader>
         {columns.map((column) => (
           <TableHeaderCell key={column.id} title={column.title} icon={column.icon} infoContent={column.infoContent} />
@@ -99,29 +111,31 @@ export function DxTable({
         {orderedRows.map((row, index) => (
           <TableRow
             key={row.id}
-            highlighted={row.highlighted}
-            draggable
-            role="row"
-            data-row-id={row.id}
-            aria-dropeffect="move"
-            onDragStart={() => {
-              dragSourceIndex.current = index;
-            }}
-            onDragOver={(event) => {
-              event.preventDefault();
-            }}
-            onDrop={(event) => {
-              event.preventDefault();
-              if (dragSourceIndex.current !== null) {
-                handleReorder(dragSourceIndex.current, index);
-              }
-              dragSourceIndex.current = null;
-            }}
-            onDragEnd={() => {
-              dragSourceIndex.current = null;
-            }}
-            aria-grabbed={dragSourceIndex.current === index}
-            data-density={density}
+            {...({
+              highlighted: row.highlighted,
+              draggable: true,
+              role: "row",
+              "data-row-id": row.id,
+              "aria-dropeffect": "move",
+              onDragStart: () => {
+                dragSourceIndex.current = index;
+              },
+              onDragOver: (event: RowDragEvent) => {
+                event.preventDefault();
+              },
+              onDrop: (event: RowDragEvent) => {
+                event.preventDefault();
+                if (dragSourceIndex.current !== null) {
+                  handleReorder(dragSourceIndex.current, index);
+                }
+                dragSourceIndex.current = null;
+              },
+              onDragEnd: () => {
+                dragSourceIndex.current = null;
+              },
+              "aria-grabbed": dragSourceIndex.current === index,
+              "data-density": density,
+            } as unknown as VibeTableRowProps)}
           >
             {columns.map((column) => (
               <TableCell key={`${row.id}-${column.id}`}>

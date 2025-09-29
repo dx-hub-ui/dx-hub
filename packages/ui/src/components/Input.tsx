@@ -3,7 +3,7 @@
 import { forwardRef, type ComponentProps, type Ref } from "react";
 import { TextField } from "@vibe/core";
 import { useInteractionEvents } from "../telemetry/events";
-import type { DxComponentBaseProps } from "./types";
+import type { DxComponentBaseProps, DxSize } from "./types";
 
 export interface DxInputProps
   extends Omit<ComponentProps<typeof TextField>, "size" | "validation" | "onChange">,
@@ -12,10 +12,18 @@ export interface DxInputProps
   validationStatus?: "success" | "error";
 }
 
-const sizeMap = {
+type TextFieldSize = ComponentProps<typeof TextField>["size"];
+type TextFieldBlurEvent = Parameters<
+  NonNullable<ComponentProps<typeof TextField>["onBlur"]>
+>[0];
+type TextFieldKeyEvent = Parameters<
+  NonNullable<ComponentProps<typeof TextField>["onKeyDown"]>
+>[0];
+
+const sizeMap: Record<DxSize, TextFieldSize> = {
   sm: TextField.sizes.SMALL,
   md: TextField.sizes.MEDIUM,
-} as const;
+};
 
 export const DxInput = forwardRef<HTMLInputElement, DxInputProps>(function DxInput(
   {
@@ -42,7 +50,7 @@ export const DxInput = forwardRef<HTMLInputElement, DxInputProps>(function DxInp
       onChange={(value) => {
         onChange?.(value);
       }}
-      onBlur={(event) => {
+      onBlur={(event: TextFieldBlurEvent) => {
         onBlur?.(event);
         trackFormSubmit(rest.name ?? "input", {
           component: "input",
@@ -52,7 +60,7 @@ export const DxInput = forwardRef<HTMLInputElement, DxInputProps>(function DxInp
           telemetryId,
         });
       }}
-      onKeyDown={(event) => {
+      onKeyDown={(event: TextFieldKeyEvent) => {
         if (event.key === "Enter") {
           trackFormSubmit(rest.name ?? "input", {
             component: "input",

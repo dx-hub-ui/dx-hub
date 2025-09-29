@@ -18,8 +18,18 @@
     "POSTHOG_HOST"
   ],
   "tasks": {
-    "build": { "dependsOn": ["^build"], "outputs": [".next/**", "dist/**"] },
-    "dev": { "cache": false },
+    "build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "dist/**",
+        ".next/**"
+      ]
+    },
+    "dev": {
+      "cache": false
+    },
     "lint": {},
     "typecheck": {}
   }

@@ -8,7 +8,7 @@ import type { DxComponentBaseProps } from "./types";
 
 export interface DxToastProps
   extends Omit<ComponentProps<typeof Toast>, "type">,
-    DxComponentBaseProps {
+    Omit<DxComponentBaseProps, "variant"> {
   variant?: DxComponentBaseProps["variant"] | "success" | "info";
 }
 

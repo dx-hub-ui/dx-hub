@@ -2,15 +2,32 @@
 
 import { Badge, type BadgeProps } from "@vibe/core";
 import type { ReactNode } from "react";
-import type { DxComponentBaseProps } from "./types";
+import type { DxComponentBaseProps, DxVariant } from "./types";
 
 export interface DxBadgeProps
-  extends Omit<BadgeProps, "type" | "children">,
+  extends Omit<BadgeProps, "type" | "children" | "color">,
     DxComponentBaseProps {
   children: ReactNode;
   value?: number;
   type?: "indicator" | "counter";
 }
+
+type CounterBadgeColor = "primary" | "dark" | "negative" | "light";
+type IndicatorBadgeColor = "primary" | "notification";
+
+const counterColorMap: Record<DxVariant, CounterBadgeColor> = {
+  primary: "primary",
+  secondary: "dark",
+  ghost: "light",
+  danger: "negative",
+};
+
+const indicatorColorMap: Record<DxVariant, IndicatorBadgeColor> = {
+  primary: "primary",
+  secondary: "primary",
+  ghost: "primary",
+  danger: "notification",
+};
 
 export function DxBadge({
   variant = "primary",
@@ -26,23 +43,24 @@ export function DxBadge({
     return (
       <Badge
         type="counter"
+        color={counterColorMap[variant]}
         count={value}
-        children={children}
         data-density={density}
         {...rest}
-      />
+      >
+        {children}
+      </Badge>
     );
   }
-
-  const indicatorColor = variant === "danger" ? "notification" : "primary";
 
   return (
     <Badge
       type="indicator"
-      color={indicatorColor}
+      color={indicatorColorMap[variant]}
       data-density={density}
-      children={children}
       {...rest}
-    />
+    >
+      {children}
+    </Badge>
   );
 }

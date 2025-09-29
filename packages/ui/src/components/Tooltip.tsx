@@ -6,7 +6,10 @@ import type { DxComponentBaseProps } from "./types";
 
 export interface DxTooltipProps
   extends Omit<TooltipProps, "theme" | "onTooltipShow" | "onTooltipHide">,
-    DxComponentBaseProps {}
+    DxComponentBaseProps {
+  onTooltipShow?: TooltipProps["onTooltipShow"];
+  onTooltipHide?: TooltipProps["onTooltipHide"];
+}
 
 export function DxTooltip({
   variant = "primary",
@@ -42,7 +45,7 @@ export function DxTooltip({
         });
         onTooltipHide?.();
       }}
-      {...rest}
+      {...(rest as TooltipProps)}
     />
   );
 }

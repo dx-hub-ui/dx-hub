@@ -6,14 +6,16 @@ import { useInteractionEvents } from "../telemetry/events";
 import type { DxComponentBaseProps, DxSize } from "./types";
 
 export interface DxDialogProps
-  extends Omit<ModalProps, "size">,
+  extends Omit<ModalProps, "width" | "onClose" | "alertDialog">,
     DxComponentBaseProps {
   show: boolean;
+  onClose?: () => void;
+  alertModal?: boolean;
 }
 
-const sizeMap: Record<DxSize, ModalProps["size"]> = {
-  sm: "small",
-  md: "medium",
+const widthMap: Record<DxSize, NonNullable<ModalProps["width"]>> = {
+  sm: Modal.width.DEFAULT,
+  md: Modal.width.FULL_WIDTH,
 };
 
 export function DxDialog({
@@ -44,11 +46,10 @@ export function DxDialog({
   return (
     <Modal
       show={show}
-      size={sizeMap[size]}
+      width={widthMap[size]}
       data-density={density}
-      closeButtonTheme={variant === "ghost" ? "white" : "dark"}
-      alertModal={variant === "danger" || alertModal}
-      onClose={(event) => {
+      alertDialog={variant === "danger" || alertModal}
+      onClose={() => {
         trackOverlay("dialog", {
           component: "dialog",
           state: "close",
@@ -57,7 +58,7 @@ export function DxDialog({
           size,
           telemetryId,
         });
-        onClose?.(event);
+        onClose?.();
       }}
       {...rest}
     />

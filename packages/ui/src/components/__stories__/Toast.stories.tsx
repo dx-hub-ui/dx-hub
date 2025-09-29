@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, type ComponentProps } from "react";
 import { DxToast } from "../Toast";
 import { DxButton } from "../Button";
+
+type DxToastStoryArgs = ComponentProps<typeof DxToast>;
 
 const meta = {
   title: "Primitives/Toast",
@@ -16,7 +18,7 @@ const meta = {
 export default meta;
 
 export const Playground = {
-  render: (args) => {
+  render: (args: DxToastStoryArgs) => {
     const [open, setOpen] = useState(true);
     return (
       <div className="flex flex-col items-start gap-4">
