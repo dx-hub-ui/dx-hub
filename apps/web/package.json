@@ -8,22 +8,33 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@dx/ui": "workspace:*",
     "@vibe/core": "^3.69.0",
     "@vibe/icons": "^1.11.0",
     "geist": "^1.5.1",
+    "nanoid": "^5.1.6",
     "next": "15.0.0",
+    "qrcode": "^1.5.4",
     "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "@dx/ui": "workspace:*"
+    "react-dom": "18.3.1"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.1.0",
+    "@storybook/addon-a11y": "^8.4.4",
+    "@storybook/addon-essentials": "^8.4.4",
+    "@storybook/addon-interactions": "^8.4.4",
+    "@storybook/nextjs": "^8.4.4",
+    "@storybook/react": "^8.4.4",
+    "@storybook/test": "^8.4.4",
     "@tailwindcss/postcss": "^4.1.13",
     "@types/node": "^24.5.2",
+    "@types/qrcode": "^1.5.5",
     "@types/react": "^19.1.15",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.36.0",
     "eslint-config-next": "^15.5.4",
     "postcss": "^8.5.6",
+    "storybook": "^8.4.4",
     "tailwindcss": "^4.1.13",
     "typescript": "^5.9.2"
   }

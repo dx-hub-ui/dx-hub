@@ -1,0 +1,28 @@
+diff --git a/dist/Select-b1f456d2.esm.js b/dist/Select-b1f456d2.esm.js
+index cb1253cafe289341d79785923ff94681153894b9..e1c6daa53e025255f8de85a02a4c344e61eb58b5 100644
+--- a/dist/Select-b1f456d2.esm.js
++++ b/dist/Select-b1f456d2.esm.js
+@@ -12,7 +12,8 @@ import _getPrototypeOf from '@babel/runtime/helpers/esm/getPrototypeOf';
+ import React, { Component, PureComponent } from 'react';
+ import memoizeOne from 'memoize-one';
+ import { jsx as jsx$3 } from '@emotion/core';
+-import { findDOMNode } from 'react-dom';
++import ReactDOM from 'react-dom';
++const { findDOMNode } = ReactDOM;
+ import { c as clearIndicatorCSS, a as containerCSS, b as css, d as dropdownIndicatorCSS, g as groupCSS, e as groupHeadingCSS, i as indicatorsContainerCSS, f as indicatorSeparatorCSS, h as inputCSS, l as loadingIndicatorCSS, j as loadingMessageCSS, m as menuCSS, k as menuListCSS, n as menuPortalCSS, o as multiValueCSS, p as multiValueLabelCSS, q as multiValueRemoveCSS, r as noOptionsMessageCSS, s as optionCSS, t as placeholderCSS, u as css$1, v as valueContainerCSS, w as isTouchCapable, x as isMobileDevice, y as defaultComponents, z as classNames, A as isDocumentElement, B as exportedEqual, C as cleanValue, D as scrollIntoView, E as noop, M as MenuPlacer } from './index-eb176738.esm.js';
+ 
+ var diacritics = [{
+diff --git a/dist/Select-cc02eb02.browser.esm.js b/dist/Select-cc02eb02.browser.esm.js
+index 522a2fc2999477a6a9895d4997d872c27682df21..ab753f60a4a6ec2d1f7da7c8b6dcac188aba8006 100644
+--- a/dist/Select-cc02eb02.browser.esm.js
++++ b/dist/Select-cc02eb02.browser.esm.js
+@@ -12,7 +12,8 @@ import _getPrototypeOf from '@babel/runtime/helpers/esm/getPrototypeOf';
+ import React, { Component, PureComponent } from 'react';
+ import memoizeOne from 'memoize-one';
+ import { jsx as jsx$3 } from '@emotion/core';
+-import { findDOMNode } from 'react-dom';
++import ReactDOM from 'react-dom';
++const { findDOMNode } = ReactDOM;
+ import { c as clearIndicatorCSS, a as containerCSS, b as css, d as dropdownIndicatorCSS, g as groupCSS, e as groupHeadingCSS, i as indicatorsContainerCSS, f as indicatorSeparatorCSS, h as inputCSS, l as loadingIndicatorCSS, j as loadingMessageCSS, m as menuCSS, k as menuListCSS, n as menuPortalCSS, o as multiValueCSS, p as multiValueLabelCSS, q as multiValueRemoveCSS, r as noOptionsMessageCSS, s as optionCSS, t as placeholderCSS, u as css$1, v as valueContainerCSS, w as isTouchCapable, x as isMobileDevice, y as defaultComponents, z as classNames, A as isDocumentElement, B as exportedEqual, C as cleanValue, D as scrollIntoView, E as noop, M as MenuPlacer } from './index-c58eed5f.browser.esm.js';
+ 
+ var diacritics = [{

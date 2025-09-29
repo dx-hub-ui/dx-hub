@@ -1,0 +1,13 @@
+{
+  "appName": "DX Hub",
+  "badges": {
+    "crmSprint": "Sprint 3 — CRM"
+  },
+  "actions": {
+    "openStorybook": "Abrir Storybook"
+  },
+  "footer": {
+    "docsLabel": "Referências oficiais do Vibe",
+    "docs": "Docs oficiais do Vibe"
+  }
+}

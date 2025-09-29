@@ -1,0 +1,6 @@
+allowedBuiltDependencies:
+  - "@tailwindcss/oxide"
+  - "sharp"
+  - "unrs-resolver"
+  - "core-js-pure"
+  - "esbuild"
