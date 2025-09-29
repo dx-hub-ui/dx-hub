@@ -458,7 +458,6 @@ export default function HomePage() {
     setDetailsOpen(true);
     setStageFilter("all");
     setSearchTerm("");
-    setCurrentPage(1);
     resetForm();
     setDialogOpen(false);
 
