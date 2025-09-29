@@ -679,7 +679,7 @@ export default function HomePage() {
                   <div className="flex flex-col gap-4">
                     <DxTable
                       columns={tableColumns}
-                      data={tableRows}
+                      rows={tableRows}
                       onReorder={handleTableReorder}
                       emptyState={emptyState}
                       errorState={errorState}
