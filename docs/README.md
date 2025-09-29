@@ -1,9 +1,26 @@
 # Documentação DX Hub
 
-Este diretório centraliza orientações de governança para o uso do Vibe Design System, do MCP oficial da monday.com e dos nossos fluxos internos. Utilize os subdiretórios para acessar rapidamente guias de contribuição, checklists e arquivos de configuração necessários durante o desenvolvimento.
+Este diretório organiza as referências necessárias para construir interfaces fiéis ao Vibe Design System e manter nossas rotinas de governança.
 
-- [`mcp/`](mcp/README.md): instalação e uso do Vibe MCP, além do checklist de onboarding obrigatório.
-- [`ui/`](ui/contribution-guide.md): boas práticas para implementar interfaces utilizando o catálogo Vibe via `@dx/ui`.
-- [`storybook/`](storybook/README.md): convenções para manter o Storybook como fonte viva de documentação com referências ao Vibe e validações de acessibilidade.
+## Catálogo Vibe
+- [`vibe/index.md`](vibe/index.md): índice com links oficiais do Vibe por categoria.
+- [`vibe/cookbook-dx.md`](vibe/cookbook-dx.md): receitas aprovadas para compor fluxos complexos.
+- [`vibe/accessibility.md`](vibe/accessibility.md): boas práticas de acessibilidade específicas do Vibe.
+- [`vibe/themes-density.md`](vibe/themes-density.md): orientações de temas e densidades suportadas.
 
-> Sempre referencie estes materiais ao abrir um PR de UI e preencha o template com os links consultados.
+## Governança
+- [`governance/reviews.md`](governance/reviews.md): responsabilidades do UI Steward e fluxo de revisões leves.
+- [`ui/contribution-guide.md`](ui/contribution-guide.md): como colaborar com @dx/ui mantendo paridade.
+- [`ui-parity.md`](ui-parity.md): matriz de paridade dos componentes já encapsulados.
+
+## Storybook & QA
+- [`storybook/README.md`](storybook/README.md): configuração recomendada de addons, temas e documentação.
+- [`storybook/accessibility-checklist.md`](storybook/accessibility-checklist.md): checklist obrigatório antes de aprovar PR.
+
+## Internacionalização
+- [`i18n/glossario.md`](i18n/glossario.md): termos padronizados PT-BR para novas traduções.
+
+## Operações
+- [`foundations.md`](foundations.md): fundamentos de infraestrutura (CI, previews, Supabase) para garantir entregas consistentes.
+
+> Referencie estes documentos ao planejar ou revisar qualquer trabalho de UI.

@@ -1,24 +1,28 @@
 ## Resumo
 - _Descreva brevemente a mudança e o contexto._
 
-## Referências Vibe/MCP
+## Referências Vibe
 - Docs consultadas:
-  - [ ] `https://monday.com/vibe/...`
-  - [ ] `mcp://vibe/...`
-- MCP prompt/resposta relevante:
-  - _Cole o trecho ou descreva a consulta realizada._
+  - [ ] `https://monday.com/vibe/components/...`
+  - [ ] `https://monday.com/vibe/patterns/...`
+- Outros materiais internos:
+  - [ ] `docs/vibe/...`
 
 ## Justificativa de UI
 - Componente/variante escolhida:
-- Ícones ou tokens aplicados:
 - Considerações de densidade/tema:
+- Tokens ou ícones aplicados:
 
 ## Checklists
 - [ ] Acessibilidade validada (veja [Checklist Storybook](../docs/storybook/accessibility-checklist.md)).
 - [ ] Internacionalização revisada (sem strings hardcoded).
 - [ ] Telemetria PostHog configurada (quando aplicável).
-- [ ] Storybook atualizado com links para Vibe e notas MCP (quando aplicável).
-- [ ] Checklist MCP completo para novos contribuidores (se for a primeira contribuição).
+- [ ] Storybook atualizado e link do preview Vercel informado.
+- [ ] Parity Matrix verificada/atualizada (quando introduzir novo wrapper @dx/ui).
+- [ ] UI Steward pingado para revisão (quando envolver UI nova ou crítica).
 
-## Screenshots / Notas adicionais
-- _Inclua capturas de tela, links de preview ou observações específicas._
+## Screenshots / Previews
+- _Inclua capturas de tela, gravações ou links de preview relevantes._
+
+## Notas adicionais
+- _Observações específicas, migrações ou alertas para QA._
