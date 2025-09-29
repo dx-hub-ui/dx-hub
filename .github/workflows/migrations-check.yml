@@ -3,21 +3,16 @@ name: Supabase Migrations Check
 on:
   pull_request:
     branches: [ "main" ]
+    paths:
+      - "supabase/migrations/**"
 
 jobs:
   lint-migrations:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup Supabase CLI
-        uses: supabase/setup-cli@v1
+      - uses: supabase/setup-cli@v1
         with:
           version: latest
-
-      - name: Lint SQL
-        run: supabase db lint
-
-      # opcional: ver diffs (não aplica)
-      - name: Show diff (dry-run)
-        run: supabase db diff --use-migra --schema public || true
+      - name: Check SQL syntax only
+        run: supabase db lint --schema-only

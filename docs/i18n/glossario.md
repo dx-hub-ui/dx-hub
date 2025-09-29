@@ -17,3 +17,4 @@ Padronize traduções utilizando estes termos-base. Expanda conforme novas featu
 | Telemetry | `Telemetria` | Para eventos PostHog/Sentry. |
 
 > Atualize este glossário antes de criar novas chaves de tradução.
+
