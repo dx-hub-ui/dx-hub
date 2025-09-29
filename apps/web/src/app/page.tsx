@@ -1022,7 +1022,7 @@ export default function HomePage() {
               });
             }}
             size="sm"
-            classNames={{ modal: "!bg-white !p-0" }}
+            classNames={{ content: "!bg-white !p-0" }}
             style={detailsDialogStyle}
             aria-labelledby="contact-details-title"
           >
