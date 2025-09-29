@@ -988,7 +988,7 @@ export default function HomePage() {
           </Link>
         </footer>
       </section>
-        {selectedContact && (
+        {detailsOpen && selectedContact && (
           <DxDialog
             id="contact-details-dialog"
             show={detailsOpen}
