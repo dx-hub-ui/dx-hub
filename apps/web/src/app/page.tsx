@@ -2,25 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useState, type ComponentProps } from "react";
 import {
   DxBadge,
   DxButton,
-  DxCard,
   DxDialog,
   DxInput,
-  DxSkeleton,
-  DxTable,
   DxToast,
   DxTooltip,
   useTelemetry,
 } from "@dx/ui";
-import { Label } from "@vibe/core";
 import { useAppLayout } from "@/components/app-shell/AppShell";
 import { useTranslation } from "@/i18n/I18nProvider";
 import { CRM_CONTACTS_SEED } from "@/crm/mock-data";
@@ -30,9 +21,7 @@ import {
   type ContactRecord,
   type ContactStage,
 } from "@/crm/types";
-import { CONTACT_STAGE_THEME } from "@/crm/stage-theme";
 
-const PAGE_SIZE = 5;
 const CURRENT_MEMBER = {
   id: "member-owner",
   name: "João Martins",
@@ -50,6 +39,34 @@ type ContactFormState = {
 };
 
 type ContactFormErrors = Partial<Record<keyof ContactFormState, string>>;
+
+const STAGE_ACCENT_COLORS: Record<ContactStage, string> = {
+  prospecting: "#cfd7ff",
+  discovery: "#ffcb00",
+  negotiation: "#f65f7c",
+  won: "#00c875",
+  lost: "#8f73ff",
+};
+
+const STAGE_HEADER_TEXT: Record<ContactStage, string> = {
+  prospecting: "#1f2430",
+  discovery: "#1f2430",
+  negotiation: "#ffffff",
+  won: "#ffffff",
+  lost: "#ffffff",
+};
+
+type BadgeVariant = ComponentProps<typeof DxBadge>["variant"];
+
+const STAGE_BADGE_VARIANTS: Record<ContactStage, BadgeVariant> = {
+  prospecting: "secondary",
+  discovery: "primary",
+  negotiation: "primary",
+  won: "secondary",
+  lost: "danger",
+};
+
+const VIEW_MODES = ["table", "kanban"] as const;
 
 function formatDateTime(value: string, locale: string) {
   try {
@@ -82,7 +99,6 @@ function getInitials(name: string) {
 }
 
 export default function HomePage() {
-  const { t: tCommon } = useTranslation("common");
   const contactsDictionary = useTranslation("contacts");
   const { t: tErrors } = useTranslation("errors");
   const { t: tAuth } = useTranslation("auth");
@@ -99,8 +115,8 @@ export default function HomePage() {
   const [stageFilter, setStageFilter] = useState<StageFilter>("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [view, setView] = useState<"table" | "kanban">("table");
-  const [currentPage, setCurrentPage] = useState(1);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const [formState, setFormState] = useState<ContactFormState>(defaultFormState);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [toastOpen, setToastOpen] = useState(false);
@@ -215,21 +231,9 @@ export default function HomePage() {
     });
   }, [contacts, searchTerm, stageFilter]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredContacts.length / PAGE_SIZE));
-  const safePage = Math.min(currentPage, totalPages);
-
-  const paginatedContacts = useMemo(() => {
-    const start = (safePage - 1) * PAGE_SIZE;
-    return filteredContacts.slice(start, start + PAGE_SIZE);
-  }, [filteredContacts, safePage]);
-
   const contactMap = useMemo(() => {
     return new Map<string, ContactRecord>(contacts.map((contact) => [contact.id, contact]));
   }, [contacts]);
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm, stageFilter]);
 
   useEffect(() => {
     if (!selectedContactId && filteredContacts.length > 0) {
@@ -266,104 +270,17 @@ export default function HomePage() {
     return errors;
   }, [formState, formSubmitted, tContacts]);
 
-  const tableColumns = useMemo(() => {
-    return [
-      {
-        id: "name",
-        accessor: "name",
-        title: tContacts("table.headers.name"),
-        render: (row: { id: string }) => {
-          const contact = contactMap.get(row.id);
-          if (!contact) {
-            return null;
-          }
-          const isSelected = contact.id === selectedContactId;
-          return (
-            <button
-              type="button"
-              onClick={() => setSelectedContactId(contact.id)}
-              className={`flex flex-col items-start gap-1 text-left ${
-                isSelected
-                  ? "text-[var(--dx-color-text-primary)]"
-                  : "text-[var(--dx-color-text-secondary)]"
-              }`}
-              aria-pressed={isSelected}
-            >
-              <span className="text-sm font-semibold">{contact.name}</span>
-              <span className="text-xs text-[var(--dx-color-text-tertiary)]">{contact.company}</span>
-            </button>
-          );
-        },
-      },
-      {
-        id: "stage",
-        accessor: "stage",
-        title: tContacts("table.headers.stage"),
-        render: (row: { id: string }) => {
-          const contact = contactMap.get(row.id);
-          if (!contact) {
-            return null;
-          }
-          const theme = CONTACT_STAGE_THEME[contact.stage];
-          return (
-            <Label
-              color={theme.labelColor}
-              kind="fill"
-              size="small"
-              text={stageLabels[contact.stage]}
-              data-telemetry-id={`table-stage-${contact.stage}`}
-            />
-          );
-        },
-      },
-      {
-        id: "owner",
-        accessor: "owner",
-        title: tContacts("table.headers.owner"),
-        render: (row: { id: string }) => {
-          const contact = contactMap.get(row.id);
-          if (!contact) {
-            return null;
-          }
-          return (
-            <div className="flex flex-col">
-              <span className="text-sm font-medium text-[var(--dx-color-text-primary)]">{contact.assignedTo}</span>
-              <span className="text-xs text-[var(--dx-color-text-tertiary)]">{tContacts("table.labels.owner")}</span>
-            </div>
-          );
-        },
-      },
-    ];
-  }, [contactMap, selectedContactId, stageLabels, tContacts]);
-
-  const tableRows = useMemo(() => {
-    return paginatedContacts.map((contact) => ({
-      id: contact.id,
-      highlighted: contact.id === selectedContactId,
-      cells: {
-        name: contact.name,
-        stage: stageLabels[contact.stage],
-        owner: contact.assignedTo,
-      },
-    }));
-  }, [paginatedContacts, selectedContactId, stageLabels]);
-
-  const emptyState = useMemo(
-    () => (
-      <div role="status" className="px-4 py-6 text-sm text-[var(--dx-color-text-secondary)]">
-        {tContacts("table.empty")}
-      </div>
-    ),
-    [tContacts],
-  );
-
-  const errorState = useMemo(
-    () => (
-      <div role="alert" className="px-4 py-6 text-sm text-[var(--color-error)]">
-        {tContacts("table.error")}
-      </div>
-    ),
-    [tContacts],
+  const handleSelectContact = useCallback(
+    (contactId: string) => {
+      setSelectedContactId(contactId);
+      setDetailsOpen(true);
+      telemetry.capture("ui_open_overlay", {
+        overlay: "contact_details_panel",
+        state: "open",
+        entity: "crm_contacts",
+      });
+    },
+    [telemetry],
   );
 
   const selectedContact = selectedContactId ? contactMap.get(selectedContactId) ?? null : null;
@@ -377,10 +294,68 @@ export default function HomePage() {
     });
   }, [selectedContact]);
 
+  const groupedContacts = useMemo(() => {
+    const active = filteredContacts.filter((contact) => contact.stage !== "lost");
+    const inactive = filteredContacts.filter((contact) => contact.stage === "lost");
+    return [
+      {
+        id: "active",
+        title: tContacts("table.groups.active"),
+        contacts: active,
+      },
+      {
+        id: "inactive",
+        title: tContacts("table.groups.inactive"),
+        contacts: inactive,
+      },
+    ];
+  }, [filteredContacts, tContacts]);
+
+  const handleViewChange = useCallback(
+    (nextView: "table" | "kanban") => {
+      if (nextView === view) {
+        return;
+      }
+      setView(nextView);
+      telemetry.capture("ui_toggle_view", {
+        from: view,
+        to: nextView,
+        entity: "crm_contacts",
+      });
+    },
+    [telemetry, view],
+  );
+
+  const handleToolbarAction = useCallback(
+    (action: string) => {
+      telemetry.capture("crm_toolbar_click", {
+        action,
+        entity: "crm_contacts",
+      });
+    },
+    [telemetry],
+  );
+
+  const handleClearFilters = useCallback(() => {
+    setSearchTerm("");
+    setStageFilter("all");
+    telemetry.capture("ui_clear_filters", { entity: "crm_contacts" });
+  }, [telemetry]);
+
   const resetForm = useCallback(() => {
     setFormState(defaultFormState());
     setFormSubmitted(false);
   }, []);
+
+  const openNewContact = useCallback(() => {
+    resetForm();
+    setDialogOpen(true);
+    telemetry.capture("ui_open_overlay", {
+      overlay: "new_contact_dialog",
+      state: "open",
+      entity: "crm_contacts",
+    });
+  }, [resetForm, telemetry]);
 
   const handleStageChange = useCallback(
     (contactId: string, nextStage: ContactStage) => {
@@ -469,9 +444,9 @@ export default function HomePage() {
 
     setContacts((prev) => [newContact, ...prev]);
     setSelectedContactId(newContact.id);
+    setDetailsOpen(true);
     setStageFilter("all");
     setSearchTerm("");
-    setCurrentPage(1);
     resetForm();
     setDialogOpen(false);
 
@@ -488,6 +463,11 @@ export default function HomePage() {
       }),
     );
     setToastOpen(true);
+    telemetry.capture("ui_open_overlay", {
+      overlay: "contact_details_panel",
+      state: "open",
+      entity: "crm_contacts",
+    });
   }, [formState, resetForm, tContacts, telemetry, validationErrors]);
 
   const renderActivityMessage = useCallback(
@@ -507,463 +487,635 @@ export default function HomePage() {
     [stageLabels, tContacts],
   );
 
-  const handleTableReorder = useCallback(
-    (from: number, to: number, rows: { id: string }[]) => {
-      const pageIds = rows.map((row) => row.id);
-      setContacts((previous) => {
-        const updated = [...previous];
-        const sourceId = pageIds[from];
-        const targetId = pageIds[to];
-        if (!sourceId || !targetId) {
-          return previous;
-        }
-        const fromIndex = updated.findIndex((contact) => contact.id === sourceId);
-        const toIndex = updated.findIndex((contact) => contact.id === targetId);
-        if (fromIndex === -1 || toIndex === -1) {
-          return previous;
-        }
-        const [moved] = updated.splice(fromIndex, 1);
-        updated.splice(toIndex, 0, moved);
-        return updated;
-      });
-    },
-    [],
-  );
-
   return (
     <>
       <p aria-live="assertive" className="sr-only">
         {announcement}
       </p>
-      <section className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-6 py-10">
-            <header className="flex flex-col gap-3">
-              <DxBadge density="compact" type="indicator" variant="primary">
-                <span className="text-xs font-semibold uppercase tracking-wide text-[var(--dx-color-text-primary)]">
-                  {tCommon("badges.crmSprint")}
-                </span>
-              </DxBadge>
-              <div className="flex flex-col gap-3">
-                <h1 className="text-3xl font-semibold text-[var(--dx-color-text-primary)]">
+      <section className="flex flex-col gap-8 pb-12">
+        <div className="border-b border-[#d4d9e6] bg-white px-6 pb-10 pt-12 sm:px-10 lg:px-16">
+          <div className="flex flex-col gap-10">
+            <div className="flex flex-wrap items-start justify-between gap-6">
+              <div className="flex max-w-3xl flex-col gap-3">
+                <h1 className="text-3xl font-semibold text-[#1f2430]">
                   {tContacts("hero.title")}
                 </h1>
-                <p className="max-w-3xl text-base text-[var(--dx-color-text-secondary)]">
+                <p className="text-base text-[#6b7185]">
                   {tContacts("hero.subtitle")}
                 </p>
               </div>
-              <div className="flex flex-wrap gap-3">
-                <DxTooltip content={tContacts("actions.newContactTooltip")}
-                  telemetryId="tooltip.new_contact"
-                >
-                  <DxButton
-                    variant="primary"
-                    size="md"
-                    onClick={() => {
-                      resetForm();
-                      setDialogOpen(true);
-                      telemetry.capture("ui_open_overlay", {
-                        overlay: "new_contact_dialog",
-                        state: "open",
-                        entity: "crm_contacts",
-                      });
-                    }}
-                    telemetryId="action.new_contact"
-                    aria-haspopup="dialog"
-                  >
-                    {tContacts("actions.newContact")}
-                  </DxButton>
-                </DxTooltip>
-                <DxButton
-                  variant="ghost"
-                  size="md"
-                  onClick={() => {
-                    const nextView = view === "table" ? "kanban" : "table";
-                    setView(nextView);
-                    telemetry.capture("ui_toggle_view", {
-                      from: view,
-                      to: nextView,
-                      entity: "crm_contacts",
-                    });
-                  }}
-                  telemetryId="action.toggle_view"
-                >
-                  {view === "table"
-                    ? tContacts("actions.viewKanban")
-                    : tContacts("actions.viewTable")}
-                </DxButton>
-              </div>
-            </header>
-
-            <div className="grid gap-6 md:grid-cols-[2fr_1fr]">
-              <DxCard className="flex flex-col gap-6 bg-[var(--dx-color-surface)] p-6" aria-live="polite">
-                <div className="flex flex-col gap-4">
-                  <div className="flex flex-wrap items-center justify-between gap-4">
-                    <div className="flex flex-wrap gap-2">
-                      <DxBadge density="compact" variant="primary" telemetryId="summary.total_contacts">
-                        {tContacts("summary.total", { values: { count: contacts.length } })}
-                      </DxBadge>
-                      {CONTACT_STAGE_ORDER.map((stage) => {
-                        const theme = CONTACT_STAGE_THEME[stage];
-                        return (
-                          <Label
-                            key={stage}
-                            color={theme.labelColor}
-                            kind="line"
-                            size="small"
-                            text={tContacts("summary.stageChip", {
-                              values: { stage: stageLabels[stage], count: stageTotals[stage] ?? 0 },
-                            })}
-                            data-telemetry-id={`summary.stage_${stage}`}
-                          />
-                        );
-                      })}
-                    </div>
-                    <DxTooltip content={tContacts("table.filters.searchPlaceholder")}
-                      telemetryId="tooltip.search_contacts"
-                    >
-                      <div className="flex items-center gap-2">
-                        <DxInput
-                          name="search"
-                          value={searchTerm}
-                          onChange={(value) => setSearchTerm(value)}
-                          placeholder={tContacts("table.filters.searchPlaceholder")}
-                          telemetryId="table.search"
-                        />
-                        <DxButton
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            setSearchTerm("");
-                            setStageFilter("all");
-                            telemetry.capture("ui_clear_filters", { entity: "crm_contacts" });
-                          }}
-                          telemetryId="table.clear_filters"
-                        >
-                          {tContacts("filters.stageGroupLabel")}
-                        </DxButton>
-                      </div>
-                    </DxTooltip>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-sm font-medium text-[var(--dx-color-text-primary)]">
-                      {tContacts("filters.stageGroupLabel")}
-                    </span>
-                    <div className="flex flex-wrap gap-2" role="group" aria-label={tContacts("filters.stageGroupLabel")}>
-                      <DxButton
-                        size="sm"
-                        variant={stageFilter === "all" ? "secondary" : "ghost"}
-                        onClick={() => {
-                          setStageFilter("all");
-                          telemetry.capture("ui_filter_stage", { stage: "all", entity: "crm_contacts" });
-                        }}
-                        telemetryId="filter.stage.all"
-                        aria-pressed={stageFilter === "all"}
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+                <div className="flex items-center gap-1 rounded-full border border-[#d4d9e6] bg-[#f6f7fb] p-1">
+                  {VIEW_MODES.map((mode) => {
+                    const isActive = view === mode;
+                    return (
+                      <button
+                        key={mode}
+                        type="button"
+                        onClick={() => handleViewChange(mode)}
+                        className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0073ea] ${
+                          isActive ? "bg-white text-[#1f2430]" : "text-[#6b7185] hover:text-[#1f2430]"
+                        }`}
+                        aria-pressed={isActive}
                       >
-                        {tContacts("filters.stages.all")}
-                      </DxButton>
-                      {CONTACT_STAGE_ORDER.map((stage) => (
-                        <DxButton
-                          key={stage}
-                          size="sm"
-                          variant={stageFilter === stage ? "secondary" : "ghost"}
-                          onClick={() => {
-                            setStageFilter(stage);
-                            telemetry.capture("ui_filter_stage", { stage, entity: "crm_contacts" });
-                          }}
-                          telemetryId={`filter.stage.${stage}`}
-                          aria-pressed={stageFilter === stage}
-                        >
-                          {stageLabels[stage]}
-                        </DxButton>
-                      ))}
-                    </div>
-                  </div>
+                        {mode === "table"
+                          ? tContacts("views.table")
+                          : tContacts("views.kanban")}
+                      </button>
+                    );
+                  })}
                 </div>
-
-                {view === "table" ? (
-                  <div className="flex flex-col gap-4">
-                    <DxTable
-                      columns={tableColumns}
-                      rows={tableRows}
-                      onReorder={handleTableReorder}
-                      emptyState={emptyState}
-                      errorState={errorState}
-                      density="comfortable"
-                      telemetryId="contacts.table"
+                <div className="flex flex-wrap items-center gap-2">
+                  {selectedContact ? (
+                    <DxButton
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleSelectContact(selectedContact.id)}
+                      telemetryId="action.open_contact_details"
+                    >
+                      {tContacts("actions.openDetails")}
+                    </DxButton>
+                  ) : null}
+                  <DxTooltip
+                    content={tContacts("actions.newContactTooltip")}
+                    telemetryId="tooltip.new_contact"
+                  >
+                    <DxButton
+                      variant="primary"
+                      size="sm"
+                      onClick={openNewContact}
+                      telemetryId="action.new_contact"
+                      aria-haspopup="dialog"
+                    >
+                      {tContacts("actions.newContact")}
+                    </DxButton>
+                  </DxTooltip>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-[#6b7185]">
+              <span>{tContacts("summary.total", { values: { count: contacts.length } })}</span>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+              {CONTACT_STAGE_ORDER.map((stage) => (
+                <div
+                  key={stage}
+                  className="flex items-center justify-between rounded-xl border border-[#d4d9e6] bg-white px-4 py-3"
+                >
+                  <div className="flex items-center gap-3">
+                    <span
+                      aria-hidden="true"
+                      className="h-2.5 w-2.5 rounded-full"
+                      style={{ backgroundColor: STAGE_ACCENT_COLORS[stage] }}
                     />
-                    <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--dx-color-border)] pt-4 text-sm text-[var(--dx-color-text-secondary)]">
-                      <span>
-                        {tContacts("table.pagination.summary", {
-                          values: {
-                            start: paginatedContacts.length > 0 ? (safePage - 1) * PAGE_SIZE + 1 : 0,
-                            end: (safePage - 1) * PAGE_SIZE + paginatedContacts.length,
-                            total: filteredContacts.length,
-                          },
+                    <div className="flex flex-col">
+                      <span className="text-sm font-semibold text-[#1f2430]">
+                        {stageLabels[stage]}
+                      </span>
+                      <span className="text-xs text-[#6b7185]">
+                        {tContacts("summary.stageChip", {
+                          values: { stage: stageLabels[stage], count: stageTotals[stage] ?? 0 },
                         })}
                       </span>
-                      <div className="flex items-center gap-2">
-                        <DxButton
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
-                          disabled={safePage === 1}
-                          telemetryId="table.page_previous"
-                        >
-                          {tContacts("table.pagination.previous")}
-                        </DxButton>
-                        <span className="text-xs text-[var(--dx-color-text-tertiary)]">
-                          {tContacts("table.pagination.current", { values: { page: safePage, total: totalPages } })}
-                        </span>
-                        <DxButton
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
-                          disabled={safePage === totalPages}
-                          telemetryId="table.page_next"
-                        >
-                          {tContacts("table.pagination.next")}
-                        </DxButton>
-                      </div>
                     </div>
                   </div>
-                ) : (
-                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                    {CONTACT_STAGE_ORDER.map((stage) => {
-                      const stageContacts = filteredContacts.filter((contact) => contact.stage === stage);
-                      const theme = CONTACT_STAGE_THEME[stage];
-                      const countStyles =
-                        theme.headerTextColor.toLowerCase() === "#ffffff"
-                          ? { backgroundColor: "rgba(255, 255, 255, 0.18)", color: "#ffffff" }
-                          : { backgroundColor: "rgba(255, 255, 255, 0.7)", color: theme.headerTextColor };
-                      return (
-                        <section
-                          key={stage}
-                          aria-label={tContacts("kanban.columnLabel", {
-                            values: { stage: stageLabels[stage], count: stageContacts.length },
-                          })}
-                          className="flex min-h-[360px] flex-col overflow-hidden rounded-2xl border shadow-sm"
-                          style={{ backgroundColor: theme.backgroundColor, borderColor: theme.borderColor }}
-                        >
-                          <header
-                            className="flex items-start justify-between gap-3 px-4 py-3 shadow-[inset_0_-1px_0_rgba(15,23,42,0.1)]"
-                            style={{ backgroundColor: theme.accentColor, color: theme.headerTextColor }}
-                          >
-                            <div className="flex flex-col">
-                              <h2 className="text-sm font-semibold">{stageLabels[stage]}</h2>
-                              <span className="text-xs opacity-80">
-                                {tContacts("kanban.listLabel", {
-                                  values: { stage: stageLabels[stage] },
-                                })}
-                              </span>
-                            </div>
-                            <span
-                              className="rounded-full px-3 py-1 text-xs font-semibold"
-                              style={countStyles}
-                            >
-                              {stageTotals[stage] ?? 0}
-                            </span>
-                          </header>
-                          <div
-                            role="list"
-                            aria-label={tContacts("kanban.listLabel", {
-                              values: { stage: stageLabels[stage] },
-                            })}
-                            className="flex flex-1 flex-col gap-3 p-4"
-                          >
-                            {stageContacts.length === 0 ? (
-                              <div className="flex flex-1 items-center justify-center rounded-2xl border border-dashed border-white/60 bg-white/60 p-6 text-center text-xs font-medium text-[var(--dx-color-text-tertiary)]">
-                                {tContacts("kanban.empty")}
-                              </div>
-                            ) : (
-                              stageContacts.map((contact) => {
-                                const nextStageIndex = CONTACT_STAGE_ORDER.indexOf(contact.stage) + 1;
-                                const nextStage = CONTACT_STAGE_ORDER[nextStageIndex];
-                                const cardTheme = CONTACT_STAGE_THEME[contact.stage];
-                                return (
-                                  <article
-                                    key={contact.id}
-                                    role="listitem"
-                                    className="group flex flex-col gap-3 rounded-2xl border border-transparent bg-white p-4 shadow-[0_6px_14px_rgba(15,23,42,0.12)] transition-all hover:-translate-y-0.5 hover:shadow-[0_16px_30px_rgba(15,23,42,0.16)]"
-                                    style={{ borderLeft: `6px solid ${cardTheme.accentColor}` }}
-                                    draggable
-                                    onDragStart={(event) => {
-                                      event.dataTransfer.setData("text/plain", contact.id);
-                                      setDraggedContactId(contact.id);
-                                    }}
-                                    onDragEnd={() => setDraggedContactId(null)}
-                                    aria-grabbed={draggedContactId === contact.id}
-                                    aria-describedby={`contact-${contact.id}-meta`}
-                                  >
-                                    <div className="flex items-start justify-between gap-3">
-                                      <button
-                                        type="button"
-                                        onClick={() => setSelectedContactId(contact.id)}
-                                        className="text-left"
-                                      >
-                                        <h3 className="text-sm font-semibold text-[var(--dx-color-text-primary)]">
-                                          {contact.name}
-                                        </h3>
-                                        <p className="text-xs text-[var(--dx-color-text-tertiary)]">{contact.company}</p>
-                                      </button>
-                                      <Label
-                                        color={cardTheme.labelColor}
-                                        kind="fill"
-                                        size="small"
-                                        text={stageLabels[contact.stage]}
-                                      />
-                                    </div>
-                                    <div
-                                      id={`contact-${contact.id}-meta`}
-                                      className="flex flex-wrap items-center gap-2 text-xs text-[var(--dx-color-text-secondary)]"
-                                    >
-                                      <span>
-                                        {tContacts("kanban.lastInteraction", {
-                                          values: { timestamp: formatDateTime(contact.lastInteraction, locale) },
-                                        })}
-                                      </span>
-                                    </div>
-                                    <div className="flex flex-wrap gap-2 text-xs font-medium text-[var(--dx-color-text-secondary)]">
-                                      <span className="rounded-full bg-[rgba(15,23,42,0.06)] px-2 py-1">
-                                        {contact.assignedTo}
-                                      </span>
-                                      <span className="rounded-full bg-[rgba(15,23,42,0.06)] px-2 py-1">
-                                        {contact.email}
-                                      </span>
-                                    </div>
-                                    {nextStage ? (
-                                      <DxButton
-                                        size="sm"
-                                        variant="ghost"
-                                        onClick={() => handleStageChange(contact.id, nextStage)}
-                                        telemetryId={`kanban.advance_${contact.id}`}
-                                        className="self-start"
-                                      >
-                                        {tContacts("kanban.actions.advance", {
-                                          values: { stage: stageLabels[nextStage] },
-                                        })}
-                                      </DxButton>
-                                    ) : (
-                                      <Label
-                                        color={Label.colors.DONE_GREEN}
-                                        kind="fill"
-                                        size="small"
-                                        text={tContacts("kanban.actions.completed")}
-                                      />
-                                    )}
-                                  </article>
-                                );
-                              })
-                            )}
-                          </div>
-                        </section>
-                      );
-                    })}
-                  </div>
-                )}
-              </DxCard>
-
-              <DxCard className="flex h-full flex-col gap-4 bg-[var(--dx-color-surface)] p-6" aria-live="polite">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-semibold text-[var(--dx-color-text-primary)]">
-                    {tContacts("details.title")}
-                  </h2>
-                  <DxBadge density="compact" variant="ghost">
-                    {view === "table" ? tContacts("details.mode.table") : tContacts("details.mode.kanban")}
-                  </DxBadge>
+                  <span className="text-2xl font-semibold text-[#1f2430]">
+                    {stageTotals[stage] ?? 0}
+                  </span>
                 </div>
-                {selectedContact ? (
-                  <div className="flex flex-col gap-5">
-                    <div className="flex flex-col gap-2">
-                      <h3 className="text-xl font-semibold text-[var(--dx-color-text-primary)]">{selectedContact.name}</h3>
-                      <span className="text-sm text-[var(--dx-color-text-secondary)]">{selectedContact.company}</span>
-                    </div>
-                    <div className="grid gap-3 text-sm text-[var(--dx-color-text-primary)]">
-                      <div className="flex flex-col">
-                        <span className="text-xs uppercase tracking-wide text-[var(--dx-color-text-tertiary)]">
-                          {tContacts("details.stage")}
-                        </span>
-                        <Label
-                          color={CONTACT_STAGE_THEME[selectedContact.stage].labelColor}
-                          kind="fill"
-                          size="small"
-                          text={stageLabels[selectedContact.stage]}
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-6 px-6 sm:px-10 lg:px-16">
+          <div className="flex flex-col gap-4 rounded-2xl border border-[#e2e6f2] bg-white px-5 py-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <DxInput
+                  name="search"
+                  value={searchTerm}
+                  onChange={(value) => setSearchTerm(value)}
+                  placeholder={tContacts("table.filters.searchPlaceholder")}
+                  telemetryId="table.search"
+                  className="w-full sm:w-64"
+                />
+                <DxButton
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleToolbarAction("person")}
+                  telemetryId="toolbar.person"
+                >
+                  {tContacts("toolbar.person")}
+                </DxButton>
+                <DxButton
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleToolbarAction("team")}
+                  telemetryId="toolbar.team"
+                >
+                  {tContacts("toolbar.team")}
+                </DxButton>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <DxButton
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleToolbarAction("filter")}
+                  telemetryId="toolbar.filter"
+                >
+                  {tContacts("toolbar.filter")}
+                </DxButton>
+                <DxButton
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleToolbarAction("sort")}
+                  telemetryId="toolbar.sort"
+                >
+                  {tContacts("toolbar.sort")}
+                </DxButton>
+                <DxButton
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleToolbarAction("group")}
+                  telemetryId="toolbar.group"
+                >
+                  {tContacts("toolbar.group")}
+                </DxButton>
+                <DxButton
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleToolbarAction("hide")}
+                  telemetryId="toolbar.hide"
+                >
+                  {tContacts("toolbar.hide")}
+                </DxButton>
+                <DxButton
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleToolbarAction("more")}
+                  telemetryId="toolbar.more"
+                >
+                  {tContacts("toolbar.more")}
+                </DxButton>
+              </div>
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="text-xs font-semibold uppercase tracking-wide text-[#9aa0b9]">
+                {tContacts("filters.stageGroupLabel")}
+              </span>
+              <div
+                className="flex flex-wrap items-center gap-1"
+                role="group"
+                aria-label={tContacts("filters.stageGroupLabel")}
+              >
+                <DxButton
+                  size="sm"
+                  variant={stageFilter === "all" ? "secondary" : "ghost"}
+                  onClick={() => {
+                    setStageFilter("all");
+                    telemetry.capture("ui_filter_stage", { stage: "all", entity: "crm_contacts" });
+                  }}
+                  telemetryId="filter.stage.all"
+                  aria-pressed={stageFilter === "all"}
+                >
+                  {tContacts("filters.stages.all")}
+                </DxButton>
+                {CONTACT_STAGE_ORDER.map((stage) => (
+                  <DxButton
+                    key={stage}
+                    size="sm"
+                    variant={stageFilter === stage ? "secondary" : "ghost"}
+                    onClick={() => {
+                      setStageFilter(stage);
+                      telemetry.capture("ui_filter_stage", { stage, entity: "crm_contacts" });
+                    }}
+                    telemetryId={`filter.stage.${stage}`}
+                    aria-pressed={stageFilter === stage}
+                  >
+                    <span className="flex items-center gap-2">
+                      <span
+                        aria-hidden="true"
+                        className="h-2 w-2 rounded-full"
+                        style={{ backgroundColor: STAGE_ACCENT_COLORS[stage] }}
+                      />
+                      {stageLabels[stage]}
+                    </span>
+                  </DxButton>
+                ))}
+              </div>
+              <DxButton
+                variant="ghost"
+                size="sm"
+                onClick={handleClearFilters}
+                telemetryId="filter.clear"
+              >
+                {tContacts("filters.reset")}
+              </DxButton>
+            </div>
+          </div>
+
+          {view === "table" ? (
+            <div className="flex flex-col gap-6">
+              {groupedContacts.map((group) => {
+                const accentColor = group.id === "inactive" ? "#9aa0b9" : "#00c875";
+                return (
+                  <section
+                    key={group.id}
+                    className="overflow-hidden rounded-2xl border border-[#d4d9e6] bg-white"
+                  >
+                    <header className="flex flex-wrap items-center justify-between gap-3 border-b border-[#e2e6f2] bg-[#f6f7fb] px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <span
+                          aria-hidden="true"
+                          className="h-2.5 w-2.5 rounded-full"
+                          style={{ backgroundColor: accentColor }}
                         />
+                        <div className="flex flex-col">
+                          <h2 className="text-sm font-semibold text-[#1f2430]">{group.title}</h2>
+                          <span className="text-xs text-[#6b7185]">
+                            {tContacts("table.groups.count", { values: { count: group.contacts.length } })}
+                          </span>
+                        </div>
                       </div>
+                      <DxButton
+                        variant="ghost"
+                        size="sm"
+                        onClick={openNewContact}
+                        telemetryId={`toolbar.add_contact.${group.id}`}
+                      >
+                        {tContacts("table.groups.addContact")}
+                      </DxButton>
+                    </header>
+                    {group.contacts.length === 0 ? (
+                      <div className="px-6 py-10 text-sm text-[#6b7185]">
+                        {tContacts("table.empty")}
+                      </div>
+                    ) : (
+                      <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-[#e2e6f2] text-left">
+                          <thead className="bg-[#f6f7fb] text-xs font-semibold uppercase tracking-wide text-[#6b7185]">
+                            <tr>
+                              <th scope="col" className="px-6 py-3 font-semibold">
+                                {tContacts("table.headers.contact")}
+                              </th>
+                              <th scope="col" className="px-6 py-3 font-semibold">
+                                {tContacts("table.headers.email")}
+                              </th>
+                              <th scope="col" className="px-6 py-3 font-semibold">
+                                {tContacts("table.headers.timeline")}
+                              </th>
+                              <th scope="col" className="px-6 py-3 font-semibold">
+                                {tContacts("table.headers.accounts")}
+                              </th>
+                              <th scope="col" className="px-6 py-3 font-semibold">
+                                {tContacts("table.headers.deals")}
+                              </th>
+                              <th scope="col" className="px-6 py-3 font-semibold">
+                                {tContacts("table.headers.phone")}
+                              </th>
+                              <th scope="col" className="px-6 py-3 font-semibold">
+                                {tContacts("table.headers.owner")}
+                              </th>
+                              <th scope="col" className="px-6 py-3 text-right font-semibold">
+                                {tContacts("table.headers.actions")}
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-[#f0f2f9]">
+                            {group.contacts.map((contact) => {
+                              const isSelected = contact.id === selectedContactId;
+                              const timelineCount = contact.activities.length;
+                              const stageColor = STAGE_ACCENT_COLORS[contact.stage];
+                              const stageTextColor = STAGE_HEADER_TEXT[contact.stage];
+                              return (
+                                <tr
+                                  key={contact.id}
+                                  className={`cursor-pointer transition-colors ${
+                                    isSelected ? "bg-[#eaf3ff]" : "hover:bg-[#f6faff]"
+                                  }`}
+                                  onClick={() => handleSelectContact(contact.id)}
+                                  onKeyDown={(event) => {
+                                    if (event.key === "Enter" || event.key === " ") {
+                                      event.preventDefault();
+                                      handleSelectContact(contact.id);
+                                    }
+                                  }}
+                                  tabIndex={0}
+                                  aria-selected={isSelected}
+                                >
+                                  <td className="px-6 py-4 align-middle">
+                                    <div className="flex flex-col gap-1">
+                                      <span className="text-sm font-semibold text-[#0073ea]">
+                                        {contact.name}
+                                      </span>
+                                      <span className="text-xs text-[#6b7185]">{contact.company}</span>
+                                    </div>
+                                  </td>
+                                  <td className="px-6 py-4 align-middle text-sm text-[#1f2430]">
+                                    {contact.email}
+                                  </td>
+                                  <td className="px-6 py-4 align-middle">
+                                    <span className="inline-flex items-center gap-2 rounded-full border border-[#d4d9e6] bg-white px-3 py-1 text-xs font-medium text-[#1f2430]">
+                                      <span className="h-2 w-2 rounded-full bg-[#0073ea]" aria-hidden="true" />
+                                      {tContacts("timeline.count", { values: { count: timelineCount } })}
+                                    </span>
+                                  </td>
+                                  <td className="px-6 py-4 align-middle">
+                                    <span className="inline-flex items-center rounded-full bg-[#f6faff] px-3 py-1 text-xs font-medium text-[#1f2430]">
+                                      {contact.company}
+                                    </span>
+                                  </td>
+                                  <td className="px-6 py-4 align-middle">
+                                    <span
+                                      className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
+                                      style={{ backgroundColor: `${stageColor}1a`, color: stageTextColor, border: `1px solid ${stageColor}` }}
+                                    >
+                                      {stageLabels[contact.stage]}
+                                    </span>
+                                  </td>
+                                  <td className="px-6 py-4 align-middle text-sm text-[#1f2430]">
+                                    {contact.phone}
+                                  </td>
+                                  <td className="px-6 py-4 align-middle text-sm text-[#1f2430]">
+                                    {contact.assignedTo}
+                                  </td>
+                                  <td className="px-6 py-4 align-middle text-right">
+                                    <DxButton
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={(event) => {
+                                        event.stopPropagation();
+                                        handleToolbarAction("row.more");
+                                      }}
+                                      telemetryId={`table.row.more.${contact.id}`}
+                                    >
+                                      {tContacts("table.actions.more")}
+                                    </DxButton>
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </section>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              {CONTACT_STAGE_ORDER.map((stage) => {
+                const stageContacts = filteredContacts.filter((contact) => contact.stage === stage);
+                const headerColor = STAGE_ACCENT_COLORS[stage];
+                const headerText = STAGE_HEADER_TEXT[stage];
+                return (
+                  <section
+                    key={stage}
+                    aria-label={tContacts("kanban.columnLabel", {
+                      values: { stage: stageLabels[stage], count: stageContacts.length },
+                    })}
+                    className="flex min-h-[420px] flex-col overflow-hidden rounded-2xl border border-[#d4d9e6] bg-white"
+                  >
+                    <header
+                      className="flex items-center justify-between px-4 py-3"
+                      style={{ backgroundColor: headerColor, color: headerText }}
+                    >
                       <div className="flex flex-col">
-                        <span className="text-xs uppercase tracking-wide text-[var(--dx-color-text-tertiary)]">
-                          {tContacts("details.email")}
+                        <h2 className="text-sm font-semibold">{stageLabels[stage]}</h2>
+                        <span className="text-xs opacity-80">
+                          {tContacts("kanban.listLabel", { values: { stage: stageLabels[stage] } })}
                         </span>
-                        <span>{selectedContact.email}</span>
                       </div>
-                      <div className="flex flex-col">
-                        <span className="text-xs uppercase tracking-wide text-[var(--dx-color-text-tertiary)]">
-                          {tContacts("details.phone")}
-                        </span>
-                        <span>{selectedContact.phone}</span>
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-xs uppercase tracking-wide text-[var(--dx-color-text-tertiary)]">
-                          {tContacts("details.assigned")}
-                        </span>
-                        <span>{selectedContact.assignedTo}</span>
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-xs uppercase tracking-wide text-[var(--dx-color-text-tertiary)]">
-                          {tContacts("details.lastInteraction")}
-                        </span>
-                        <span>{formatDateTime(selectedContact.lastInteraction, locale)}</span>
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-3">
-                      <h3 className="text-sm font-semibold text-[var(--dx-color-text-primary)]">
-                        {tContacts("timeline.title")}
-                      </h3>
-                      {orderedActivities.length === 0 ? (
-                        <p className="text-xs text-[var(--dx-color-text-tertiary)]">{tContacts("timeline.empty")}</p>
+                      <span className="text-sm font-semibold">
+                        {stageTotals[stage] ?? 0}
+                      </span>
+                    </header>
+                    <div
+                      role="list"
+                      aria-label={tContacts("kanban.listLabel", {
+                        values: { stage: stageLabels[stage] },
+                      })}
+                      className="flex flex-1 flex-col gap-3 px-4 py-4"
+                      onDragOver={(event) => event.preventDefault()}
+                      onDrop={(event) => {
+                        event.preventDefault();
+                        const contactId = event.dataTransfer.getData("text/plain");
+                        if (contactId) {
+                          handleStageChange(contactId, stage);
+                        }
+                      }}
+                    >
+                      {stageContacts.length === 0 ? (
+                        <p className="rounded-xl border border-dashed border-[#d4d9e6] bg-[#f6f7fb] px-4 py-6 text-xs text-[#6b7185]">
+                          {tContacts("kanban.empty")}
+                        </p>
                       ) : (
-                        <ol className="flex flex-col gap-3">
-                          {orderedActivities.map((activity) => (
-                            <li
-                              key={activity.id}
-                              className="rounded-md border border-[var(--dx-color-border)] bg-[var(--dx-color-page-background)] p-3"
+                        stageContacts.map((contact) => {
+                          const nextStageIndex = CONTACT_STAGE_ORDER.indexOf(contact.stage) + 1;
+                          const nextStage = CONTACT_STAGE_ORDER[nextStageIndex];
+                          return (
+                            <article
+                              key={contact.id}
+                              role="listitem"
+                              className={`flex flex-col gap-3 rounded-xl border border-[#e2e6f2] bg-white p-4 transition-colors ${
+                                draggedContactId === contact.id ? "border-[#0073ea]" : "hover:border-[#c7ccda]"
+                              }`}
+                              draggable
+                              onDragStart={(event) => {
+                                event.dataTransfer.setData("text/plain", contact.id);
+                                setDraggedContactId(contact.id);
+                              }}
+                              onDragEnd={() => setDraggedContactId(null)}
+                              aria-grabbed={draggedContactId === contact.id}
+                              aria-describedby={`contact-${contact.id}-meta`}
                             >
-                              <div className="flex items-center justify-between">
-                                <DxBadge density="compact" variant="ghost">
-                                  {tContacts(`timeline.types.${activity.type}`)}
-                                </DxBadge>
-                                <span className="text-xs text-[var(--dx-color-text-tertiary)]">
-                                  {formatDateTime(activity.timestamp, locale)}
+                              <div className="flex items-start justify-between gap-3">
+                                <button
+                                  type="button"
+                                  onClick={() => handleSelectContact(contact.id)}
+                                  className="text-left"
+                                >
+                                  <h3 className="text-sm font-semibold text-[#1f2430]">{contact.name}</h3>
+                                  <p className="text-xs text-[#6b7185]">{contact.company}</p>
+                                </button>
+                                <span
+                                  className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
+                                  style={{ backgroundColor: `${headerColor}1a`, color: headerText }}
+                                >
+                                  {stageLabels[contact.stage]}
                                 </span>
                               </div>
-                              <p className="mt-2 text-sm text-[var(--dx-color-text-primary)]">
-                                {renderActivityMessage(activity.summaryKey, activity.actor, activity.summaryValues)}
+                              <p id={`contact-${contact.id}-meta`} className="text-xs text-[#6b7185]">
+                                {tContacts("kanban.lastInteraction", {
+                                  values: { timestamp: formatDateTime(contact.lastInteraction, locale) },
+                                })}
                               </p>
-                            </li>
-                          ))}
-                        </ol>
+                              <div className="flex flex-wrap gap-2">
+                                <span className="inline-flex items-center rounded-full bg-[#f6f7fb] px-3 py-1 text-xs font-medium text-[#1f2430]">
+                                  {contact.assignedTo}
+                                </span>
+                                <span className="inline-flex items-center rounded-full bg-[#f6f7fb] px-3 py-1 text-xs font-medium text-[#1f2430]">
+                                  {contact.email}
+                                </span>
+                              </div>
+                              {nextStage ? (
+                                <DxButton
+                                  size="sm"
+                                  variant="secondary"
+                                  onClick={() => handleStageChange(contact.id, nextStage)}
+                                  telemetryId={`kanban.advance_${contact.id}`}
+                                >
+                                  {tContacts("kanban.actions.advance", {
+                                    values: { stage: stageLabels[nextStage] },
+                                  })}
+                                </DxButton>
+                              ) : (
+                                <span className="text-xs font-semibold text-[#00c875]">
+                                  {tContacts("kanban.actions.completed")}
+                                </span>
+                              )}
+                            </article>
+                          );
+                        })
                       )}
                     </div>
-                  </div>
-                ) : (
-                  <div className="flex flex-col gap-3 text-sm text-[var(--dx-color-text-tertiary)]">
-                    <DxSkeleton height={24} density="compact" />
-                    <p>{tContacts("details.empty")}</p>
-                  </div>
-                )}
-              </DxCard>
+                  </section>
+                );
+              })}
             </div>
+          )}
+        </div>
 
-            <footer className="flex flex-col gap-3 pb-10">
-              <span className="text-sm text-[var(--dx-color-text-tertiary)]">{tContacts("footer.title")}</span>
-              <Link
-                href="https://monday.com/vibe"
-                className="text-sm font-medium text-[var(--dx-color-accent)] hover:underline"
-                target="_blank"
-                rel="noreferrer"
-              >
-                {tCommon("footer.docs")}
-              </Link>
-            </footer>
-          </section>
+        <footer className="flex flex-col gap-3 px-6 pb-4 text-sm text-[#6b7185] sm:px-10 lg:px-16">
+          <span>{tContacts("footer.title")}</span>
+          <Link
+            href="https://monday.com/vibe"
+            className="w-fit text-sm font-medium text-[#0073ea] hover:underline"
+          >
+            {tContacts("footer.link")}
+          </Link>
+        </footer>
+      </section>
+        {detailsOpen && selectedContact && (
+          <DxDialog
+            id="contact-details-dialog"
+            show={detailsOpen}
+            onClose={() => {
+              setDetailsOpen(false);
+              telemetry.capture("ui_open_overlay", {
+                overlay: "contact_details_panel",
+                state: "close",
+                entity: "crm_contacts",
+              });
+            }}
+            size="sm"
+            classNames={{
+              modal:
+                "fixed inset-y-0 right-0 h-full w-[420px] max-w-[420px] rounded-none border-l border-[#d4d9e6] shadow-none !bg-white !p-0",
+            }}
+            aria-labelledby="contact-details-title"
+          >
+            <div className="flex h-full flex-col bg-white" id="contact-details-title">
+              <header className="flex flex-col gap-3 border-b border-[#d4d9e6] bg-[#f6f7fb] px-6 py-5">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex flex-col gap-1">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-[#9aa0b9]">
+                      {tContacts("details.title")}
+                    </span>
+                    <h2 className="text-2xl font-semibold text-[#1f2430]">{selectedContact.name}</h2>
+                    <span className="text-sm text-[#6b7185]">{selectedContact.company}</span>
+                  </div>
+                  <div className="flex flex-col items-end gap-2">
+                    <DxBadge density="compact" variant={STAGE_BADGE_VARIANTS[selectedContact.stage]}>
+                      {stageLabels[selectedContact.stage]}
+                    </DxBadge>
+                    <DxBadge density="compact" variant="ghost">
+                      {view === "table"
+                        ? tContacts("details.mode.table")
+                        : tContacts("details.mode.kanban")}
+                    </DxBadge>
+                  </div>
+                </div>
+              </header>
+              <div className="flex flex-1 flex-col gap-6 overflow-y-auto bg-white px-6 py-6">
+                <div className="grid gap-3">
+                  <div className="flex flex-col gap-2 rounded-xl border border-[#e2e6f2] bg-[#f9faff] px-4 py-3">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-[#9aa0b9]">
+                      {tContacts("details.stage")}
+                    </span>
+                    <DxBadge density="compact" variant={STAGE_BADGE_VARIANTS[selectedContact.stage]}>
+                      {stageLabels[selectedContact.stage]}
+                    </DxBadge>
+                  </div>
+                  <div className="flex flex-col gap-2 rounded-xl border border-[#e2e6f2] bg-[#f9faff] px-4 py-3">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-[#9aa0b9]">
+                      {tContacts("details.email")}
+                    </span>
+                    <span className="text-sm font-medium text-[#1f2430]">{selectedContact.email}</span>
+                  </div>
+                  <div className="flex flex-col gap-2 rounded-xl border border-[#e2e6f2] bg-[#f9faff] px-4 py-3">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-[#9aa0b9]">
+                      {tContacts("details.phone")}
+                    </span>
+                    <span className="text-sm font-medium text-[#1f2430]">{selectedContact.phone}</span>
+                  </div>
+                  <div className="flex flex-col gap-2 rounded-xl border border-[#e2e6f2] bg-[#f9faff] px-4 py-3">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-[#9aa0b9]">
+                      {tContacts("details.assigned")}
+                    </span>
+                    <span className="text-sm font-medium text-[#1f2430]">{selectedContact.assignedTo}</span>
+                  </div>
+                  <div className="flex flex-col gap-2 rounded-xl border border-[#e2e6f2] bg-[#f9faff] px-4 py-3">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-[#9aa0b9]">
+                      {tContacts("details.lastInteraction")}
+                    </span>
+                    <span className="text-sm font-medium text-[#1f2430]">
+                      {formatDateTime(selectedContact.lastInteraction, locale)}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-semibold text-[#1f2430]">
+                      {tContacts("timeline.title")}
+                    </h3>
+                    <DxBadge density="compact" variant="ghost">
+                      {tContacts("timeline.count", { values: { count: orderedActivities.length } })}
+                    </DxBadge>
+                  </div>
+                  {orderedActivities.length === 0 ? (
+                    <p className="rounded-xl border border-dashed border-[#d4d9e6] bg-[#f9faff] px-4 py-6 text-xs text-[#9aa0b9]">
+                      {tContacts("timeline.empty")}
+                    </p>
+                  ) : (
+                    <ol className="flex flex-col gap-3">
+                      {orderedActivities.map((activity) => (
+                        <li
+                          key={activity.id}
+                          className="rounded-xl border border-[#e2e6f2] bg-[#f6f7fb] px-4 py-3"
+                        >
+                          <div className="flex items-center justify-between">
+                            <DxBadge density="compact" variant="ghost">
+                              {tContacts(`timeline.types.${activity.type}`)}
+                            </DxBadge>
+                            <span className="text-xs text-[#9aa0b9]">
+                              {formatDateTime(activity.timestamp, locale)}
+                            </span>
+                          </div>
+                          <p className="mt-2 text-sm text-[#1f2430]">
+                            {renderActivityMessage(activity.summaryKey, activity.actor, activity.summaryValues)}
+                          </p>
+                        </li>
+                      ))}
+                    </ol>
+                  )}
+                </div>
+              </div>
+            </div>
+          </DxDialog>
+        )}
         <DxDialog
           id="new-contact-dialog"
           show={dialogOpen}
@@ -980,8 +1132,8 @@ export default function HomePage() {
           aria-labelledby="new-contact-title"
         >
           <div className="flex flex-col gap-4 p-6" id="new-contact-title">
-            <h2 className="text-xl font-semibold text-[var(--dx-color-text-primary)]">{tContacts("form.title")}</h2>
-            <p className="text-sm text-[var(--dx-color-text-secondary)]">{tContacts("form.subtitle")}</p>
+            <h2 className="text-xl font-semibold text-[#1f2430]">{tContacts("form.title")}</h2>
+            <p className="text-sm text-[#6b7185]">{tContacts("form.subtitle")}</p>
             <form
               className="flex flex-col gap-4"
               onSubmit={(event) => {
@@ -991,7 +1143,7 @@ export default function HomePage() {
             >
               <div className="grid gap-3">
                 <label className="flex flex-col gap-1 text-sm">
-                  <span className="text-xs font-medium uppercase tracking-wide text-[var(--dx-color-text-tertiary)]">
+                  <span className="text-xs font-medium uppercase tracking-wide text-[#9aa0b9]">
                     {tContacts("form.fields.name")}
                   </span>
                   <DxInput
@@ -1002,13 +1154,13 @@ export default function HomePage() {
                     validationStatus={validationErrors.name ? "error" : undefined}
                   />
                   {validationErrors.name ? (
-                    <span className="text-xs text-[var(--color-error)]" role="alert">
+                    <span className="text-xs text-[#e2445c]" role="alert">
                       {validationErrors.name}
                     </span>
                   ) : null}
                 </label>
                 <label className="flex flex-col gap-1 text-sm">
-                  <span className="text-xs font-medium uppercase tracking-wide text-[var(--dx-color-text-tertiary)]">
+                  <span className="text-xs font-medium uppercase tracking-wide text-[#9aa0b9]">
                     {tContacts("form.fields.company")}
                   </span>
                   <DxInput
@@ -1019,13 +1171,13 @@ export default function HomePage() {
                     validationStatus={validationErrors.company ? "error" : undefined}
                   />
                   {validationErrors.company ? (
-                    <span className="text-xs text-[var(--color-error)]" role="alert">
+                    <span className="text-xs text-[#e2445c]" role="alert">
                       {validationErrors.company}
                     </span>
                   ) : null}
                 </label>
                 <label className="flex flex-col gap-1 text-sm">
-                  <span className="text-xs font-medium uppercase tracking-wide text-[var(--dx-color-text-tertiary)]">
+                  <span className="text-xs font-medium uppercase tracking-wide text-[#9aa0b9]">
                     {tContacts("form.fields.email")}
                   </span>
                   <DxInput
@@ -1036,13 +1188,13 @@ export default function HomePage() {
                     validationStatus={validationErrors.email ? "error" : undefined}
                   />
                   {validationErrors.email ? (
-                    <span className="text-xs text-[var(--color-error)]" role="alert">
+                    <span className="text-xs text-[#e2445c]" role="alert">
                       {validationErrors.email}
                     </span>
                   ) : null}
                 </label>
                 <label className="flex flex-col gap-1 text-sm">
-                  <span className="text-xs font-medium uppercase tracking-wide text-[var(--dx-color-text-tertiary)]">
+                  <span className="text-xs font-medium uppercase tracking-wide text-[#9aa0b9]">
                     {tContacts("form.fields.phone")}
                   </span>
                   <DxInput
@@ -1053,14 +1205,14 @@ export default function HomePage() {
                     validationStatus={validationErrors.phone ? "error" : undefined}
                   />
                   {validationErrors.phone ? (
-                    <span className="text-xs text-[var(--color-error)]" role="alert">
+                    <span className="text-xs text-[#e2445c]" role="alert">
                       {validationErrors.phone}
                     </span>
                   ) : null}
                 </label>
               </div>
               <div className="flex flex-col gap-2">
-                <span className="text-xs font-medium uppercase tracking-wide text-[var(--dx-color-text-tertiary)]">
+                <span className="text-xs font-medium uppercase tracking-wide text-[#9aa0b9]">
                   {tContacts("form.fields.stage")}
                 </span>
                 <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={tContacts("form.fields.stage")}> 
@@ -1104,7 +1256,7 @@ export default function HomePage() {
                   </DxButton>
                 </div>
                 {Object.keys(validationErrors).length > 0 ? (
-                  <span className="text-xs text-[var(--color-error)]" role="alert">
+                  <span className="text-xs text-[#e2445c]" role="alert">
                     {tErrors("validation")}
                   </span>
                 ) : null}

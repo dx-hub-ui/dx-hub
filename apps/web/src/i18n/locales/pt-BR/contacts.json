@@ -1,14 +1,40 @@
 {
   "hero": {
-    "title": "CRM com componentes Vibe, pronto para produção",
-    "subtitle": "Gerencie contatos, acompanhe movimentações no quadro Kanban e valide etapas com telemetria e A11y conectadas."
+    "title": "Contatos",
+    "subtitle": "Organize os relacionamentos do seu CRM em uma experiência inspirada no monday.com, com tabelas e Kanban alinhados ao design system do DX Hub."
+  },
+  "navigation": {
+    "main": "Favoritos",
+    "workspace": "Workspace",
+    "overview": "Visão geral",
+    "crm": "CRM de contatos",
+    "automations": "Automações",
+    "dashboards": "Dashboards",
+    "marketing": "Marketing"
+  },
+  "workspace": {
+    "title": "Workspace DX Hub",
+    "board": "CRM de contatos",
+    "members": "Contatos ativos: {{count}}"
+  },
+  "header": {
+    "searchPlaceholder": "Pesquisar no workspace",
+    "invite": "Convidar membros",
+    "notifications": "Abrir notificações",
+    "notificationsIcon": "🔔",
+    "profile": "Abrir perfil de {{name}}",
+    "role": {
+      "owner": "Administrador"
+    }
   },
   "actions": {
     "newContact": "Novo contato",
     "newContactTooltip": "Registrar contato com telemetria e RLS",
-    "viewKanban": "Ver Kanban",
-    "viewTable": "Ver tabela",
-    "viewMicrosites": "Abrir microsites"
+    "openDetails": "Abrir detalhes"
+  },
+  "views": {
+    "table": "Tabela principal",
+    "kanban": "Kanban"
   },
   "summary": {
     "total": "{{count}} contato(s) ativos",
@@ -18,7 +44,8 @@
     "stageGroupLabel": "Filtrar por etapa",
     "stages": {
       "all": "Todas"
-    }
+    },
+    "reset": "Limpar filtros"
   },
   "stages": {
     "prospecting": "Prospecção",
@@ -32,9 +59,14 @@
     "empty": "Nenhum contato cadastrado ainda.",
     "error": "Não foi possível carregar os contatos.",
     "headers": {
-      "name": "Nome",
-      "stage": "Etapa",
-      "owner": "Responsável"
+      "contact": "Contato",
+      "email": "E-mail",
+      "timeline": "Timeline",
+      "accounts": "Contas",
+      "deals": "Negócios",
+      "phone": "Telefone",
+      "owner": "Responsável",
+      "actions": "Ações"
     },
     "labels": {
       "owner": "Responsável"
@@ -47,6 +79,15 @@
       "previous": "Anterior",
       "next": "Próxima",
       "current": "{{page}} / {{total}}"
+    },
+    "groups": {
+      "active": "Contatos ativos",
+      "inactive": "Contatos inativos",
+      "count": "{{count}} contato(s)",
+      "addContact": "+ Adicionar contato"
+    },
+    "actions": {
+      "more": "Mais"
     }
   },
   "kanban": {
@@ -61,6 +102,15 @@
     "announcement": {
       "stageChanged": "{{name}} movido para {{stage}}"
     }
+  },
+  "toolbar": {
+    "person": "Pessoa",
+    "team": "Equipe",
+    "filter": "Filtrar",
+    "sort": "Ordenar",
+    "group": "Agrupar",
+    "hide": "Ocultar",
+    "more": "Mais"
   },
   "details": {
     "title": "Detalhes do contato",
@@ -77,6 +127,7 @@
   },
   "timeline": {
     "title": "Timeline",
+    "count": "{{count}} atividade(s)",
     "empty": "Sem atividades registradas.",
     "types": {
       "created": "Criação",
@@ -118,5 +169,9 @@
   },
   "toast": {
     "created": "Contato {{name}} cadastrado com sucesso."
+  },
+  "footer": {
+    "title": "Referências rápidas",
+    "link": "monday.com Vibe"
   }
 }

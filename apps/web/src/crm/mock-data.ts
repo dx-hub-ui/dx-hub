@@ -1,15 +1,6 @@
-import { CONTACT_STAGE_ORDER, DEMO_ORG_ID, type ContactRecord } from "./types";
+import { CONTACT_STAGE_ORDER, DEMO_ORG_ID, type ContactRecord, type ContactStage } from "./types";
 
-const MOCK_REFERENCE_TIME = Date.UTC(2024, 3, 18, 15, 0, 0);
-const HOUR_IN_MS = 1000 * 60 * 60;
-
-function hoursAgo(hours: number) {
-  return new Date(MOCK_REFERENCE_TIME - hours * HOUR_IN_MS).toISOString();
-}
-
-function daysAgo(days: number) {
-  return hoursAgo(days * 24);
-}
+const now = new Date();
 
 export const CRM_CONTACTS_SEED: ContactRecord[] = [
   {
@@ -22,13 +13,13 @@ export const CRM_CONTACTS_SEED: ContactRecord[] = [
     owner: "João Martins",
     assignedTo: "João Martins",
     orgId: DEMO_ORG_ID,
-    lastInteraction: hoursAgo(5),
+    lastInteraction: new Date(now.getTime() - 1000 * 60 * 60 * 5).toISOString(),
     activities: [
       {
         id: "activity-ana-created",
         type: "created",
         actor: "João Martins",
-        timestamp: daysAgo(3),
+        timestamp: new Date(now.getTime() - 1000 * 60 * 60 * 72).toISOString(),
         summaryKey: "timeline.events.created",
         summaryValues: { actor: "João Martins" },
       },
@@ -36,7 +27,7 @@ export const CRM_CONTACTS_SEED: ContactRecord[] = [
         id: "activity-ana-discovery",
         type: "meeting",
         actor: "João Martins",
-        timestamp: daysAgo(1),
+        timestamp: new Date(now.getTime() - 1000 * 60 * 60 * 24).toISOString(),
         summaryKey: "timeline.events.discoveryCall",
         summaryValues: { actor: "João Martins" },
       },
@@ -44,7 +35,7 @@ export const CRM_CONTACTS_SEED: ContactRecord[] = [
         id: "activity-ana-stage",
         type: "stage",
         actor: "João Martins",
-        timestamp: hoursAgo(5),
+        timestamp: new Date(now.getTime() - 1000 * 60 * 60 * 5).toISOString(),
         summaryKey: "timeline.events.stageChanged",
         summaryValues: { actor: "João Martins", stage: "discovery", from: "prospecting" },
       },
@@ -60,13 +51,13 @@ export const CRM_CONTACTS_SEED: ContactRecord[] = [
     owner: "Ana Prado",
     assignedTo: "Paula Ribeiro",
     orgId: DEMO_ORG_ID,
-    lastInteraction: hoursAgo(12),
+    lastInteraction: new Date(now.getTime() - 1000 * 60 * 60 * 12).toISOString(),
     activities: [
       {
         id: "activity-marcelo-created",
         type: "created",
         actor: "Ana Prado",
-        timestamp: daysAgo(6),
+        timestamp: new Date(now.getTime() - 1000 * 60 * 60 * 144).toISOString(),
         summaryKey: "timeline.events.created",
         summaryValues: { actor: "Ana Prado" },
       },
@@ -74,7 +65,7 @@ export const CRM_CONTACTS_SEED: ContactRecord[] = [
         id: "activity-marcelo-email",
         type: "email",
         actor: "Paula Ribeiro",
-        timestamp: daysAgo(1),
+        timestamp: new Date(now.getTime() - 1000 * 60 * 60 * 24).toISOString(),
         summaryKey: "timeline.events.proposalSent",
         summaryValues: { actor: "Paula Ribeiro" },
       },
@@ -82,7 +73,7 @@ export const CRM_CONTACTS_SEED: ContactRecord[] = [
         id: "activity-marcelo-stage",
         type: "stage",
         actor: "Paula Ribeiro",
-        timestamp: hoursAgo(12),
+        timestamp: new Date(now.getTime() - 1000 * 60 * 60 * 12).toISOString(),
         summaryKey: "timeline.events.stageChanged",
         summaryValues: { actor: "Paula Ribeiro", stage: "negotiation", from: "discovery" },
       },
@@ -98,13 +89,13 @@ export const CRM_CONTACTS_SEED: ContactRecord[] = [
     owner: "Ana Prado",
     assignedTo: "Ana Prado",
     orgId: DEMO_ORG_ID,
-    lastInteraction: daysAgo(2),
+    lastInteraction: new Date(now.getTime() - 1000 * 60 * 60 * 48).toISOString(),
     activities: [
       {
         id: "activity-camila-created",
         type: "created",
         actor: "Ana Prado",
-        timestamp: daysAgo(8),
+        timestamp: new Date(now.getTime() - 1000 * 60 * 60 * 192).toISOString(),
         summaryKey: "timeline.events.created",
         summaryValues: { actor: "Ana Prado" },
       },
@@ -112,7 +103,7 @@ export const CRM_CONTACTS_SEED: ContactRecord[] = [
         id: "activity-camila-demo",
         type: "meeting",
         actor: "Ana Prado",
-        timestamp: daysAgo(4),
+        timestamp: new Date(now.getTime() - 1000 * 60 * 60 * 96).toISOString(),
         summaryKey: "timeline.events.demoCompleted",
         summaryValues: { actor: "Ana Prado" },
       },
@@ -120,7 +111,7 @@ export const CRM_CONTACTS_SEED: ContactRecord[] = [
         id: "activity-camila-stage",
         type: "stage",
         actor: "Ana Prado",
-        timestamp: daysAgo(2),
+        timestamp: new Date(now.getTime() - 1000 * 60 * 60 * 48).toISOString(),
         summaryKey: "timeline.events.stageChanged",
         summaryValues: { actor: "Ana Prado", stage: "won", from: "negotiation" },
       },
@@ -136,13 +127,13 @@ export const CRM_CONTACTS_SEED: ContactRecord[] = [
     owner: "João Martins",
     assignedTo: "Isabela Costa",
     orgId: DEMO_ORG_ID,
-    lastInteraction: hoursAgo(8),
+    lastInteraction: new Date(now.getTime() - 1000 * 60 * 60 * 8).toISOString(),
     activities: [
       {
         id: "activity-leo-created",
         type: "created",
         actor: "Isabela Costa",
-        timestamp: daysAgo(2),
+        timestamp: new Date(now.getTime() - 1000 * 60 * 60 * 48).toISOString(),
         summaryKey: "timeline.events.created",
         summaryValues: { actor: "Isabela Costa" },
       },
@@ -150,7 +141,7 @@ export const CRM_CONTACTS_SEED: ContactRecord[] = [
         id: "activity-leo-note",
         type: "note",
         actor: "Isabela Costa",
-        timestamp: hoursAgo(8),
+        timestamp: new Date(now.getTime() - 1000 * 60 * 60 * 8).toISOString(),
         summaryKey: "timeline.events.qualifyNote",
         summaryValues: { actor: "Isabela Costa" },
       },
@@ -166,13 +157,13 @@ export const CRM_CONTACTS_SEED: ContactRecord[] = [
     owner: "João Martins",
     assignedTo: "João Martins",
     orgId: DEMO_ORG_ID,
-    lastInteraction: daysAgo(14),
+    lastInteraction: new Date(now.getTime() - 1000 * 60 * 60 * 24 * 14).toISOString(),
     activities: [
       {
         id: "activity-helena-created",
         type: "created",
         actor: "João Martins",
-        timestamp: daysAgo(45),
+        timestamp: new Date(now.getTime() - 1000 * 60 * 60 * 24 * 45).toISOString(),
         summaryKey: "timeline.events.created",
         summaryValues: { actor: "João Martins" },
       },
@@ -180,12 +171,20 @@ export const CRM_CONTACTS_SEED: ContactRecord[] = [
         id: "activity-helena-stage",
         type: "stage",
         actor: "João Martins",
-        timestamp: daysAgo(14),
+        timestamp: new Date(now.getTime() - 1000 * 60 * 60 * 24 * 14).toISOString(),
         summaryKey: "timeline.events.stageChanged",
         summaryValues: { actor: "João Martins", stage: "lost", from: "negotiation" },
       },
     ],
   },
 ];
+
+export const CONTACT_STAGE_VARIANTS: Record<ContactStage, "primary" | "secondary" | "ghost" | "danger"> = {
+  prospecting: "secondary",
+  discovery: "primary",
+  negotiation: "primary",
+  won: "secondary",
+  lost: "danger",
+};
 
 export const BOARD_COLUMN_ORDER = CONTACT_STAGE_ORDER;
