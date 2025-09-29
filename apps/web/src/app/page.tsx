@@ -1009,23 +1009,23 @@ export default function HomePage() {
           </Link>
         </footer>
       </section>
-        <DxDialog
-          id="contact-details-dialog"
-          show={Boolean(detailsOpen && selectedContact)}
-          onClose={() => {
-            setDetailsOpen(false);
-            telemetry.capture("ui_open_overlay", {
-              overlay: "contact_details_panel",
-              state: "close",
-              entity: "crm_contacts",
-            });
-          }}
-          size="sm"
-          className="!bg-white !p-0"
-          style={detailsDialogStyle}
-          aria-labelledby="contact-details-title"
-        >
-          {selectedContact ? (
+        {selectedContact && (
+          <DxDialog
+            id="contact-details-dialog"
+            show={detailsOpen}
+            onClose={() => {
+              setDetailsOpen(false);
+              telemetry.capture("ui_open_overlay", {
+                overlay: "contact_details_panel",
+                state: "close",
+                entity: "crm_contacts",
+              });
+            }}
+            size="sm"
+            className="!bg-white !p-0"
+            style={detailsDialogStyle}
+            aria-labelledby="contact-details-title"
+          >
             <div className="flex h-full flex-col bg-white" id="contact-details-title">
               <header className="flex flex-col gap-3 border-b border-[#d4d9e6] bg-[#f6f7fb] px-6 py-5">
                 <div className="flex items-start justify-between gap-4">
@@ -1123,8 +1123,8 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
-          ) : null}
-        </DxDialog>
+          </DxDialog>
+        )}
         <DxDialog
           id="new-contact-dialog"
           show={dialogOpen}
