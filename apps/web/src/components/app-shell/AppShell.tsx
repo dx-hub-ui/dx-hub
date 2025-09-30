@@ -219,7 +219,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               <div className={styles.topbarTitles}>
                 {config.workspace.title ? (
                   <Heading
-                    type={Heading.types.H4}
+                    type={Heading.types.H3}
                     weight={Heading.weights.BOLD}
                     color={Heading.colors.PRIMARY}
                     className={styles.topbarTitle}
