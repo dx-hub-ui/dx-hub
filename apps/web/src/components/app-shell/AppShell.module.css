@@ -41,9 +41,7 @@
   padding: 0;
 }
 
-.navListItem {
-  display: contents;
-}
+.navListItem { display: contents; }
 
 .navItemButton {
   display: inline-flex;
@@ -94,17 +92,22 @@
   min-width: 0;
 }
 
+/* === TOPBAR ============================================================= */
 .topbar {
   position: sticky;
   top: 0;
   left: 0;
-  z-index: 10;
+  z-index: 20;
+
+  /* Align with the layout's rail + content */
   display: grid;
-  grid-template-columns: var(--shell-sidebar-width) 1fr;
+  grid-template-columns: var(--dx-rail-current, var(--shell-sidebar-width)) 1fr;
+
   align-items: stretch;
-  width: calc(100% + var(--shell-sidebar-width) + var(--shell-rail-gap, 0px));
-  margin-left: calc((var(--shell-sidebar-width) + var(--shell-rail-gap, 0px)) * -1);
+  width: 100%;
+  margin: 0;
   min-height: var(--dx-top-bar-height);
+
   background: var(--dx-color-surface);
   box-shadow: var(--dx-shadow-topbar);
   padding-inline-end: var(--dx-page-padding-x);
@@ -115,7 +118,7 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  width: var(--shell-sidebar-width);
+  width: 100%;
   border-right: 1px solid var(--dx-color-border-subtle);
   background: var(--dx-color-surface);
   padding-inline: var(--dx-space-4);
@@ -191,9 +194,7 @@
   transition: background-color 120ms ease, box-shadow 120ms ease;
 }
 
-.pill:hover {
-  background: var(--dx-chip-hover);
-}
+.pill:hover { background: var(--dx-chip-hover); }
 
 .topbarControls {
   display: inline-flex;
@@ -248,9 +249,7 @@
   font-weight: var(--dx-font-weight-semibold);
 }
 
-.boardViewContainer {
-  display: contents;
-}
+.boardViewContainer { display: contents; }
 
 .main {
   min-height: 0;
@@ -270,31 +269,16 @@
 }
 
 @media (max-width: 1024px) {
-  .sidebar {
-    padding: var(--dx-space-5) var(--dx-space-3);
-  }
-
-  .topbarInner {
-    padding-inline-start: var(--dx-space-3);
-  }
+  .sidebar { padding: var(--dx-space-5) var(--dx-space-3); }
+  .topbarInner { padding-inline-start: var(--dx-space-3); }
 }
 
 @media (max-width: 768px) {
-  .topbarInner {
-    gap: var(--dx-space-4);
-  }
-
-  .pill {
-    display: none;
-  }
+  .topbarInner { gap: var(--dx-space-4); }
+  .pill { display: none; }
 }
 
 @media (max-width: 640px) {
-  .sidebar {
-    padding: var(--dx-space-4);
-  }
-
-  .topbarInner {
-    gap: var(--dx-space-3);
-  }
+  .sidebar { padding: var(--dx-space-4); }
+  .topbarInner { gap: var(--dx-space-3); }
 }
