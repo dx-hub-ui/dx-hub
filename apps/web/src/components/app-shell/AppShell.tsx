@@ -257,19 +257,12 @@ export function AppShell({ children }: { children: ReactNode }) {
                 />
               ) : null}
               {config.workspace.profile ? (
-                <div className={styles.profile} aria-label={config.workspace.profile.label} role="group">
-                  <Avatar
-                    text={config.workspace.profile.initials}
-                    withoutTooltip
-                    ariaLabel={config.workspace.profile.name}
-                  />
-                  <div className={styles.profileDetails}>
-                    <span className={styles.profileName}>{config.workspace.profile.name}</span>
-                    {config.workspace.profile.role ? (
-                      <span className={styles.profileRole}>{config.workspace.profile.role}</span>
-                    ) : null}
-                  </div>
-                </div>
+                <Avatar
+                  text={config.workspace.profile.initials}
+                  withoutTooltip
+                  ariaLabel={config.workspace.profile.name}
+                  className={styles.profileAvatar}
+                />
               ) : null}
             </div>
           </header>
