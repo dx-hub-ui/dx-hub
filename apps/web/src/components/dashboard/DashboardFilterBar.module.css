@@ -1,0 +1,123 @@
+.root {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--dx-dashboard-filter-gap, var(--dx-space-4));
+  background: var(--dx-dashboard-filter-background, var(--dx-color-surface));
+  border: 1px solid var(--dx-dashboard-filter-border, var(--dx-color-border));
+  border-radius: var(--dx-dashboard-filter-radius, var(--dx-radius-lg));
+  padding: var(--dx-dashboard-filter-padding-block, var(--dx-space-4))
+    var(--dx-dashboard-filter-padding-inline, var(--dx-space-5));
+  box-shadow: var(--dx-shadow-soft);
+}
+
+.fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dx-space-2);
+  min-width: 12rem;
+}
+
+.legend {
+  font-size: var(--dx-typography-xs);
+  color: var(--dx-color-text-secondary);
+  font-weight: var(--dx-font-weight-medium);
+}
+
+.roleGroup {
+  display: flex;
+  gap: var(--dx-space-2);
+}
+
+.roleButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--dx-space-2);
+  padding: var(--dx-space-2) var(--dx-space-3);
+  border-radius: var(--dx-radius-md);
+  border: 1px solid var(--dx-color-border);
+  background: var(--dx-color-surface);
+  color: var(--dx-color-text-secondary);
+  font-size: var(--dx-typography-sm);
+  font-weight: var(--dx-font-weight-medium);
+  cursor: pointer;
+  transition: box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.roleButton[aria-pressed="true"] {
+  background: var(--primary-selected-color);
+  border-color: transparent;
+  color: var(--text-color-on-primary);
+  box-shadow: 0 12px 24px -12px var(--primary-selected-color);
+}
+
+.roleButton:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--primary-selected-hover-color);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dx-space-2);
+  min-width: 10rem;
+  flex: 1 1 12rem;
+}
+
+.label {
+  font-size: var(--dx-typography-xs);
+  font-weight: var(--dx-font-weight-medium);
+  color: var(--dx-color-text-secondary);
+}
+
+.select {
+  appearance: none;
+  border: 1px solid var(--dx-color-border);
+  border-radius: var(--dx-radius-md);
+  background: var(--dx-color-surface);
+  color: var(--dx-color-text-primary);
+  padding: var(--dx-space-2) var(--dx-space-4);
+  font-size: var(--dx-typography-sm);
+  font-family: inherit;
+  min-height: 2.75rem;
+  box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.02);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.select:focus-visible {
+  outline: none;
+  border-color: var(--primary-selected-color);
+  box-shadow: 0 0 0 2px var(--primary-selected-hover-color);
+}
+
+@media (max-width: 900px) {
+  .root {
+    padding: var(--dx-space-4);
+  }
+
+  .fieldset {
+    width: 100%;
+  }
+
+  .roleGroup {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 680px) {
+  .root {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .roleGroup {
+    flex-wrap: wrap;
+  }
+
+  .roleButton {
+    flex: 1 1 calc(50% - var(--dx-space-2));
+    justify-content: center;
+  }
+}

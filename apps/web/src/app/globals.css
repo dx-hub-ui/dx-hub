@@ -9,6 +9,29 @@
   --dx-color-text-secondary: var(--color-asphalt);
   --dx-color-text-tertiary: var(--color-wolf_gray);
   --dx-color-accent: var(--color-basic_blue);
+  --dx-space-0: 0;
+  --dx-space-1: 0.25rem;
+  --dx-space-2: 0.5rem;
+  --dx-space-3: 0.75rem;
+  --dx-space-4: 1rem;
+  --dx-space-5: 1.5rem;
+  --dx-space-6: 2rem;
+  --dx-space-7: 2.5rem;
+  --dx-space-8: 3rem;
+  --dx-radius-sm: 0.75rem;
+  --dx-radius-md: 1rem;
+  --dx-radius-lg: 1.5rem;
+  --dx-shadow-soft: var(--box-shadow-small);
+  --dx-shadow-elevated: var(--box-shadow-medium);
+  --dx-layout-max-width: 1180px;
+  --dx-layout-content-gap: var(--dx-space-6);
+  --dx-typography-xs: 0.75rem;
+  --dx-typography-sm: 0.875rem;
+  --dx-typography-md: 1rem;
+  --dx-typography-lg: 1.25rem;
+  --dx-font-weight-regular: 400;
+  --dx-font-weight-medium: 500;
+  --dx-font-weight-semibold: 600;
 }
 
 @theme inline {
