@@ -4,6 +4,7 @@
   color-scheme: light;
   --dx-color-page-background: var(--color-riverstone_gray);
   --dx-color-surface: var(--color-snow_white);
+  --dx-color-surface-hover: #e1eff2;
   --dx-color-border: var(--color-ui_grey);
   --dx-color-text-primary: var(--color-black);
   --dx-color-text-secondary: var(--color-asphalt);
@@ -32,6 +33,13 @@
   --dx-font-weight-regular: 400;
   --dx-font-weight-medium: 500;
   --dx-font-weight-semibold: 600;
+  --dx-top-bar-height: 40px;
+  --dx-top-bar-enlarged-height: 56px;
+  --surface-color: var(--dx-color-surface-hover);
+  --primary-selected-hover-color: var(--dx-color-surface-hover);
+  --top-bar-height: var(--dx-top-bar-height);
+  --top-bar-enlarged-height: var(--dx-top-bar-enlarged-height);
+  --box-shadow-xs: 0px 4px 6px -4px rgba(0, 0, 0, 0.1);
 }
 
 @theme inline {

@@ -98,38 +98,40 @@
 
 .topbar {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: var(--spacing-large);
-  padding: var(--spacing-large) var(--spacing-xxl);
+  flex-wrap: wrap;
+  gap: var(--spacing-medium);
+  padding: 0 var(--spacing-xl);
+  min-height: var(--top-bar-height, 48px);
   background-color: var(--primary-selected-hover-color);
   border-bottom: 1px solid var(--layout-border-color);
-  box-shadow: var(--box-shadow-small);
+  box-shadow: var(--box-shadow-xs);
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: var(--legacy-top-bar-z-index, 10);
 }
 
 .topbarInfo {
   display: flex;
   align-items: center;
-  gap: var(--spacing-medium);
+  gap: var(--spacing-small);
 }
 
 .appBadge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
+  width: var(--spacing-xl);
+  height: var(--spacing-xl);
+  border-radius: 50%;
   background-color: var(--primary-background-color);
   color: var(--primary-text-color);
-  font-size: 0.9rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  box-shadow: var(--box-shadow-small);
+  font-size: var(--font-size-20, 0.875rem);
+  font-weight: var(--font-weight-bold, 600);
+  letter-spacing: 0.06em;
+  box-shadow: var(--box-shadow-xs);
+  text-transform: uppercase;
 }
 
 .topbarTitles {
@@ -142,7 +144,7 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--spacing-medium);
+  gap: var(--spacing-small);
 }
 
 .search {
@@ -150,31 +152,17 @@
   max-width: 360px;
 }
 
-.profile {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-small);
-  padding: 6px 12px;
-  border-radius: 999px;
+.profileAvatar {
+  box-shadow: var(--box-shadow-xs);
+  border: 2px solid var(--primary-background-color);
   background-color: var(--primary-background-color);
+  transition: box-shadow var(--motion-productive-short, 70ms) var(--motion-timing-transition, ease);
+}
+
+.profileAvatar:focus-visible,
+.profileAvatar:hover {
   box-shadow: var(--box-shadow-small);
-}
-
-.profileDetails {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.2;
-}
-
-.profileName {
-  color: var(--primary-text-color);
-  font-weight: 600;
-  font-size: 0.95rem;
-}
-
-.profileRole {
-  color: var(--secondary-text-color);
-  font-size: 0.75rem;
+  outline: none;
 }
 
 .main {
