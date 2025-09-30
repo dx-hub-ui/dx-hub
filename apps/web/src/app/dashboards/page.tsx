@@ -72,6 +72,14 @@ type WidgetDefinition = {
   variant?: "primary" | "ghost";
 };
 
+function toDashboardScope(value: string | undefined): DashboardScope | null {
+  if (value === "org" || value === "team" || value === "self") {
+    return value;
+  }
+
+  return null;
+}
+
 function getInitials(name: string) {
   return name
     .split(" ")
@@ -156,7 +164,9 @@ export default function DashboardsPage() {
   );
 
   const scopeOptions = scopeOptionsByRole[role];
-  const defaultScope = scopeOptions[0]?.value ?? scope;
+  const defaultScope = useMemo<DashboardScope>(() => {
+    return toDashboardScope(scopeOptions[0]?.value) ?? scope;
+  }, [scope, scopeOptions]);
 
   useEffect(() => {
     if (!scopeOptions.some((option) => option.value === scope)) {
