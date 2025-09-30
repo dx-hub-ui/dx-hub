@@ -11,7 +11,7 @@
   display: flex;
   flex-direction: column;
   width: var(--dx-sidebar-width);
-  /* espaço extra para o primeiro item não “grudar” no topbar */
+  /* respiro para o primeiro item não “grudar” no topbar */
   padding: calc(var(--dx-space-7)) var(--dx-space-4);
   gap: var(--dx-space-4);
   color: var(--dx-color-text-primary);
@@ -31,7 +31,6 @@
   padding-inline-end: var(--dx-space-1);
   margin-inline-end: calc(-1 * var(--dx-space-1));
   scrollbar-gutter: stable;
-  /* leve afastamento visual do topo */
   margin-top: var(--dx-space-1);
 }
 
@@ -82,8 +81,6 @@
   color: var(--dx-color-text-primary);
   box-shadow: none;
 }
-
-/* hover do item ativo usa o hover-selected */
 .navItemButtonActive:hover,
 .navItemButtonActive:focus-visible {
   background: var(--primary-selected-hover-color);
@@ -110,20 +107,20 @@
   left: 0;
   z-index: 20;
 
-  /* alinha com o rail + conteúdo */
+  /* mesma definição de colunas da grid principal p/ a largura casar com a sidebar */
   display: grid;
-  grid-template-columns: var(--dx-rail-current, var(--shell-sidebar-width)) 1fr;
+  grid-template-columns: minmax(0, var(--dx-rail-current, var(--shell-sidebar-width))) 1fr;
 
   align-items: stretch;
   width: 100%;
   margin: 0;
   min-height: var(--dx-top-bar-height);
 
-  /* fundo no tom solicitado */
+  /* topo inteiro na cor pedida (o globals.css também reforça isso) */
   background: var(--dx-color-topbar-bg);
   box-shadow: var(--dx-shadow-topbar);
 
-  /* só respiro à direita – o da esquerda é tratado por cada coluna */
+  /* respiro só à direita; a coluna 2 recebe padding à esquerda */
   padding-inline: 0 var(--dx-page-padding-x);
   box-sizing: border-box;
 }
@@ -136,7 +133,6 @@
   min-height: var(--dx-top-bar-height);
   border-right: 1px solid var(--dx-color-border-subtle);
   background: var(--dx-color-topbar-bg);
-  /* padding local para o bloco da marca; evita “faixa dupla” à esquerda */
   padding-inline: var(--dx-space-4);
   box-sizing: border-box;
 }
@@ -148,8 +144,7 @@
   gap: var(--dx-space-6);
   width: 100%;
   margin: 0;
-  /* respiro à esquerda só para a coluna de conteúdo do topbar */
-  padding-inline-start: var(--dx-page-padding-x);
+  padding-inline-start: var(--dx-page-padding-x); /* respiro à esquerda */
   height: var(--dx-top-bar-height);
 }
 
