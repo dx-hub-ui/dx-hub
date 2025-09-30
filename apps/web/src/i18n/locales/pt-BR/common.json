@@ -7,6 +7,18 @@
   "actions": {
     "openStorybook": "Abrir Storybook"
   },
+  "navigation": {
+    "primary": "Navegação principal"
+  },
+  "regions": {
+    "main": "Conteúdo principal"
+  },
+  "topbar": {
+    "notifications": "Notificações",
+    "help": "Ajuda",
+    "inbox": "Inbox",
+    "account": "Conta do usuário"
+  },
   "footer": {
     "docsLabel": "Referências oficiais do Vibe",
     "docs": "Docs oficiais do Vibe"

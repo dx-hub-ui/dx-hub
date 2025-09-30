@@ -10,16 +10,18 @@ import {
   type CSSProperties,
   type ReactNode,
 } from "react";
-import { Avatar, Heading, Icon, Search, Text, type SubIcon } from "@vibe/core";
+import { Avatar, Icon, type SubIcon } from "@vibe/core";
 import {
   Apps as AppsIcon,
   Board as BoardIcon,
   Chart as ChartIcon,
   Dashboard as DashboardIcon,
+  Help as HelpIcon,
+  Inbox as InboxIcon,
   Integrations as IntegrationsIcon,
-  Invite as InviteIcon,
   Notifications as NotificationsIcon,
 } from "@vibe/icons";
+import { useTelemetry } from "@dx/ui";
 import { useTranslation } from "@/i18n/I18nProvider";
 import styles from "./AppShell.module.css";
 
@@ -121,6 +123,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const [leftPaneState, setLeftPaneState] = useState<"collapsed" | "expanded">("expanded");
   const [railWidth, setRailWidth] = useState<number | null>(null);
   const { t: tCommon } = useTranslation("common");
+  const { capture: captureTelemetry } = useTelemetry();
 
   const setConfig = useCallback<AppLayoutContextValue["setConfig"]>((patch) => {
     setConfigState((previous) => {
@@ -143,12 +146,44 @@ export function AppShell({ children }: { children: ReactNode }) {
       .join("")
       .slice(0, 2);
   }, [appName, config.workspace.appAcronym]);
-  const hasUtilityIcons = Boolean(config.workspace.inviteLabel || config.workspace.notificationsLabel);
-  const workspaceDescriptor =
+  const navigationItems = useMemo(() => {
+    return config.sidebar.sections.flatMap((section) => section.items);
+  }, [config.sidebar.sections]);
+
+  const primaryNavigationLabel =
+    tCommon("navigation.primary") ?? tCommon("navigation") ?? "Navegação principal";
+  const mainRegionLabel = tCommon("regions.main") ?? tCommon("mainContent") ?? "Conteúdo principal";
+
+  const notificationsLabel =
+    config.workspace.notificationsLabel ?? tCommon("topbar.notifications") ?? "Notificações";
+  const helpLabel = tCommon("topbar.help") ?? "Ajuda";
+  const inboxLabel = tCommon("topbar.inbox") ?? "Inbox";
+  const avatarLabel =
     config.workspace.profile?.label ??
-    config.workspace.profile?.role ??
-    tCommon("workspace") ??
-    "Workspace";
+    config.workspace.profile?.name ??
+    tCommon("topbar.account") ??
+    "Conta";
+
+  const handleNavigationClick = useCallback(
+    (item: NavigationItem) => {
+      captureTelemetry("ui_navigation_item_click", {
+        origin: "sidebar",
+        label: item.label,
+        destination: item.id,
+      });
+    },
+    [captureTelemetry],
+  );
+
+  const handleTopbarControlClick = useCallback(
+    (control: "notifications" | "help" | "inbox" | "avatar") => {
+      captureTelemetry("ui_topbar_click", {
+        origin: "topbar",
+        control,
+      });
+    },
+    [captureTelemetry],
+  );
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -198,70 +233,42 @@ export function AppShell({ children }: { children: ReactNode }) {
               id="first-level-control"
               className={`first-level-control ${styles.sidebar}`}
               tabIndex={-1}
-              aria-label={tCommon("navigation") ?? "Navigation"}
+              aria-label={primaryNavigationLabel}
             >
-              <div className={styles.sidebarHeader}>
-                <span>{workspaceDescriptor}</span>
+              <div className={styles.sidebarBrand}>
+                <span className={styles.sidebarBadge} aria-hidden>
+                  {appAcronym}
+                </span>
+                <span className={styles.sidebarAppName}>{appName}</span>
               </div>
-              <div className={styles.workspaceRow}>
-                <button type="button" className={styles.workspaceSelect} aria-label={workspaceDescriptor}>
-                  <span className={styles.workspaceBadge}>{appAcronym}</span>
-                  <span className={styles.workspaceName}>{appName}</span>
-                </button>
-              </div>
-              <div className={styles.sidebarContent}>
-                {config.sidebar.sections.map((section) => {
-                  const sectionLabelId = `${section.id}-nav-label`;
-                  return (
-                    <section
-                      key={section.id}
-                      className={styles.navSection}
-                      aria-labelledby={sectionLabelId}
-                    >
-                      <Text
-                        id={sectionLabelId}
-                        type={Text.types.TEXT3}
-                        weight={Text.weights.MEDIUM}
-                        className={styles.sectionLabel}
-                      >
-                        {section.label}
-                      </Text>
-                      <div className={styles.navList}>
-                        {section.items.map((item) => {
-                          const isActive = item.id === config.sidebar.activeItemId;
-                          const IconComponent = NAVIGATION_ICONS[item.id];
-                        const buttonClassName = [
-                          styles.navItemButton,
-                          isActive ? styles.navItemButtonActive : undefined,
-                        ]
-                          .filter(Boolean)
-                          .join(" ");
+              <div className={styles.sidebarNav} role="presentation">
+                <ul className={styles.navList} role="list">
+                  {navigationItems.map((item) => {
+                    const isActive = item.id === config.sidebar.activeItemId;
+                    const IconComponent = NAVIGATION_ICONS[item.id];
+                    const buttonClassName = [
+                      styles.navItemButton,
+                      isActive ? styles.navItemButtonActive : undefined,
+                    ]
+                      .filter(Boolean)
+                      .join(" ");
 
-                        return (
-                          <button
-                            key={item.id}
-                            type="button"
-                            className={buttonClassName}
-                            aria-pressed={isActive}
-                          >
-                            {IconComponent ? <Icon icon={IconComponent} aria-hidden iconSize={18} /> : null}
-                            <span className={styles.navItemLabel}>{item.label}</span>
-                          </button>
-                        );
-                      })}
-                      </div>
-                    </section>
-                  );
-                })}
+                    return (
+                      <li key={item.id} className={styles.navListItem}>
+                        <button
+                          type="button"
+                          className={buttonClassName}
+                          onClick={() => handleNavigationClick(item)}
+                          aria-current={isActive ? "page" : undefined}
+                        >
+                          {IconComponent ? <Icon icon={IconComponent} aria-hidden iconSize={18} /> : null}
+                          <span className={styles.navItemLabel}>{item.label}</span>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
               </div>
-              {config.sidebar.footer ? (
-                <footer className={styles.sidebarFooter}>
-                  {config.sidebar.footer.title ? (
-                    <p className={styles.sidebarFooterTitle}>{config.sidebar.footer.title}</p>
-                  ) : null}
-                  {config.sidebar.footer.description ? <p>{config.sidebar.footer.description}</p> : null}
-                </footer>
-              ) : null}
             </nav>
 
             <div className="transparent-wrapper">
@@ -288,19 +295,10 @@ export function AppShell({ children }: { children: ReactNode }) {
                       </div>
                       <div className={styles.titleGroup} aria-live="polite">
                         {config.workspace.title ? (
-                          <Heading
-                            type={Heading.types.H3}
-                            weight={Heading.weights.BOLD}
-                            color={Heading.colors.PRIMARY}
-                            className={styles.topbarTitle}
-                          >
-                            {config.workspace.title}
-                          </Heading>
+                          <h1 className={styles.topbarTitle}>{config.workspace.title}</h1>
                         ) : null}
                         {config.workspace.board ? (
-                          <Text type={Text.types.TEXT2} color={Text.colors.SECONDARY} className={styles.topbarSubtitle}>
-                            {config.workspace.board}
-                          </Text>
+                          <p className={styles.topbarSubtitle}>{config.workspace.board}</p>
                         ) : null}
                       </div>
                       {config.workspace.planCta ? (
@@ -317,50 +315,51 @@ export function AppShell({ children }: { children: ReactNode }) {
                         </button>
                       ) : null}
                     </div>
-                    <div className={styles.topbarRight}>
-                      {config.workspace.search ? (
-                        <Search
-                          value={config.workspace.search.value}
-                          onChange={(value) => config.workspace.search?.onChange?.(value)}
-                          placeholder={config.workspace.search.placeholder}
-                          className={styles.search}
-                          size="small"
-                        />
+                    <div className={styles.topbarControls}>
+                      <button
+                        type="button"
+                        className={styles.iconButton}
+                        aria-label={notificationsLabel}
+                        title={notificationsLabel}
+                        onClick={() => handleTopbarControlClick("notifications")}
+                      >
+                        <Icon icon={NotificationsIcon} aria-hidden iconSize={18} />
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.iconButton}
+                        aria-label={helpLabel}
+                        title={helpLabel}
+                        onClick={() => handleTopbarControlClick("help")}
+                      >
+                        <Icon icon={HelpIcon} aria-hidden iconSize={18} />
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.iconButton}
+                        aria-label={inboxLabel}
+                        title={inboxLabel}
+                        onClick={() => handleTopbarControlClick("inbox")}
+                      >
+                        <Icon icon={InboxIcon} aria-hidden iconSize={18} />
+                      </button>
+                      {config.workspace.profile ? (
+                        <button
+                          type="button"
+                          className={styles.avatarButton}
+                          aria-label={avatarLabel}
+                          title={avatarLabel}
+                          onClick={() => handleTopbarControlClick("avatar")}
+                        >
+                          <span aria-hidden className={styles.avatarWrapper}>
+                            <Avatar
+                              text={config.workspace.profile.initials}
+                              withoutTooltip
+                              className={styles.profileAvatar}
+                            />
+                          </span>
+                        </button>
                       ) : null}
-                      <div className={styles.iconCluster}>
-                        {config.workspace.inviteLabel ? (
-                          <button
-                            type="button"
-                            className={styles.iconBtn}
-                            aria-label={config.workspace.inviteLabel}
-                            title={config.workspace.inviteLabel}
-                          >
-                            <Icon icon={InviteIcon} aria-hidden iconSize={18} />
-                          </button>
-                        ) : null}
-                        {config.workspace.notificationsLabel ? (
-                          <button
-                            type="button"
-                            className={`${styles.iconBtn} ${styles.iconBtnDot}`}
-                            aria-label={config.workspace.notificationsLabel}
-                            title={config.workspace.notificationsLabel}
-                          >
-                            <Icon icon={NotificationsIcon} aria-hidden iconSize={18} />
-                          </button>
-                        ) : null}
-                        {hasUtilityIcons ? <span className={styles.divider} aria-hidden /> : null}
-                        <div className={styles.iconBtn} aria-hidden>
-                          <div className={`${styles.brandLogo} ${styles.brandLogoSmall}`}>{appAcronym}</div>
-                        </div>
-                        {config.workspace.profile ? (
-                          <Avatar
-                            text={config.workspace.profile.initials}
-                            withoutTooltip
-                            ariaLabel={config.workspace.profile.name}
-                            className={styles.profileAvatar}
-                          />
-                        ) : null}
-                      </div>
                     </div>
                   </div>
                 </header>
@@ -371,7 +370,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   id="first-level-content"
                   className={`first-level-content ${styles.main}`}
                   tabIndex={-1}
-                  aria-label={tCommon("mainContent") ?? "Main content"}
+                  aria-label={mainRegionLabel}
                 >
                   <div className={`scroller ${styles.scroller}`}>{children}</div>
                 </main>
