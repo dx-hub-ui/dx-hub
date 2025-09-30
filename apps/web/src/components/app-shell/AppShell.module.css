@@ -159,7 +159,7 @@
   min-width: 0;
 }
 
-brandLogo {
+.brandLogo {
    display: inline-flex;
    align-items: center;
    justify-content: center;
