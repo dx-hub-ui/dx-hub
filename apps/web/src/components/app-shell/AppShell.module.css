@@ -129,7 +129,7 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  width: 100%;
+  width: var(--dx-sidebar-width);
   min-height: var(--dx-top-bar-height);
   border-right: 1px solid var(--dx-color-border-subtle);
   background: var(--dx-color-topbar-bg);
