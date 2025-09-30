@@ -1,0 +1,498 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dx-space-6);
+  padding: calc(var(--dx-page-padding-y) + 20px) var(--dx-page-padding-x) var(--dx-page-padding-y);
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dx-space-4);
+}
+
+.headerRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--dx-space-4);
+}
+
+.titleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dx-space-2);
+  max-width: 720px;
+}
+
+.title {
+  font: var(--dx-font-h2);
+  color: var(--dx-color-text-primary);
+}
+
+.subtitle {
+  font: var(--dx-font-body);
+  color: var(--dx-color-text-secondary);
+}
+
+.tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 9999px;
+  background: var(--dx-color-surface);
+  border: 1px solid var(--dx-color-border);
+}
+
+.tabButton {
+  border: 0;
+  background: transparent;
+  padding: 6px 18px;
+  border-radius: 9999px;
+  font: var(--dx-font-body-strong);
+  color: var(--dx-color-text-secondary);
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.tabButton[data-active="true"] {
+  background: var(--primary-selected-color);
+  color: var(--dx-color-text-primary);
+  box-shadow: var(--dx-shadow-soft);
+}
+
+.actionsRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--dx-space-3);
+}
+
+.actionsLeft,
+.actionsRight {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--dx-space-3);
+}
+
+.searchInput {
+  min-width: 240px;
+}
+
+.multiSelect {
+  display: flex;
+  align-items: center;
+  gap: var(--dx-space-2);
+}
+
+.multiSelect button {
+  border-radius: var(--dx-chip-radius);
+  padding: 6px 12px;
+  border: 1px solid var(--dx-color-border);
+  background: var(--dx-color-surface);
+  font: var(--dx-font-body);
+  color: var(--dx-color-text-secondary);
+  cursor: pointer;
+}
+
+.multiSelect button[data-active="true"] {
+  border-color: var(--primary-color);
+  background: var(--primary-selected-color);
+  color: var(--primary-color);
+}
+
+.tableCard {
+  border-radius: 22px;
+  border: 1px solid var(--dx-color-border);
+  background: var(--dx-color-surface);
+  overflow: hidden;
+  box-shadow: var(--dx-shadow-soft);
+  display: flex;
+  flex-direction: column;
+}
+
+.tableHeader {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: grid;
+  align-items: center;
+  background: var(--primary-selected-color);
+  border-bottom: 1px solid var(--dx-color-border);
+  padding: 10px 16px;
+  font: var(--dx-font-body-strong);
+  text-transform: uppercase;
+  color: var(--dx-color-text-secondary);
+}
+
+.tableScrollArea {
+  overflow: auto;
+  max-height: 640px;
+}
+
+.virtualSpacer {
+  width: 100%;
+}
+
+.tableRow {
+  display: grid;
+  align-items: center;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--dx-color-border);
+  font: var(--dx-font-body);
+  color: var(--dx-color-text-primary);
+  gap: 12px;
+}
+
+.tableRow[data-selected="true"] {
+  background: var(--primary-selected-color);
+  box-shadow: inset 0 0 0 1px var(--primary-color);
+}
+
+.tableRow:hover {
+  background: var(--primary-selected-hover-color);
+}
+
+.stickyCell {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  background: inherit;
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 1px solid var(--dx-color-border);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--dx-color-surface);
+}
+
+.badgeChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: var(--dx-chip-radius);
+  padding: 4px 10px;
+  font: var(--dx-font-body);
+  background: var(--primary-selected-color);
+  color: var(--primary-color);
+}
+
+.statusChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: var(--dx-chip-radius);
+  padding: 6px 12px;
+  font: var(--dx-font-body-strong);
+  white-space: nowrap;
+}
+
+.tagList {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  border-radius: var(--dx-chip-radius);
+  padding: 4px 12px;
+  background: var(--dx-color-surface);
+  border: 1px solid var(--dx-color-border);
+  font: var(--dx-font-body);
+  color: var(--dx-color-text-secondary);
+}
+
+.groupHeader {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--primary-selected-color);
+  border-bottom: 1px solid var(--dx-color-border);
+}
+
+.groupTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font: var(--dx-font-body-strong);
+  color: var(--dx-color-text-primary);
+}
+
+.groupAction {
+  border: 0;
+  background: transparent;
+  font: var(--dx-font-body);
+  color: var(--primary-color);
+  cursor: pointer;
+}
+
+.emptyState {
+  padding: 48px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--dx-space-3);
+  align-items: center;
+  justify-content: center;
+}
+
+.emptyTitle {
+  font: var(--dx-font-h3);
+  color: var(--dx-color-text-primary);
+}
+
+.emptyDescription {
+  font: var(--dx-font-body);
+  color: var(--dx-color-text-secondary);
+  max-width: 520px;
+}
+
+.bottomBar {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin-top: auto;
+  background: var(--dx-color-surface);
+  border-top: 1px solid var(--dx-color-border);
+  box-shadow: 0 -8px 24px rgba(16, 24, 40, 0.08);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-radius: 20px 20px 0 0;
+}
+
+.bottomActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.kanbanBoard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--dx-space-4);
+}
+
+.kanbanColumn {
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  border: 1px solid var(--dx-color-border);
+  background: var(--dx-color-surface);
+  min-height: 420px;
+  overflow: hidden;
+  box-shadow: var(--dx-shadow-soft);
+}
+
+.kanbanColumnHeader {
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font: var(--dx-font-body-strong);
+}
+
+.kanbanList {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--dx-space-3);
+  padding: 16px;
+  overflow-y: auto;
+  background: transparent;
+}
+
+.kanbanCard {
+  border-radius: 16px;
+  border: 1px solid var(--dx-color-border);
+  background: var(--dx-color-surface);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: var(--dx-shadow-soft);
+  cursor: grab;
+}
+
+.kanbanCard:active {
+  cursor: grabbing;
+}
+
+.kanbanCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.kanbanTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.addCardButton {
+  border: 0;
+  background: transparent;
+  padding: 14px;
+  color: var(--primary-color);
+  font: var(--dx-font-body-strong);
+  cursor: pointer;
+}
+
+.modalContent {
+  display: grid;
+  gap: var(--dx-space-4);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+  min-height: 520px;
+}
+
+.detailsStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dx-space-3);
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fieldLabel {
+  font: var(--dx-font-body-strong);
+  color: var(--dx-color-text-secondary);
+}
+
+.fieldControl,
+.fieldTextarea {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid var(--dx-color-border);
+  padding: 10px 14px;
+  font: var(--dx-font-body);
+  color: var(--dx-color-text-primary);
+  background: var(--dx-color-surface);
+}
+
+.fieldTextarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.timelineSection {
+  border-radius: 18px;
+  border: 1px solid var(--dx-color-border);
+  background: var(--dx-color-surface);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--dx-space-3);
+}
+
+.timelineList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dx-space-3);
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.timelineItem {
+  display: flex;
+  gap: 12px;
+}
+
+.timelineMarker {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  margin-top: 6px;
+}
+
+.timelineBody {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.timelineTitle {
+  font: var(--dx-font-body-strong);
+  color: var(--dx-color-text-primary);
+}
+
+.timelineMeta {
+  font: var(--dx-font-body);
+  color: var(--dx-color-text-secondary);
+}
+
+.activityComposer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dx-space-2);
+}
+
+.activityTabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.activityTabs button {
+  border-radius: var(--dx-chip-radius);
+  border: 1px solid var(--dx-color-border);
+  background: var(--dx-color-surface);
+  padding: 6px 12px;
+  cursor: pointer;
+  font: var(--dx-font-body);
+  color: var(--dx-color-text-secondary);
+}
+
+.activityTabs button[data-active="true"] {
+  background: var(--primary-selected-color);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.progressStrip {
+  height: 4px;
+  width: 120px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--primary-color) 0%, rgba(0, 127, 155, 0.2) 100%);
+  animation: shimmer 1.6s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    opacity: 0.35;
+    transform: translateX(-12px);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(12px);
+  }
+  100% {
+    opacity: 0.35;
+    transform: translateX(-12px);
+  }
+}
