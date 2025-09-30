@@ -99,11 +99,9 @@
 .topbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--spacing-medium);
-  padding: 0 var(--spacing-xl);
-  min-height: var(--top-bar-height, 48px);
+  gap: var(--spacing-large);
+  padding: 0 var(--spacing-large);
+  height: var(--top-bar-height, 40px);
   background-color: var(--primary-selected-hover-color);
   border-bottom: 1px solid var(--layout-border-color);
   box-shadow: var(--box-shadow-xs);
@@ -116,6 +114,7 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-small);
+  min-width: 0;
 }
 
 .appBadge {
@@ -134,22 +133,40 @@
   text-transform: uppercase;
 }
 
+
 .topbarTitles {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  align-items: baseline;
+  gap: var(--spacing-small);
+  min-width: 0;
+}
+
+.topbarTitle {
+  font-size: var(--font-size-30, 1rem);
+  font-weight: var(--font-weight-semibold, 600);
+  line-height: var(--font-line-height-30, 1.5);
+  color: var(--primary-text-color);
+}
+
+.topbarSubtitle {
+  font-size: var(--font-size-20, 0.875rem);
+  color: var(--secondary-text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .topbarActions {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
   gap: var(--spacing-small);
+  margin-left: auto;
+  flex-wrap: nowrap;
 }
 
 .search {
-  min-width: 260px;
-  max-width: 360px;
+  min-width: 220px;
+  max-width: 320px;
 }
 
 .profileAvatar {

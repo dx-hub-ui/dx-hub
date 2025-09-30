@@ -214,16 +214,21 @@ export function AppShell({ children }: { children: ReactNode }) {
         </aside>
         <div className={styles.layout}>
           <header className={styles.topbar}>
-            <Flex align={Flex.align.CENTER} gap={Flex.gaps.MEDIUM} className={styles.topbarInfo} aria-live="polite">
+            <Flex align={Flex.align.CENTER} className={styles.topbarInfo} aria-live="polite">
               <div className={styles.appBadge}>{appAcronym}</div>
               <div className={styles.topbarTitles}>
                 {config.workspace.title ? (
-                  <Heading type={Heading.types.H3} weight={Heading.weights.BOLD} color={Heading.colors.PRIMARY}>
+                  <Heading
+                    type={Heading.types.H4}
+                    weight={Heading.weights.BOLD}
+                    color={Heading.colors.PRIMARY}
+                    className={styles.topbarTitle}
+                  >
                     {config.workspace.title}
                   </Heading>
                 ) : null}
                 {config.workspace.board ? (
-                  <Text type={Text.types.TEXT2} color={Text.colors.SECONDARY}>
+                  <Text type={Text.types.TEXT2} color={Text.colors.SECONDARY} className={styles.topbarSubtitle}>
                     {config.workspace.board}
                   </Text>
                 ) : null}
