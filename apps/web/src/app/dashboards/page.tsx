@@ -47,12 +47,8 @@ import type {
 } from "@/dashboards/selectors";
 
 /**
- * NOTE:
- * We intentionally avoid page-level wrappers that redefine width/padding/scroll.
- * The AppShell provides:
- *  - max content width (`--dx-layout-max-width`)
- *  - horizontal/vertical padding via `.scroller`
- *  - the single scroll container
+ * We avoid page-level wrappers that redefine width/padding/scroll.
+ * AppShell provides max width, padding and the single scroll container.
  */
 
 const HEADLINE_KPIS = ["newLeads", "newContacts", "meetings", "whatsappResponse", "conversion"] as const;
@@ -207,8 +203,15 @@ export default function DashboardsPage() {
   }, [isOwnerView, now, period, scope]);
 
   // Grid gaps derived from dxDashboardTokens (keeps visual rhythm with DX)
-  const gridStyle = { columnGap: dxDashboardTokens.grid.columnGap, rowGap: dxDashboardTokens.grid.rowGap } as CSSProperties;
-  const kpiGridStyle = { columnGap: dxDashboardTokens.grid.columnGap, rowGap: dxDashboardTokens.grid.rowGap } as CSSProperties;
+  const gridStyle = {
+    columnGap: dxDashboardTokens.grid.columnGap,
+    rowGap: dxDashboardTokens.grid.rowGap,
+  } as CSSProperties;
+
+  const kpiGridStyle = {
+    columnGap: dxDashboardTokens.grid.columnGap,
+    rowGap: dxDashboardTokens.grid.rowGap,
+  } as CSSProperties;
 
   const periodRange = resolvePeriodRange(period, now);
   const periodLabel = useMemo(() => {
@@ -221,8 +224,12 @@ export default function DashboardsPage() {
   // Section styles using DX tokens
   const sectionStyle: CSSProperties = { display: "grid", gap: "var(--dx-space-5)" };
   const sectionHeaderStyle: CSSProperties = { display: "grid", gap: "var(--dx-space-2)" };
-  const sectionTitleStyle: CSSProperties = { font: "var(--dx-font-h2)", letterSpacing: "var(--dx-ls-h2)", margin: 0 as unknown as number };
-  const sectionDescStyle: CSSProperties = { color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number };
+  const sectionTitleStyle: CSSProperties = {
+    font: "var(--dx-font-h2)",
+    letterSpacing: "var(--dx-ls-h2)",
+    margin: 0,
+  };
+  const sectionDescStyle: CSSProperties = { color: "var(--dx-color-text-secondary)", margin: 0 };
   const kpiGridClass: CSSProperties = {
     display: "grid",
     gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
@@ -235,7 +242,7 @@ export default function DashboardsPage() {
   };
   const span = (n: number): CSSProperties => ({ gridColumn: `span ${n} / span ${n}` });
 
-  // Role-specific placeholders (leader/rep) defined last to keep memo small
+  // Role-specific placeholders (leader/rep)
   const commonWidgets = useMemo<WidgetDefinition[]>(
     () => [
       {
@@ -336,11 +343,16 @@ export default function DashboardsPage() {
       {/* HERO / FILTERS */}
       <section aria-labelledby="hero-title" style={sectionStyle}>
         <header style={sectionHeaderStyle}>
-          <h1 id="hero-title" style={{ font: "var(--dx-font-h1)", letterSpacing: "var(--dx-ls-h1)", margin: 0 as unknown as number }}>
+          <h1
+            id="hero-title"
+            style={{ font: "var(--dx-font-h1)", letterSpacing: "var(--dx-ls-h1)", margin: 0 }}
+          >
             {tDashboard("hero.title")}
           </h1>
           <p style={sectionDescStyle}>{tDashboard("hero.description")}</p>
-          <p style={{ ...sectionDescStyle, font: "var(--dx-font-body-strong)" }}>{tDashboard("hero.roleHint")}</p>
+          <p style={{ ...sectionDescStyle, font: "var(--dx-font-body-strong)" }}>
+            {tDashboard("hero.roleHint")}
+          </p>
         </header>
 
         <DashboardFilterBar
@@ -369,7 +381,9 @@ export default function DashboardsPage() {
       {/* ATTENTION */}
       <section aria-labelledby="attention-heading" style={sectionStyle}>
         <header style={sectionHeaderStyle}>
-          <h2 id="attention-heading" style={sectionTitleStyle}>{tDashboard("sections.attention.title")}</h2>
+          <h2 id="attention-heading" style={sectionTitleStyle}>
+            {tDashboard("sections.attention.title")}
+          </h2>
           <p style={sectionDescStyle}>{tDashboard("sections.attention.description")}</p>
           <p style={{ ...sectionDescStyle, font: "var(--dx-font-body-strong)" }}>{tAttention("live")}</p>
         </header>
@@ -392,36 +406,67 @@ export default function DashboardsPage() {
                     <div style={{ display: "grid", gap: "var(--dx-space-3)" }}>
                       <div>
                         {isPinned ? (
-                          <span style={{ font: "var(--dx-font-body-strong)", color: "var(--dx-color-text-secondary)" }}>
+                          <span
+                            style={{
+                              font: "var(--dx-font-body-strong)",
+                              color: "var(--dx-color-text-secondary)",
+                            }}
+                          >
                             {tAttention("preview.pinned")}
                           </span>
                         ) : null}
-                        <h3 style={{ font: "var(--dx-font-h3)", margin: 0 as unknown as number }}>{box.title}</h3>
+                        <h3 style={{ font: "var(--dx-font-h3)", margin: 0 }}>{box.title}</h3>
                         <div dangerouslySetInnerHTML={{ __html: html }} />
                       </div>
 
-                      <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--dx-space-4)", color: "var(--dx-color-text-secondary)" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexWrap: "wrap",
+                          gap: "var(--dx-space-4)",
+                          color: "var(--dx-color-text-secondary)",
+                        }}
+                      >
                         <span>
                           {tAttention("meta.summary", {
-                            values: { label: tAttention("meta.audience"), value: tAttention(`audiences.${box.audience}` as const) },
+                            values: {
+                              label: tAttention("meta.audience"),
+                              value: tAttention(`audiences.${box.audience}` as const),
+                            },
                           })}
                         </span>
                         <span>
                           {tAttention("meta.summary", {
                             values: {
                               label: tAttention("meta.period"),
-                              value: `${new Intl.DateTimeFormat(locale, { day: "2-digit", month: "short" }).format(new Date(box.startAt))} – ${new Intl.DateTimeFormat(locale, { day: "2-digit", month: "short" }).format(new Date(box.endAt))}`,
+                              value: `${new Intl.DateTimeFormat(locale, {
+                                day: "2-digit",
+                                month: "short",
+                              }).format(new Date(box.startAt))} – ${new Intl.DateTimeFormat(locale, {
+                                day: "2-digit",
+                                month: "short",
+                              }).format(new Date(box.endAt))}`,
                             },
                           })}
                         </span>
                       </div>
 
                       <div style={{ display: "flex", gap: "var(--dx-space-2)" }}>
-                        <DxButton density="compact" size="md" variant="secondary" onClick={() => attentionStore.markAsRead(box.id)}>
+                        <DxButton
+                          density="compact"
+                          size="md"
+                          variant="secondary"
+                          onClick={() => attentionStore.markAsRead(box.id)}
+                        >
                           {tAttention("actions.markAsRead")}
                         </DxButton>
                         {isOwnerView ? (
-                          <DxButton density="compact" size="md" variant="primary" onClick={() => router.push("/dashboards/attention")}>
+                          <DxButton
+                            density="compact"
+                            size="md"
+                            variant="primary"
+                            onClick={() => router.push("/dashboards/attention")}
+                          >
                             {tAttention("actions.manage")}
                           </DxButton>
                         ) : null}
@@ -438,7 +483,9 @@ export default function DashboardsPage() {
       {/* HEADLINE KPIs */}
       <section aria-labelledby="headline-kpis" style={sectionStyle}>
         <header style={sectionHeaderStyle}>
-          <h2 id="headline-kpis" style={sectionTitleStyle}>{tDashboard("sections.headline.title")}</h2>
+          <h2 id="headline-kpis" style={sectionTitleStyle}>
+            {tDashboard("sections.headline.title")}
+          </h2>
           <p style={sectionDescStyle}>
             {tDashboard("sections.headline.description", { values: { period: periodLabel } })}
           </p>
@@ -447,7 +494,9 @@ export default function DashboardsPage() {
         <div style={kpiGridClass}>
           {isOwnerView && ownerMetrics
             ? HEADLINE_KPIS.map((key) => {
-                const metric = ownerMetrics.headline.find((item) => item.id === key) as HeadlineMetric | undefined;
+                const metric = ownerMetrics.headline.find(
+                  (item) => item.id === key,
+                ) as HeadlineMetric | undefined;
                 if (!metric) return null;
 
                 const label = tKpis(`headline.${key}` as const);
@@ -456,7 +505,9 @@ export default function DashboardsPage() {
                   detail = tDashboard("metrics.samples.whatsappResponse", {
                     values: {
                       responded: formatNumber(metric.numerator, locale, { maximumFractionDigits: 0 }),
-                      contacted: formatNumber(metric.denominator ?? 0, locale, { maximumFractionDigits: 0 }),
+                      contacted: formatNumber(metric.denominator ?? 0, locale, {
+                        maximumFractionDigits: 0,
+                      }),
                     },
                   });
                 }
@@ -464,7 +515,9 @@ export default function DashboardsPage() {
                   detail = tDashboard("metrics.samples.conversion", {
                     values: {
                       converted: formatNumber(metric.numerator, locale, { maximumFractionDigits: 0 }),
-                      leads: formatNumber(metric.denominator ?? 0, locale, { maximumFractionDigits: 0 }),
+                      leads: formatNumber(metric.denominator ?? 0, locale, {
+                        maximumFractionDigits: 0,
+                      }),
                     },
                   });
                 }
@@ -498,13 +551,20 @@ export default function DashboardsPage() {
       {isOwnerView && ownerMetrics ? (
         <section aria-labelledby="widgets-grid" style={sectionStyle}>
           <header style={sectionHeaderStyle}>
-            <h2 id="widgets-grid" style={sectionTitleStyle}>{tDashboard("sections.owner.funnel.title")}</h2>
+            <h2 id="widgets-grid" style={sectionTitleStyle}>
+              {tDashboard("sections.owner.funnel.title")}
+            </h2>
             <p style={sectionDescStyle}>{tDashboard("sections.owner.funnel.description")}</p>
           </header>
 
           <div style={gridClass}>
             <DxCard style={span(6)} density="compact">
-              <FunnelWidget stages={ownerMetrics.funnel} locale={locale} t={tDashboard} activeStage={funnelStage} />
+              <FunnelWidget
+                stages={ownerMetrics.funnel}
+                locale={locale}
+                t={tDashboard}
+                activeStage={funnelStage}
+              />
             </DxCard>
 
             <DxCard style={span(6)} density="compact">
@@ -538,23 +598,29 @@ export default function DashboardsPage() {
       {placeholderWidgets.length > 0 ? (
         <section aria-labelledby="widgets-placeholder" style={sectionStyle}>
           <header style={sectionHeaderStyle}>
-            <h2 id="widgets-placeholder" style={sectionTitleStyle}>{tDashboard("placeholders.draft")}</h2>
+            <h2 id="widgets-placeholder" style={sectionTitleStyle}>
+              {tDashboard("placeholders.draft")}
+            </h2>
             <p style={sectionDescStyle}>{tDashboard("placeholders.a11y")}</p>
           </header>
 
-      <div style={gridClass}>
-+          {placeholderWidgets.map((widget) => (
-+            <div key={widget.id} style={span(widget.span)}>
-+              <WidgetPlaceholder
-+                title={widget.title}
-+                description={widget.description}
-+                caption={widget.caption}
-+                variant={widget.variant}
-+                actions={<WidgetPlaceholderAction>{tDashboard("placeholders.drilldown")}</WidgetPlaceholderAction>}
-+              />
-+            </div>
-+          ))}
-+        </div>
+          <div style={gridClass}>
+            {placeholderWidgets.map((widget) => (
+              <div key={widget.id} style={span(widget.span)}>
+                <WidgetPlaceholder
+                  title={widget.title}
+                  description={widget.description}
+                  caption={widget.caption}
+                  variant={widget.variant}
+                  actions={
+                    <WidgetPlaceholderAction>
+                      {tDashboard("placeholders.drilldown")}
+                    </WidgetPlaceholderAction>
+                  }
+                />
+              </div>
+            ))}
+          </div>
         </section>
       ) : null}
     </>
@@ -583,7 +649,10 @@ function MetricCard({
     ? formatPercent(metric.value, locale, metric.id === "whatsappResponse" ? 0 : 1)
     : formatNumber(metric.value, locale, { maximumFractionDigits: 0 });
 
-  const deltaValue = metric.previousValue === 0 && metric.value !== 0 ? null : computeDelta(metric.value, metric.previousValue);
+  const deltaValue =
+    metric.previousValue === 0 && metric.value !== 0
+      ? null
+      : computeDelta(metric.value, metric.previousValue);
   const deltaVariant = deltaValue === null ? "neutral" : deltaValue >= 0 ? "positive" : "negative";
   const deltaText =
     deltaValue === null ? newLabel : formatPercent(deltaValue, locale, Math.abs(deltaValue) < 0.1 ? 1 : 0);
@@ -597,7 +666,14 @@ function MetricCard({
 
   return (
     <DxCard density="compact">
-      <header style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: "var(--dx-space-3)" }}>
+      <header
+        style={{
+          display: "flex",
+          alignItems: "baseline",
+          justifyContent: "space-between",
+          gap: "var(--dx-space-3)",
+        }}
+      >
         <span style={{ color: "var(--dx-color-text-secondary)" }}>{label}</span>
         <span role="status" aria-live="polite" style={{ font: "var(--dx-font-h3)" }}>
           {formattedValue}
@@ -605,11 +681,12 @@ function MetricCard({
       </header>
 
       <p style={{ color: deltaColor, margin: "var(--dx-space-2) 0" }}>
-        {deltaText}{" "}
-        <span style={{ color: "var(--dx-color-text-secondary)" }}>{deltaLabel}</span>
+        {deltaText} <span style={{ color: "var(--dx-color-text-secondary)" }}>{deltaLabel}</span>
       </p>
 
-      {detail ? <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>{detail}</p> : null}
+      {detail ? (
+        <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 }}>{detail}</p>
+      ) : null}
     </DxCard>
   );
 }
@@ -628,25 +705,31 @@ function FunnelWidget({
   return (
     <div style={{ display: "grid", gap: "var(--dx-space-4)" }}>
       <header style={{ display: "grid", gap: "var(--dx-space-1)" }}>
-        <h3 style={{ font: "var(--dx-font-h3)", margin: 0 as unknown as number }}>{t("sections.owner.funnel.title")}</h3>
-        <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>{t("sections.owner.funnel.description")}</p>
+        <h3 style={{ font: "var(--dx-font-h3)", margin: 0 }}>{t("sections.owner.funnel.title")}</h3>
+        <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 }}>
+          {t("sections.owner.funnel.description")}
+        </p>
       </header>
 
       <ul style={{ display: "grid", gap: "var(--dx-space-3)", listStyle: "none", margin: 0, padding: 0 }}>
         {stages.map((stage) => {
           const formattedValue = formatNumber(stage.value, locale, { maximumFractionDigits: 0 });
-          const delta = stage.previousValue === 0 && stage.value !== 0 ? null : computeDelta(stage.value, stage.previousValue);
+          const delta =
+            stage.previousValue === 0 && stage.value !== 0
+              ? null
+              : computeDelta(stage.value, stage.previousValue);
           const deltaLabel =
             delta === null ? t("metrics.delta.new") : formatPercent(delta, locale, Math.abs(delta) < 0.1 ? 1 : 0);
           const conversion = stage.conversionFromPrevious ?? 0;
-          const isActive = activeStage !== "all" && activeStage !== "visitors" && stage.id.includes(activeStage);
+          const isActive =
+            activeStage !== "all" && activeStage !== "visitors" && stage.id.includes(activeStage);
 
           return (
             <li key={stage.id} data-active={isActive}>
               <div style={{ display: "flex", justifyContent: "space-between", gap: "var(--dx-space-4)" }}>
                 <div>
-                  <p style={{ margin: 0 as unknown as number }}>{t(`widgets.funnel.stages.${stage.id}`)}</p>
-                  <p style={{ font: "var(--dx-font-h4)", margin: 0 as unknown as number }}>{formattedValue}</p>
+                  <p style={{ margin: 0 }}>{t(`widgets.funnel.stages.${stage.id}`)}</p>
+                  <p style={{ font: "var(--dx-font-h4)", margin: 0 }}>{formattedValue}</p>
                 </div>
                 <div style={{ display: "flex", gap: "var(--dx-space-4)", color: "var(--dx-color-text-secondary)" }}>
                   <span>{deltaLabel}</span>
@@ -657,8 +740,21 @@ function FunnelWidget({
                   </span>
                 </div>
               </div>
-              <div style={{ height: 8, background: "var(--primary-highlighted-color)", borderRadius: 9999, overflow: "hidden" }}>
-                <div style={{ width: `${Math.min(100, (conversion || 0) * 100)}%`, height: "100%", background: "var(--primary-color)" }} />
+              <div
+                style={{
+                  height: 8,
+                  background: "var(--primary-highlighted-color)",
+                  borderRadius: 9999,
+                  overflow: "hidden",
+                }}
+              >
+                <div
+                  style={{
+                    width: `${Math.min(100, (conversion || 0) * 100)}%`,
+                    height: "100%",
+                    background: "var(--primary-color)",
+                  }}
+                />
               </div>
             </li>
           );
@@ -675,8 +771,10 @@ function HeatmapWidget({ data, locale, t }: { data: HeatmapData; locale: string;
   return (
     <div style={{ display: "grid", gap: "var(--dx-space-4)" }}>
       <header style={{ display: "grid", gap: "var(--dx-space-1)" }}>
-        <h3 style={{ font: "var(--dx-font-h3)", margin: 0 as unknown as number }}>{t("sections.owner.heatmap.title")}</h3>
-        <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>{t("sections.owner.heatmap.description")}</p>
+        <h3 style={{ font: "var(--dx-font-h3)", margin: 0 }}>{t("sections.owner.heatmap.title")}</h3>
+        <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 }}>
+          {t("sections.owner.heatmap.description")}
+        </p>
       </header>
 
       <div role="grid" aria-label={t("widgets.heatmap.ariaLabel") ?? "Heatmap"} style={{ display: "grid", gap: "var(--dx-space-2)" }}>
@@ -685,7 +783,16 @@ function HeatmapWidget({ data, locale, t }: { data: HeatmapData; locale: string;
           const dayLabel = dayFormatter.format(date);
           const dateLabel = dateFormatter.format(date);
           return (
-            <div key={dayIso} role="row" style={{ display: "grid", gridTemplateColumns: "120px 1fr", alignItems: "center", gap: "var(--dx-space-3)" }}>
+            <div
+              key={dayIso}
+              role="row"
+              style={{
+                display: "grid",
+                gridTemplateColumns: "120px 1fr",
+                alignItems: "center",
+                gap: "var(--dx-space-3)",
+              }}
+            >
               <span style={{ color: "var(--dx-color-text-secondary)" }}>{`${dayLabel} ${dateLabel}`}</span>
               <div role="presentation" style={{ display: "grid", gridTemplateColumns: "repeat(24, 1fr)", gap: 2 }}>
                 {data.hours.map((hour) => {
@@ -720,7 +827,15 @@ function HeatmapWidget({ data, locale, t }: { data: HeatmapData; locale: string;
 
       <div style={{ display: "flex", alignItems: "center", gap: "var(--dx-space-3)" }}>
         <span>{t("widgets.heatmap.legend.low")}</span>
-        <span aria-hidden style={{ flex: 1, height: 6, background: "linear-gradient(90deg, rgba(0,127,155,0.12), rgba(0,127,155,0.9))", borderRadius: 9999 }} />
+        <span
+          aria-hidden
+          style={{
+            flex: 1,
+            height: 6,
+            background: "linear-gradient(90deg, rgba(0,127,155,0.12), rgba(0,127,155,0.9))",
+            borderRadius: 9999,
+          }}
+        />
         <span>{t("widgets.heatmap.legend.high")}</span>
       </div>
     </div>
@@ -750,8 +865,10 @@ function LeaderPerformanceWidget({ rows, locale, t }: { rows: LeaderPerformanceR
   return (
     <div style={{ display: "grid", gap: "var(--dx-space-4)" }}>
       <header style={{ display: "grid", gap: "var(--dx-space-1)" }}>
-        <h3 style={{ font: "var(--dx-font-h3)", margin: 0 as unknown as number }}>{t("sections.owner.leaders.title")}</h3>
-        <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>{t("sections.owner.leaders.description")}</p>
+        <h3 style={{ font: "var(--dx-font-h3)", margin: 0 }}>{t("sections.owner.leaders.title")}</h3>
+        <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 }}>
+          {t("sections.owner.leaders.description")}
+        </p>
       </header>
       <DxTable
         columns={columns}
@@ -793,8 +910,10 @@ function MicrositeWidget({ rows, locale, t }: { rows: MicrositePerformanceRow[];
   return (
     <div style={{ display: "grid", gap: "var(--dx-space-4)" }}>
       <header style={{ display: "grid", gap: "var(--dx-space-1)" }}>
-        <h3 style={{ font: "var(--dx-font-h3)", margin: 0 as unknown as number }}>{t("sections.owner.microsites.title")}</h3>
-        <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>{t("sections.owner.microsites.description")}</p>
+        <h3 style={{ font: "var(--dx-font-h3)", margin: 0 }}>{t("sections.owner.microsites.title")}</h3>
+        <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 }}>
+          {t("sections.owner.microsites.description")}
+        </p>
       </header>
       <DxTable
         columns={columns}
@@ -817,17 +936,21 @@ function CadenceWidget({ rows, locale, t }: { rows: CadenceEfficiencyRow[]; loca
   return (
     <div style={{ display: "grid", gap: "var(--dx-space-4)" }}>
       <header style={{ display: "grid", gap: "var(--dx-space-1)" }}>
-        <h3 style={{ font: "var(--dx-font-h3)", margin: 0 as unknown as number }}>{t("sections.owner.cadence.title")}</h3>
-        <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>{t("sections.owner.cadence.description")}</p>
+        <h3 style={{ font: "var(--dx-font-h3)", margin: 0 }}>{t("sections.owner.cadence.title")}</h3>
+        <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 }}>
+          {t("sections.owner.cadence.description")}
+        </p>
       </header>
 
       <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "grid", gap: "var(--dx-space-3)" }}>
         {rows.map((row) => (
           <li key={row.id} style={{ display: "grid", gap: "var(--dx-space-2)" }}>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <p style={{ margin: 0 as unknown as number, font: "var(--dx-font-body-strong)" }}>{row.cadenceName}</p>
+              <p style={{ margin: 0, font: "var(--dx-font-body-strong)" }}>{row.cadenceName}</p>
               <span style={{ color: "var(--dx-color-text-secondary)" }}>
-                {t("widgets.cadence.dueSteps", { values: { value: formatNumber(row.dueSteps, locale, { maximumFractionDigits: 0 }) } })}
+                {t("widgets.cadence.dueSteps", {
+                  values: { value: formatNumber(row.dueSteps, locale, { maximumFractionDigits: 0 }) },
+                })}
               </span>
             </div>
 
@@ -845,10 +968,14 @@ function CadenceWidget({ rows, locale, t }: { rows: CadenceEfficiencyRow[]; loca
 
             <div style={{ display: "flex", gap: "var(--dx-space-2)" }}>
               <DxBadge variant="primary" size="sm">
-                {t("widgets.cadence.completion", { values: { value: formatPercent(row.completionRate || 0, locale, 0) } })}
+                {t("widgets.cadence.completion", {
+                  values: { value: formatPercent(row.completionRate || 0, locale, 0) },
+                })}
               </DxBadge>
               <DxBadge variant="danger" size="sm">
-                {t("widgets.cadence.overdue", { values: { value: formatPercent(row.overdueRate || 0, locale, 0) } })}
+                {t("widgets.cadence.overdue", {
+                  values: { value: formatPercent(row.overdueRate || 0, locale, 0) },
+                })}
               </DxBadge>
             </div>
           </li>
@@ -862,23 +989,32 @@ function GoalsWidget({ data, locale, t }: { data: GoalsOverview; locale: string;
   return (
     <div style={{ display: "grid", gap: "var(--dx-space-4)" }}>
       <header style={{ display: "grid", gap: "var(--dx-space-1)" }}>
-        <h3 style={{ font: "var(--dx-font-h3)", margin: 0 as unknown as number }}>{t("sections.owner.goals.title")}</h3>
-        <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>{t("sections.owner.goals.description")}</p>
+        <h3 style={{ font: "var(--dx-font-h3)", margin: 0 }}>{t("sections.owner.goals.title")}</h3>
+        <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 }}>
+          {t("sections.owner.goals.description")}
+        </p>
       </header>
 
       <div>
-        <p style={{ font: "var(--dx-font-h2)", margin: 0 as unknown as number }}>{formatPercent(data.attainmentRate || 0, locale, 0)}</p>
+        <p style={{ font: "var(--dx-font-h2)", margin: 0 }}>
+          {formatPercent(data.attainmentRate || 0, locale, 0)}
+        </p>
         <p style={{ color: "var(--dx-color-text-secondary)", margin: "var(--dx-space-1) 0 0" }}>
-          {t("widgets.goals.onTrack", { values: { count: data.repsOnTrack, total: data.totalMembers } })}
+          {t("widgets.goals.onTrack", {
+            values: { count: data.repsOnTrack, total: data.totalMembers },
+          })}
         </p>
       </div>
 
       <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "grid", gap: "var(--dx-space-2)" }}>
         {data.leaderboard.map((entry) => (
-          <li key={entry.memberId} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <li
+            key={entry.memberId}
+            style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}
+          >
             <div>
-              <p style={{ margin: 0 as unknown as number, font: "var(--dx-font-body-strong)" }}>{entry.name}</p>
-              <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>
+              <p style={{ margin: 0, font: "var(--dx-font-body-strong)" }}>{entry.name}</p>
+              <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 }}>
                 {t("widgets.goals.progress", {
                   values: {
                     contacts: formatPercent(entry.contactsProgress || 0, locale, 0),
@@ -888,7 +1024,9 @@ function GoalsWidget({ data, locale, t }: { data: GoalsOverview; locale: string;
                 })}
               </p>
             </div>
-            <DxBadge variant="primary" size="sm">{formatPercent(entry.score || 0, locale, 0)}</DxBadge>
+            <DxBadge variant="primary" size="sm">
+              {formatPercent(entry.score || 0, locale, 0)}
+            </DxBadge>
           </li>
         ))}
       </ul>
@@ -901,34 +1039,62 @@ function DataQualityWidget({ insight, locale, t }: { insight: DataQualityInsight
   return (
     <div style={{ display: "grid", gap: "var(--dx-space-4)" }}>
       <header style={{ display: "grid", gap: "var(--dx-space-1)" }}>
-        <h3 style={{ font: "var(--dx-font-h3)", margin: 0 as unknown as number }}>{t("sections.owner.quality.title")}</h3>
-        <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>{t("sections.owner.quality.description")}</p>
+        <h3 style={{ font: "var(--dx-font-h3)", margin: 0 }}>{t("sections.owner.quality.title")}</h3>
+        <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 }}>
+          {t("sections.owner.quality.description")}
+        </p>
       </header>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: "var(--dx-space-4)" }}>
         <div>
-          <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>{t("widgets.quality.total")}</p>
-          <p style={{ font: "var(--dx-font-h4)", margin: 0 as unknown as number }}>{totalLabel}</p>
+          <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 }}>
+            {t("widgets.quality.total")}
+          </p>
+          <p style={{ font: "var(--dx-font-h4)", margin: 0 }}>{totalLabel}</p>
         </div>
         <div>
-          <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>{t("widgets.quality.stale")}</p>
-          <p style={{ font: "var(--dx-font-h4)", margin: 0 as unknown as number }}>{formatPercent(insight.stalePercentage || 0, locale, 0)}</p>
-          <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>
-            {t("widgets.quality.staleCount", { values: { count: formatNumber(insight.staleCount, locale, { maximumFractionDigits: 0 }) } })}
+          <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 }}>
+            {t("widgets.quality.stale")}
+          </p>
+          <p style={{ font: "var(--dx-font-h4)", margin: 0 }}>
+            {formatPercent(insight.stalePercentage || 0, locale, 0)}
+          </p>
+          <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 }}>
+            {t("widgets.quality.staleCount", {
+              values: {
+                count: formatNumber(insight.staleCount, locale, { maximumFractionDigits: 0 }),
+              },
+            })}
           </p>
         </div>
         <div>
-          <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>{t("widgets.quality.critical")}</p>
-          <p style={{ font: "var(--dx-font-h4)", margin: 0 as unknown as number }}>{formatPercent(insight.criticalPercentage || 0, locale, 0)}</p>
-          <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>
-            {t("widgets.quality.criticalCount", { values: { count: formatNumber(insight.criticalCount, locale, { maximumFractionDigits: 0 }) } })}
+          <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 }}>
+            {t("widgets.quality.critical")}
+          </p>
+          <p style={{ font: "var(--dx-font-h4)", margin: 0 }}>
+            {formatPercent(insight.criticalPercentage || 0, locale, 0)}
+          </p>
+          <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 }}>
+            {t("widgets.quality.criticalCount", {
+              values: {
+                count: formatNumber(insight.criticalCount, locale, { maximumFractionDigits: 0 }),
+              },
+            })}
           </p>
         </div>
         <div>
-          <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>{t("widgets.quality.duplicates")}</p>
-          <p style={{ font: "var(--dx-font-h4)", margin: 0 as unknown as number }}>{formatPercent(insight.duplicatePercentage || 0, locale, 0)}</p>
-          <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>
-            {t("widgets.quality.duplicatesCount", { values: { count: formatNumber(insight.duplicates, locale, { maximumFractionDigits: 0 }) } })}
+          <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 }}>
+            {t("widgets.quality.duplicates")}
+          </p>
+          <p style={{ font: "var(--dx-font-h4)", margin: 0 }}>
+            {formatPercent(insight.duplicatePercentage || 0, locale, 0)}
+          </p>
+          <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 }}>
+            {t("widgets.quality.duplicatesCount", {
+              values: {
+                count: formatNumber(insight.duplicates, locale, { maximumFractionDigits: 0 }),
+              },
+            })}
           </p>
         </div>
       </div>
