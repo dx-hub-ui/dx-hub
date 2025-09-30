@@ -45,7 +45,18 @@ import type {
   LeaderPerformanceRow,
   MicrositePerformanceRow,
 } from "@/dashboards/selectors";
-import styles from "./DashboardPage.module.css";
+
+/**
+ * NOTE:
+ * We intentionally avoid importing a page-level stylesheet that redefines page width,
+ * paddings, or scrolling. The AppShell already provides:
+ *  - a max content width (`--dx-layout-max-width`)
+ *  - horizontal/vertical padding via `.scroller`
+ *  - the *only* scroll container
+ *
+ * If you need to style a local element, prefer inline styles using DX tokens or
+ * component props (DxCard, DxTable, etc.).
+ */
 
 const HEADLINE_KPIS = ["newLeads", "newContacts", "meetings", "whatsappResponse", "conversion"] as const;
 
@@ -55,17 +66,9 @@ const CURRENT_MEMBER = {
   role: "owner" as DashboardRole,
 };
 
-const GRID_COLUMN_CLASSNAMES = {
-  "span-3": styles["span-3"],
-  "span-4": styles["span-4"],
-  "span-6": styles["span-6"],
-  "span-8": styles["span-8"],
-  "span-12": styles["span-12"],
-};
-
 type WidgetDefinition = {
   id: string;
-  span: keyof typeof GRID_COLUMN_CLASSNAMES;
+  span: 3 | 4 | 6 | 8 | 12;
   title: string;
   description: string;
   caption?: string;
@@ -73,10 +76,7 @@ type WidgetDefinition = {
 };
 
 function toDashboardScope(value: string | undefined): DashboardScope | null {
-  if (value === "org" || value === "team" || value === "self") {
-    return value;
-  }
-
+  if (value === "org" || value === "team" || value === "self") return value;
   return null;
 }
 
@@ -164,19 +164,16 @@ export default function DashboardsPage() {
   );
 
   const scopeOptions = scopeOptionsByRole[role];
-  const defaultScope = useMemo<DashboardScope>(() => {
-    return toDashboardScope(scopeOptions[0]?.value) ?? scope;
-  }, [scope, scopeOptions]);
+  const defaultScope = useMemo<DashboardScope>(() => toDashboardScope(scopeOptions[0]?.value) ?? scope, [scope, scopeOptions]);
 
   useEffect(() => {
-    if (!scopeOptions.some((option) => option.value === scope)) {
-      setScope(defaultScope);
-    }
+    if (!scopeOptions.some((option) => option.value === scope)) setScope(defaultScope);
   }, [defaultScope, scope, scopeOptions]);
 
   const layoutRoleLabel = tDashboard(`filters.roleOptions.${role}` as const);
   const memberInitials = useMemo(() => getInitials(CURRENT_MEMBER.name), []);
 
+  // Configure AppShell (title, board, profile, active nav item)
   useEffect(() => {
     setConfig({
       sidebar: {
@@ -199,10 +196,7 @@ export default function DashboardsPage() {
   const isOwnerView = role === "owner";
 
   const ownerMetrics = useMemo(() => {
-    if (!isOwnerView) {
-      return null;
-    }
-
+    if (!isOwnerView) return null;
     return {
       headline: getHeadlineMetrics({ period, scope, memberId: CURRENT_MEMBER.id, now }),
       funnel: getFunnelStages({ period, scope, memberId: CURRENT_MEMBER.id, now }),
@@ -219,14 +213,14 @@ export default function DashboardsPage() {
     () => [
       {
         id: "tasks",
-        span: "span-6",
+        span: 6,
         title: tDashboard("sections.tasks.title"),
         description: tDashboard("sections.tasks.description"),
         caption: tDashboard("placeholders.draft"),
       },
       {
         id: "events",
-        span: "span-6",
+        span: 6,
         title: tDashboard("sections.common.events.title"),
         description: tDashboard("sections.common.events.description"),
         caption: tDashboard("placeholders.a11y"),
@@ -241,21 +235,21 @@ export default function DashboardsPage() {
       leader: [
         {
           id: "leader-funnel",
-          span: "span-6",
+          span: 6,
           title: tDashboard("sections.leader.funnel.title"),
           description: tDashboard("sections.leader.funnel.description"),
           caption: tKpis("leader.funnel"),
         },
         {
           id: "leader-load",
-          span: "span-6",
+          span: 6,
           title: tDashboard("sections.leader.load.title"),
           description: tDashboard("sections.leader.load.description"),
           caption: tKpis("leader.load"),
         },
         {
           id: "leader-comparison",
-          span: "span-12",
+          span: 12,
           title: tDashboard("sections.leader.comparison.title"),
           description: tDashboard("sections.leader.comparison.description"),
           caption: tKpis("leader.comparison"),
@@ -265,35 +259,35 @@ export default function DashboardsPage() {
       rep: [
         {
           id: "rep-goals",
-          span: "span-6",
+          span: 6,
           title: tDashboard("sections.rep.goals.title"),
           description: tDashboard("sections.rep.goals.description"),
           caption: tKpis("rep.goals"),
         },
         {
           id: "rep-cadences",
-          span: "span-6",
+          span: 6,
           title: tDashboard("sections.rep.cadences.title"),
           description: tDashboard("sections.rep.cadences.description"),
           caption: tKpis("rep.cadences"),
         },
         {
           id: "rep-whatsapp",
-          span: "span-6",
+          span: 6,
           title: tDashboard("sections.rep.whatsapp.title"),
           description: tDashboard("sections.rep.whatsapp.description"),
           caption: tKpis("rep.whatsapp"),
         },
         {
           id: "rep-microsite",
-          span: "span-6",
+          span: 6,
           title: tDashboard("sections.rep.microsite.title"),
           description: tDashboard("sections.rep.microsite.description"),
           caption: tKpis("rep.microsite"),
         },
         {
           id: "rep-events",
-          span: "span-12",
+          span: 12,
           title: tDashboard("sections.rep.events.title"),
           description: tDashboard("sections.rep.events.description"),
           caption: tKpis("rep.events"),
@@ -305,15 +299,14 @@ export default function DashboardsPage() {
   );
 
   const placeholderWidgets = useMemo(() => {
-    if (role === "owner") {
-      return [];
-    }
+    if (role === "owner") return [];
     const roleWidgets = role === "leader" ? widgetsByRole.leader : widgetsByRole.rep;
     return [...commonWidgets, ...roleWidgets];
   }, [commonWidgets, role, widgetsByRole]);
 
-  const gridStyle = { columnGap: dxDashboardTokens.grid.columnGap, rowGap: dxDashboardTokens.grid.rowGap };
-  const kpiGridStyle = { columnGap: dxDashboardTokens.grid.columnGap, rowGap: dxDashboardTokens.grid.rowGap };
+  // Grid gaps derived from dxDashboardTokens (keeps visual rhythm with DX)
+  const gridStyle = { columnGap: dxDashboardTokens.grid.columnGap, rowGap: dxDashboardTokens.grid.rowGap } as CSSProperties;
+  const kpiGridStyle = { columnGap: dxDashboardTokens.grid.columnGap, rowGap: dxDashboardTokens.grid.rowGap } as CSSProperties;
 
   const periodRange = resolvePeriodRange(period, now);
   const periodLabel = useMemo(() => {
@@ -323,255 +316,251 @@ export default function DashboardsPage() {
     return `${startLabel} – ${endLabel}`;
   }, [locale, periodRange.end, periodRange.start]);
 
-  return (
-    <div className={styles.page}>
-      <div className={styles.inner}>
-        <section className={styles.hero}>
-          <header>
-            <h1 className={styles.title}>{tDashboard("hero.title")}</h1>
-            <p className={styles.description}>{tDashboard("hero.description")}</p>
-            <p className={styles.roleHint}>{tDashboard("hero.roleHint")}</p>
-          </header>
-          <DashboardFilterBar
-            sectionLabel={tDashboard("hero.title")}
-            role={role}
-            onRoleChange={setRole}
-            roleOptions={roleOptions}
-            period={period}
-            onPeriodChange={(value) => setPeriod(value as DashboardPeriodKey)}
-            periodOptions={periodOptions}
-            scope={scope}
-            onScopeChange={(value) => setScope(value as DashboardScope)}
-            scopeOptions={scopeOptions}
-            funnelStage={funnelStage}
-            onFunnelStageChange={setFunnelStage}
-            funnelOptions={funnelOptions}
-            labels={{
-              role: tDashboard("filters.role"),
-              period: tDashboard("filters.period"),
-              scope: tDashboard("filters.scope"),
-              funnelStage: tDashboard("filters.funnelStage"),
-            }}
-          />
-        </section>
+  // Inline section wrappers use only spacing tokens, not custom containers.
+  const sectionStyle: CSSProperties = { display: "grid", gap: "var(--dx-space-5)" };
+  const sectionHeaderStyle: CSSProperties = { display: "grid", gap: "var(--dx-space-2)" };
+  const sectionTitleStyle: CSSProperties = { font: "var(--dx-font-h2)", letterSpacing: "var(--dx-ls-h2)", margin: 0 as unknown as number };
+  const sectionDescStyle: CSSProperties = { color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number };
+  const kpiGridClass: CSSProperties = {
+    display: "grid",
+    gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
+    ...kpiGridStyle,
+  };
+  const gridClass: CSSProperties = {
+    display: "grid",
+    gridTemplateColumns: "repeat(12, minmax(0, 1fr))",
+    ...gridStyle,
+  };
 
-        <section className={styles.attentionSection} aria-labelledby="attention-heading">
-          <div className={styles.sectionHeader}>
-            <h2 id="attention-heading" className={styles.sectionTitle}>
-              {tDashboard("sections.attention.title")}
-            </h2>
-            <p className={styles.sectionDescription}>{tDashboard("sections.attention.description")}</p>
-            <p className={styles.placeholdersNote}>{tAttention("live")}</p>
-          </div>
-          <div className={styles.attentionList} role="list" aria-live="polite">
-            {attentionBoxes.length === 0 ? (
-              <div role="listitem" className={styles.attentionCard}>
-                <p className={styles.sectionDescription}>{tAttention("empty")}</p>
-              </div>
-            ) : (
-              attentionBoxes.map((box) => {
-                const html = markdownToHtml(box.bodyMd);
-                const isPinned = box.pinned;
-                const isRead = attentionStore.readBoxIds.has(box.id);
-                return (
-                  <article
-                    key={box.id}
-                    className={styles.attentionCard}
-                    data-pinned={isPinned}
-                    data-variant={box.variant}
-                    data-read={isRead}
-                    role="listitem"
-                  >
+  const span = (n: number): CSSProperties => ({ gridColumn: `span ${n} / span ${n}` });
+
+  return (
+    <>
+      {/* HERO / FILTERS */}
+      <section aria-labelledby="hero-title" style={sectionStyle}>
+        <header style={sectionHeaderStyle}>
+          <h1 id="hero-title" style={{ font: "var(--dx-font-h1)", letterSpacing: "var(--dx-ls-h1)", margin: 0 as unknown as number }}>
+            {tDashboard("hero.title")}
+          </h1>
+          <p style={sectionDescStyle}>{tDashboard("hero.description")}</p>
+          <p style={{ ...sectionDescStyle, font: "var(--dx-font-body-strong)" }}>{tDashboard("hero.roleHint")}</p>
+        </header>
+
+        <DashboardFilterBar
+          sectionLabel={tDashboard("hero.title")}
+          role={role}
+          onRoleChange={setRole}
+          roleOptions={roleOptions}
+          period={period}
+          onPeriodChange={(value) => setPeriod(value as DashboardPeriodKey)}
+          periodOptions={periodOptions}
+          scope={scope}
+          onScopeChange={(value) => setScope(value as DashboardScope)}
+          scopeOptions={scopeOptions}
+          funnelStage={funnelStage}
+          onFunnelStageChange={setFunnelStage}
+          funnelOptions={funnelOptions}
+          labels={{
+            role: tDashboard("filters.role"),
+            period: tDashboard("filters.period"),
+            scope: tDashboard("filters.scope"),
+            funnelStage: tDashboard("filters.funnelStage"),
+          }}
+        />
+      </section>
+
+      {/* ATTENTION */}
+      <section aria-labelledby="attention-heading" style={sectionStyle}>
+        <header style={sectionHeaderStyle}>
+          <h2 id="attention-heading" style={sectionTitleStyle}>{tDashboard("sections.attention.title")}</h2>
+          <p style={sectionDescStyle}>{tDashboard("sections.attention.description")}</p>
+          <p style={{ ...sectionDescStyle, font: "var(--dx-font-body-strong)" }}>{tAttention("live")}</p>
+        </header>
+
+        <div role="list" aria-live="polite" style={{ display: "grid", gap: "var(--dx-space-4)" }}>
+          {attentionBoxes.length === 0 ? (
+            <DxCard density="compact" role="listitem">
+              <p style={sectionDescStyle}>{tAttention("empty")}</p>
+            </DxCard>
+          ) : (
+            attentionBoxes.map((box) => {
+              const html = markdownToHtml(box.bodyMd);
+              const isPinned = box.pinned;
+              const isRead = attentionStore.readBoxIds.has(box.id);
+              return (
+                <DxCard key={box.id} density="compact" role="listitem" data-pinned={isPinned} data-read={isRead}>
+                  <div style={{ display: "grid", gap: "var(--dx-space-3)" }}>
                     <div>
-                      {isPinned ? <span className={styles.placeholdersNote}>{tAttention("preview.pinned")}</span> : null}
-                      <h3 className={styles.attentionHeading}>{box.title}</h3>
-                      <div
-                        className={styles.attentionBody}
-                        dangerouslySetInnerHTML={{ __html: html }}
-                      />
+                      {isPinned ? (
+                        <span style={{ font: "var(--dx-font-body-strong)", color: "var(--dx-color-text-secondary)" }}>
+                          {tAttention("preview.pinned")}
+                        </span>
+                      ) : null}
+                      <h3 style={{ font: "var(--dx-font-h3)", margin: 0 as unknown as number }}>{box.title}</h3>
+                      <div dangerouslySetInnerHTML={{ __html: html }} />
                     </div>
-                    <div className={styles.attentionMeta}>
+
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--dx-space-4)", color: "var(--dx-color-text-secondary)" }}>
                       <span>
                         {tAttention("meta.summary", {
-                          values: {
-                            label: tAttention("meta.audience"),
-                            value: tAttention(`audiences.${box.audience}` as const),
-                          },
+                          values: { label: tAttention("meta.audience"), value: tAttention(`audiences.${box.audience}` as const) },
                         })}
                       </span>
                       <span>
                         {tAttention("meta.summary", {
                           values: {
                             label: tAttention("meta.period"),
-                            value: `${new Intl.DateTimeFormat(locale, {
-                              day: "2-digit",
-                              month: "short",
-                            }).format(new Date(box.startAt))} – ${new Intl.DateTimeFormat(locale, {
-                              day: "2-digit",
-                              month: "short",
-                            }).format(new Date(box.endAt))}`,
+                            value: `${new Intl.DateTimeFormat(locale, { day: "2-digit", month: "short" }).format(new Date(box.startAt))} – ${new Intl.DateTimeFormat(locale, { day: "2-digit", month: "short" }).format(new Date(box.endAt))}`,
                           },
                         })}
                       </span>
                     </div>
-                    <div className={styles.attentionActions}>
-                      <DxButton
-                        density="compact"
-                        size="md"
-                        variant="secondary"
-                        onClick={() => attentionStore.markAsRead(box.id)}
-                      >
+
+                    <div style={{ display: "flex", gap: "var(--dx-space-2)" }}>
+                      <DxButton density="compact" size="md" variant="secondary" onClick={() => attentionStore.markAsRead(box.id)}>
                         {tAttention("actions.markAsRead")}
                       </DxButton>
                       {isOwnerView ? (
-                        <DxButton
-                          density="compact"
-                          size="md"
-                          variant="primary"
-                          onClick={() => router.push("/dashboards/attention")}
-                        >
+                        <DxButton density="compact" size="md" variant="primary" onClick={() => router.push("/dashboards/attention")}>
                           {tAttention("actions.manage")}
                         </DxButton>
                       ) : null}
                     </div>
-                  </article>
+                  </div>
+                </DxCard>
+              );
+            })
+          )}
+        </div>
+      </section>
+
+      {/* HEADLINE KPIs */}
+      <section aria-labelledby="headline-kpis" style={sectionStyle}>
+        <header style={sectionHeaderStyle}>
+          <h2 id="headline-kpis" style={sectionTitleStyle}>{tDashboard("sections.headline.title")}</h2>
+          <p style={sectionDescStyle}>
+            {tDashboard("sections.headline.description", { values: { period: periodLabel } })}
+          </p>
+        </header>
+
+        <div style={kpiGridClass}>
+          {isOwnerView && ownerMetrics
+            ? HEADLINE_KPIS.map((key) => {
+                const metric = ownerMetrics.headline.find((item) => item.id === key) as HeadlineMetric | undefined;
+                if (!metric) return null;
+
+                const label = tKpis(`headline.${key}` as const);
+                let detail: string | undefined;
+                if (metric.id === "whatsappResponse" && metric.numerator !== undefined) {
+                  detail = tDashboard("metrics.samples.whatsappResponse", {
+                    values: {
+                      responded: formatNumber(metric.numerator, locale, { maximumFractionDigits: 0 }),
+                      contacted: formatNumber(metric.denominator ?? 0, locale, { maximumFractionDigits: 0 }),
+                    },
+                  });
+                }
+                if (metric.id === "conversion" && metric.numerator !== undefined) {
+                  detail = tDashboard("metrics.samples.conversion", {
+                    values: {
+                      converted: formatNumber(metric.numerator, locale, { maximumFractionDigits: 0 }),
+                      leads: formatNumber(metric.denominator ?? 0, locale, { maximumFractionDigits: 0 }),
+                    },
+                  });
+                }
+
+                return (
+                  <MetricCard
+                    key={metric.id}
+                    metric={metric}
+                    label={label}
+                    locale={locale}
+                    deltaLabel={tDashboard("metrics.delta.label")}
+                    newLabel={tDashboard("metrics.delta.new")}
+                    detail={detail}
+                  />
                 );
               })
-            )}
-          </div>
-        </section>
-
-        <section className={styles.headlineSection} aria-labelledby="headline-kpis">
-          <div className={styles.sectionHeader}>
-            <h2 id="headline-kpis" className={styles.sectionTitle}>
-              {tDashboard("sections.headline.title")}
-            </h2>
-            <p className={styles.sectionDescription}>
-              {tDashboard("sections.headline.description", { values: { period: periodLabel } })}
-            </p>
-          </div>
-          <div className={styles.kpiGrid} style={kpiGridStyle}>
-            {isOwnerView && ownerMetrics
-              ? HEADLINE_KPIS.map((key) => {
-                  const metric = ownerMetrics.headline.find((item) => item.id === key) as HeadlineMetric | undefined;
-                  if (!metric) {
-                    return null;
-                  }
-
-                  const label = tKpis(`headline.${key}` as const);
-                  let detail: string | undefined;
-                  if (metric.id === "whatsappResponse" && metric.numerator !== undefined) {
-                    detail = tDashboard("metrics.samples.whatsappResponse", {
-                      values: {
-                        responded: formatNumber(metric.numerator, locale, { maximumFractionDigits: 0 }),
-                        contacted: formatNumber(metric.denominator ?? 0, locale, { maximumFractionDigits: 0 }),
-                      },
-                    });
-                  }
-                  if (metric.id === "conversion" && metric.numerator !== undefined) {
-                    detail = tDashboard("metrics.samples.conversion", {
-                      values: {
-                        converted: formatNumber(metric.numerator, locale, { maximumFractionDigits: 0 }),
-                        leads: formatNumber(metric.denominator ?? 0, locale, { maximumFractionDigits: 0 }),
-                      },
-                    });
-                  }
-
-                  return (
-                    <MetricCard
-                      key={metric.id}
-                      metric={metric}
-                      label={label}
-                      locale={locale}
-                      deltaLabel={tDashboard("metrics.delta.label")}
-                      newLabel={tDashboard("metrics.delta.new")}
-                      detail={detail}
-                    />
-                  );
-                })
-              : HEADLINE_KPIS.map((key) => (
-                  <WidgetPlaceholder
-                    key={key}
-                    title={tKpis(`headline.${key}` as const)}
-                    description={tDashboard("placeholders.drilldown")}
-                    metric="--"
-                    metricDescription={tDashboard("placeholders.draft")}
-                    variant="ghost"
-                    ariaLive="polite"
-                    className={styles.kpiCard}
-                  />
-                ))}
-          </div>
-        </section>
-
-        {isOwnerView && ownerMetrics ? (
-          <section className={styles.section} aria-labelledby="widgets-grid">
-            <div className={styles.sectionHeader}>
-              <h2 id="widgets-grid" className={styles.sectionTitle}>
-                {tDashboard("sections.owner.funnel.title")}
-              </h2>
-              <p className={styles.sectionDescription}>{tDashboard("sections.owner.funnel.description")}</p>
-            </div>
-            <div className={styles.grid} style={gridStyle}>
-              <div className={`${styles.funnelCard} ${styles["span-6"]}`}>
-                <FunnelWidget
-                  stages={ownerMetrics.funnel}
-                  locale={locale}
-                  t={tDashboard}
-                  activeStage={funnelStage}
-                />
-              </div>
-              <div className={`${styles.heatmapCard} ${styles["span-6"]}`}>
-                <HeatmapWidget data={ownerMetrics.heatmap} locale={locale} t={tDashboard} />
-              </div>
-              <div className={`${styles.tableCard} ${styles["span-6"]}`}>
-                <LeaderPerformanceWidget rows={ownerMetrics.leaders} locale={locale} t={tDashboard} />
-              </div>
-              <div className={`${styles.tableCard} ${styles["span-6"]}`}>
-                <MicrositeWidget rows={ownerMetrics.microsites} locale={locale} t={tDashboard} />
-              </div>
-              <div className={`${styles.cadenceCard} ${styles["span-4"]}`}>
-                <CadenceWidget rows={ownerMetrics.cadences} locale={locale} t={tDashboard} />
-              </div>
-              <div className={`${styles.qualityCard} ${styles["span-4"]}`}>
-                <DataQualityWidget insight={ownerMetrics.quality} locale={locale} t={tDashboard} />
-              </div>
-              <div className={`${styles.goalsCard} ${styles["span-4"]}`}>
-                <GoalsWidget data={ownerMetrics.goals} locale={locale} t={tDashboard} />
-              </div>
-            </div>
-          </section>
-        ) : null}
-
-        {placeholderWidgets.length > 0 ? (
-          <section className={styles.section} aria-labelledby="widgets-placeholder">
-            <div className={styles.sectionHeader}>
-              <h2 id="widgets-placeholder" className={styles.sectionTitle}>
-                {tDashboard("placeholders.draft")}
-              </h2>
-              <p className={styles.sectionDescription}>{tDashboard("placeholders.a11y")}</p>
-            </div>
-            <div className={styles.grid} style={gridStyle}>
-              {placeholderWidgets.map((widget) => (
+            : HEADLINE_KPIS.map((key) => (
                 <WidgetPlaceholder
-                  key={widget.id}
-                  title={widget.title}
-                  description={widget.description}
-                  caption={widget.caption}
-                  variant={widget.variant}
-                  className={GRID_COLUMN_CLASSNAMES[widget.span]}
-                  actions={
-                    <WidgetPlaceholderAction>{tDashboard("placeholders.drilldown")}</WidgetPlaceholderAction>
-                  }
+                  key={key}
+                  title={tKpis(`headline.${key}` as const)}
+                  description={tDashboard("placeholders.drilldown")}
+                  metric="--"
+                  metricDescription={tDashboard("placeholders.draft")}
+                  variant="ghost"
                 />
               ))}
-            </div>
-          </section>
-        ) : null}
-      </div>
-    </div>
+        </div>
+      </section>
+
+      {/* OWNER WIDGETS */}
+      {isOwnerView && ownerMetrics ? (
+        <section aria-labelledby="widgets-grid" style={sectionStyle}>
+          <header style={sectionHeaderStyle}>
+            <h2 id="widgets-grid" style={sectionTitleStyle}>{tDashboard("sections.owner.funnel.title")}</h2>
+            <p style={sectionDescStyle}>{tDashboard("sections.owner.funnel.description")}</p>
+          </header>
+
+          <div style={gridClass}>
+            <DxCard style={span(6)} density="compact">
+              <FunnelWidget stages={ownerMetrics.funnel} locale={locale} t={tDashboard} activeStage={funnelStage} />
+            </DxCard>
+
+            <DxCard style={span(6)} density="compact">
+              <HeatmapWidget data={ownerMetrics.heatmap} locale={locale} t={tDashboard} />
+            </DxCard>
+
+            <DxCard style={span(6)} density="compact">
+              <LeaderPerformanceWidget rows={ownerMetrics.leaders} locale={locale} t={tDashboard} />
+            </DxCard>
+
+            <DxCard style={span(6)} density="compact">
+              <MicrositeWidget rows={ownerMetrics.microsites} locale={locale} t={tDashboard} />
+            </DxCard>
+
+            <DxCard style={span(4)} density="compact">
+              <CadenceWidget rows={ownerMetrics.cadences} locale={locale} t={tDashboard} />
+            </DxCard>
+
+            <DxCard style={span(4)} density="compact">
+              <DataQualityWidget insight={ownerMetrics.quality} locale={locale} t={tDashboard} />
+            </DxCard>
+
+            <DxCard style={span(4)} density="compact">
+              <GoalsWidget data={ownerMetrics.goals} locale={locale} t={tDashboard} />
+            </DxCard>
+          </div>
+        </section>
+      ) : null}
+
+      {/* PLACEHOLDERS (Leader/Rep) */}
+      {placeholderWidgets.length > 0 ? (
+        <section aria-labelledby="widgets-placeholder" style={sectionStyle}>
+          <header style={sectionHeaderStyle}>
+            <h2 id="widgets-placeholder" style={sectionTitleStyle}>{tDashboard("placeholders.draft")}</h2>
+            <p style={sectionDescStyle}>{tDashboard("placeholders.a11y")}</p>
+          </header>
+
+          <div style={gridClass}>
+            {placeholderWidgets.map((widget) => (
+              <WidgetPlaceholder
+                key={widget.id}
+                title={widget.title}
+                description={widget.description}
+                caption={widget.caption}
+                variant={widget.variant}
+                style={span(widget.span)}
+                actions={<WidgetPlaceholderAction>{tDashboard("placeholders.drilldown")}</WidgetPlaceholderAction>}
+              />
+            ))}
+          </div>
+        </section>
+      ) : null}
+    </>
   );
 }
+
+/* === Local, presentation-only building blocks =========================== */
 
 function MetricCard({
   metric,
@@ -596,22 +585,30 @@ function MetricCard({
   const deltaValue = metric.previousValue === 0 && metric.value !== 0 ? null : computeDelta(metric.value, metric.previousValue);
   const deltaVariant = deltaValue === null ? "neutral" : deltaValue >= 0 ? "positive" : "negative";
   const deltaText =
-    deltaValue === null
-      ? newLabel
-      : formatPercent(deltaValue, locale, Math.abs(deltaValue) < 0.1 ? 1 : 0);
+    deltaValue === null ? newLabel : formatPercent(deltaValue, locale, Math.abs(deltaValue) < 0.1 ? 1 : 0);
+
+  const deltaColor =
+    deltaVariant === "positive"
+      ? "var(--positive-color)"
+      : deltaVariant === "negative"
+      ? "var(--negative-color)"
+      : "var(--dx-color-text-secondary)";
 
   return (
-    <DxCard className={styles.kpiCard} density="compact">
-      <header className={styles.kpiHeader}>
-        <span className={styles.kpiLabel}>{label}</span>
-        <span className={styles.kpiValue} role="status" aria-live="polite">
+    <DxCard density="compact">
+      <header style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: "var(--dx-space-3)" }}>
+        <span style={{ color: "var(--dx-color-text-secondary)" }}>{label}</span>
+        <span role="status" aria-live="polite" style={{ font: "var(--dx-font-h3)" }}>
           {formattedValue}
         </span>
       </header>
-      <p className={`${styles.kpiDelta} ${styles[`kpiDelta-${deltaVariant}`]}`}>
-        {deltaText} <span className={styles.kpiDeltaCaption}>{deltaLabel}</span>
+
+      <p style={{ color: deltaColor, margin: "var(--dx-space-2) 0" }}>
+        {deltaText}{" "}
+        <span style={{ color: "var(--dx-color-text-secondary)" }}>{deltaLabel}</span>
       </p>
-      {detail ? <p className={styles.kpiDetail}>{detail}</p> : null}
+
+      {detail ? <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>{detail}</p> : null}
     </DxCard>
   );
 }
@@ -628,29 +625,29 @@ function FunnelWidget({
   activeStage: string;
 }) {
   return (
-    <div>
-      <header className={styles.sectionHeader}>
-        <h3 className={styles.sectionTitle}>{t("sections.owner.funnel.title")}</h3>
-        <p className={styles.sectionDescription}>{t("sections.owner.funnel.description")}</p>
+    <div style={{ display: "grid", gap: "var(--dx-space-4)" }}>
+      <header style={{ display: "grid", gap: "var(--dx-space-1)" }}>
+        <h3 style={{ font: "var(--dx-font-h3)", margin: 0 as unknown as number }}>{t("sections.owner.funnel.title")}</h3>
+        <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>{t("sections.owner.funnel.description")}</p>
       </header>
-      <ul className={styles.funnelList}>
+
+      <ul style={{ display: "grid", gap: "var(--dx-space-3)", listStyle: "none", margin: 0, padding: 0 }}>
         {stages.map((stage) => {
           const formattedValue = formatNumber(stage.value, locale, { maximumFractionDigits: 0 });
           const delta = stage.previousValue === 0 && stage.value !== 0 ? null : computeDelta(stage.value, stage.previousValue);
           const deltaLabel =
-            delta === null
-              ? t("metrics.delta.new")
-              : formatPercent(delta, locale, Math.abs(delta) < 0.1 ? 1 : 0);
+            delta === null ? t("metrics.delta.new") : formatPercent(delta, locale, Math.abs(delta) < 0.1 ? 1 : 0);
           const conversion = stage.conversionFromPrevious ?? 0;
           const isActive = activeStage !== "all" && activeStage !== "visitors" && stage.id.includes(activeStage);
+
           return (
-            <li key={stage.id} className={styles.funnelStage} data-active={isActive}>
-              <div className={styles.funnelStageHeader}>
+            <li key={stage.id} data-active={isActive}>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: "var(--dx-space-4)" }}>
                 <div>
-                  <p className={styles.funnelStageLabel}>{t(`widgets.funnel.stages.${stage.id}`)}</p>
-                  <p className={styles.funnelStageValue}>{formattedValue}</p>
+                  <p style={{ margin: 0 as unknown as number }}>{t(`widgets.funnel.stages.${stage.id}`)}</p>
+                  <p style={{ font: "var(--dx-font-h4)", margin: 0 as unknown as number }}>{formattedValue}</p>
                 </div>
-                <div className={styles.funnelStageMeta}>
+                <div style={{ display: "flex", gap: "var(--dx-space-4)", color: "var(--dx-color-text-secondary)" }}>
                   <span>{deltaLabel}</span>
                   <span>
                     {t("widgets.funnel.conversion", {
@@ -659,8 +656,8 @@ function FunnelWidget({
                   </span>
                 </div>
               </div>
-              <div className={styles.funnelProgressTrack}>
-                <div className={styles.funnelProgressValue} style={{ width: `${Math.min(100, (conversion || 0) * 100)}%` }} />
+              <div style={{ height: 8, background: "var(--primary-highlighted-color)", borderRadius: 9999, overflow: "hidden" }}>
+                <div style={{ width: `${Math.min(100, (conversion || 0) * 100)}%`, height: "100%", background: "var(--primary-color)" }} />
               </div>
             </li>
           );
@@ -675,20 +672,21 @@ function HeatmapWidget({ data, locale, t }: { data: HeatmapData; locale: string;
   const dateFormatter = useMemo(() => new Intl.DateTimeFormat(locale, { day: "2-digit", month: "short" }), [locale]);
 
   return (
-    <div>
-      <header className={styles.sectionHeader}>
-        <h3 className={styles.sectionTitle}>{t("sections.owner.heatmap.title")}</h3>
-        <p className={styles.sectionDescription}>{t("sections.owner.heatmap.description")}</p>
+    <div style={{ display: "grid", gap: "var(--dx-space-4)" }}>
+      <header style={{ display: "grid", gap: "var(--dx-space-1)" }}>
+        <h3 style={{ font: "var(--dx-font-h3)", margin: 0 as unknown as number }}>{t("sections.owner.heatmap.title")}</h3>
+        <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>{t("sections.owner.heatmap.description")}</p>
       </header>
-      <div className={styles.heatmapGrid} role="grid" aria-label={t("widgets.heatmap.ariaLabel") ?? "Heatmap"}>
+
+      <div role="grid" aria-label={t("widgets.heatmap.ariaLabel") ?? "Heatmap"} style={{ display: "grid", gap: "var(--dx-space-2)" }}>
         {data.days.map((dayIso, dayIndex) => {
           const date = new Date(dayIso);
           const dayLabel = dayFormatter.format(date);
           const dateLabel = dateFormatter.format(date);
           return (
-            <div key={dayIso} className={styles.heatmapRow} role="row">
-              <span className={styles.heatmapDayLabel}>{`${dayLabel} ${dateLabel}`}</span>
-              <div className={styles.heatmapRowCells} role="presentation">
+            <div key={dayIso} role="row" style={{ display: "grid", gridTemplateColumns: "120px 1fr", alignItems: "center", gap: "var(--dx-space-3)" }}>
+              <span style={{ color: "var(--dx-color-text-secondary)" }}>{`${dayLabel} ${dateLabel}`}</span>
+              <div role="presentation" style={{ display: "grid", gridTemplateColumns: "repeat(24, 1fr)", gap: 2 }}>
                 {data.hours.map((hour) => {
                   const value = data.matrix[dayIndex]?.[hour] ?? 0;
                   const intensity = data.maxValue === 0 ? 0 : value / data.maxValue;
@@ -703,9 +701,13 @@ function HeatmapWidget({ data, locale, t }: { data: HeatmapData; locale: string;
                           value: formatNumber(value, locale, { maximumFractionDigits: 0 }),
                         },
                       })}
-                      className={styles.heatmapCell}
-                      style={{ "--heatmap-intensity": intensity } as CSSProperties}
                       title={`${dayLabel} ${dateLabel} • ${hour.toString().padStart(2, "0")}:00`}
+                      style={{
+                        width: "100%",
+                        aspectRatio: "1 / 1",
+                        borderRadius: 4,
+                        background: `rgba(0, 127, 155, ${Math.max(0.08, intensity * 0.9)})`,
+                      }}
                     />
                   );
                 })}
@@ -714,9 +716,10 @@ function HeatmapWidget({ data, locale, t }: { data: HeatmapData; locale: string;
           );
         })}
       </div>
-      <div className={styles.heatmapLegend}>
+
+      <div style={{ display: "flex", alignItems: "center", gap: "var(--dx-space-3)" }}>
         <span>{t("widgets.heatmap.legend.low")}</span>
-        <span aria-hidden className={styles.heatmapLegendScale} />
+        <span aria-hidden style={{ flex: 1, height: 6, background: "linear-gradient(90deg, rgba(0,127,155,0.12), rgba(0,127,155,0.9))", borderRadius: 9999 }} />
         <span>{t("widgets.heatmap.legend.high")}</span>
       </div>
     </div>
@@ -744,10 +747,10 @@ function LeaderPerformanceWidget({ rows, locale, t }: { rows: LeaderPerformanceR
   }));
 
   return (
-    <div>
-      <header className={styles.sectionHeader}>
-        <h3 className={styles.sectionTitle}>{t("sections.owner.leaders.title")}</h3>
-        <p className={styles.sectionDescription}>{t("sections.owner.leaders.description")}</p>
+    <div style={{ display: "grid", gap: "var(--dx-space-4)" }}>
+      <header style={{ display: "grid", gap: "var(--dx-space-1)" }}>
+        <h3 style={{ font: "var(--dx-font-h3)", margin: 0 as unknown as number }}>{t("sections.owner.leaders.title")}</h3>
+        <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>{t("sections.owner.leaders.description")}</p>
       </header>
       <DxTable
         columns={columns}
@@ -755,9 +758,9 @@ function LeaderPerformanceWidget({ rows, locale, t }: { rows: LeaderPerformanceR
         density="compact"
         size="sm"
         dataState={{ isLoading: false, isError: false }}
-        emptyState={<p className={styles.tableMessage}>{t("widgets.leaders.empty")}</p>}
+        emptyState={<p style={{ color: "var(--dx-color-text-secondary)" }}>{t("widgets.leaders.empty")}</p>}
         errorState={
-          <p role="alert" className={`${styles.tableMessage} ${styles.tableMessageError}`}>
+          <p role="alert" style={{ color: "var(--negative-color)" }}>
             {t("widgets.leaders.error")}
           </p>
         }
@@ -787,10 +790,10 @@ function MicrositeWidget({ rows, locale, t }: { rows: MicrositePerformanceRow[];
   }));
 
   return (
-    <div>
-      <header className={styles.sectionHeader}>
-        <h3 className={styles.sectionTitle}>{t("sections.owner.microsites.title")}</h3>
-        <p className={styles.sectionDescription}>{t("sections.owner.microsites.description")}</p>
+    <div style={{ display: "grid", gap: "var(--dx-space-4)" }}>
+      <header style={{ display: "grid", gap: "var(--dx-space-1)" }}>
+        <h3 style={{ font: "var(--dx-font-h3)", margin: 0 as unknown as number }}>{t("sections.owner.microsites.title")}</h3>
+        <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>{t("sections.owner.microsites.description")}</p>
       </header>
       <DxTable
         columns={columns}
@@ -798,9 +801,9 @@ function MicrositeWidget({ rows, locale, t }: { rows: MicrositePerformanceRow[];
         density="compact"
         size="sm"
         dataState={{ isLoading: false, isError: false }}
-        emptyState={<p className={styles.tableMessage}>{t("widgets.microsites.empty")}</p>}
+        emptyState={<p style={{ color: "var(--dx-color-text-secondary)" }}>{t("widgets.microsites.empty")}</p>}
         errorState={
-          <p role="alert" className={`${styles.tableMessage} ${styles.tableMessageError}`}>
+          <p role="alert" style={{ color: "var(--negative-color)" }}>
             {t("widgets.microsites.error")}
           </p>
         }
@@ -811,34 +814,40 @@ function MicrositeWidget({ rows, locale, t }: { rows: MicrositePerformanceRow[];
 
 function CadenceWidget({ rows, locale, t }: { rows: CadenceEfficiencyRow[]; locale: string; t: TranslateFn }) {
   return (
-    <div>
-      <header className={styles.sectionHeader}>
-        <h3 className={styles.sectionTitle}>{t("sections.owner.cadence.title")}</h3>
-        <p className={styles.sectionDescription}>{t("sections.owner.cadence.description")}</p>
+    <div style={{ display: "grid", gap: "var(--dx-space-4)" }}>
+      <header style={{ display: "grid", gap: "var(--dx-space-1)" }}>
+        <h3 style={{ font: "var(--dx-font-h3)", margin: 0 as unknown as number }}>{t("sections.owner.cadence.title")}</h3>
+        <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>{t("sections.owner.cadence.description")}</p>
       </header>
-      <ul className={styles.cadenceList}>
+
+      <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "grid", gap: "var(--dx-space-3)" }}>
         {rows.map((row) => (
-          <li key={row.id} className={styles.cadenceItem}>
-            <div className={styles.cadenceHeader}>
-              <p className={styles.cadenceName}>{row.cadenceName}</p>
-              <span>{t("widgets.cadence.dueSteps", { values: { value: formatNumber(row.dueSteps, locale, { maximumFractionDigits: 0 }) } })}</span>
+          <li key={row.id} style={{ display: "grid", gap: "var(--dx-space-2)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <p style={{ margin: 0 as unknown as number, font: "var(--dx-font-body-strong)" }}>{row.cadenceName}</p>
+              <span style={{ color: "var(--dx-color-text-secondary)" }}>
+                {t("widgets.cadence.dueSteps", { values: { value: formatNumber(row.dueSteps, locale, { maximumFractionDigits: 0 }) } })}
+              </span>
             </div>
-            <div className={styles.progressBar}>
+
+            <div style={{ height: 8, background: "var(--primary-highlighted-color)", borderRadius: 9999 }}>
               <span
-                className={styles.progressValue}
-                style={{ width: `${Math.min(100, row.completionRate * 100)}%` }}
+                style={{
+                  display: "block",
+                  width: `${Math.min(100, row.completionRate * 100)}%`,
+                  height: "100%",
+                  borderRadius: 9999,
+                  background: "var(--primary-color)",
+                }}
               />
             </div>
-            <div className={styles.cadenceMeta}>
+
+            <div style={{ display: "flex", gap: "var(--dx-space-2)" }}>
               <DxBadge variant="primary" size="sm">
-                {t("widgets.cadence.completion", {
-                  values: { value: formatPercent(row.completionRate || 0, locale, 0) },
-                })}
+                {t("widgets.cadence.completion", { values: { value: formatPercent(row.completionRate || 0, locale, 0) } })}
               </DxBadge>
               <DxBadge variant="danger" size="sm">
-                {t("widgets.cadence.overdue", {
-                  values: { value: formatPercent(row.overdueRate || 0, locale, 0) },
-                })}
+                {t("widgets.cadence.overdue", { values: { value: formatPercent(row.overdueRate || 0, locale, 0) } })}
               </DxBadge>
             </div>
           </li>
@@ -850,28 +859,25 @@ function CadenceWidget({ rows, locale, t }: { rows: CadenceEfficiencyRow[]; loca
 
 function GoalsWidget({ data, locale, t }: { data: GoalsOverview; locale: string; t: TranslateFn }) {
   return (
-    <div>
-      <header className={styles.sectionHeader}>
-        <h3 className={styles.sectionTitle}>{t("sections.owner.goals.title")}</h3>
-        <p className={styles.sectionDescription}>{t("sections.owner.goals.description")}</p>
+    <div style={{ display: "grid", gap: "var(--dx-space-4)" }}>
+      <header style={{ display: "grid", gap: "var(--dx-space-1)" }}>
+        <h3 style={{ font: "var(--dx-font-h3)", margin: 0 as unknown as number }}>{t("sections.owner.goals.title")}</h3>
+        <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>{t("sections.owner.goals.description")}</p>
       </header>
-      <div className={styles.goalsSummary}>
-        <p className={styles.goalsHeadline}>{formatPercent(data.attainmentRate || 0, locale, 0)}</p>
-        <p className={styles.sectionDescription}>
-          {t("widgets.goals.onTrack", {
-            values: {
-              count: data.repsOnTrack,
-              total: data.totalMembers,
-            },
-          })}
+
+      <div>
+        <p style={{ font: "var(--dx-font-h2)", margin: 0 as unknown as number }}>{formatPercent(data.attainmentRate || 0, locale, 0)}</p>
+        <p style={{ color: "var(--dx-color-text-secondary)", margin: "var(--dx-space-1) 0 0" }}>
+          {t("widgets.goals.onTrack", { values: { count: data.repsOnTrack, total: data.totalMembers } })}
         </p>
       </div>
-      <ul className={styles.leaderboardList}>
+
+      <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "grid", gap: "var(--dx-space-2)" }}>
         {data.leaderboard.map((entry) => (
-          <li key={entry.memberId} className={styles.leaderboardItem}>
+          <li key={entry.memberId} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <div>
-              <p className={styles.leaderboardName}>{entry.name}</p>
-              <p className={styles.sectionDescription}>
+              <p style={{ margin: 0 as unknown as number, font: "var(--dx-font-body-strong)" }}>{entry.name}</p>
+              <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>
                 {t("widgets.goals.progress", {
                   values: {
                     contacts: formatPercent(entry.contactsProgress || 0, locale, 0),
@@ -881,9 +887,7 @@ function GoalsWidget({ data, locale, t }: { data: GoalsOverview; locale: string;
                 })}
               </p>
             </div>
-            <DxBadge variant="primary" size="sm">
-              {formatPercent(entry.score || 0, locale, 0)}
-            </DxBadge>
+            <DxBadge variant="primary" size="sm">{formatPercent(entry.score || 0, locale, 0)}</DxBadge>
           </li>
         ))}
       </ul>
@@ -894,47 +898,36 @@ function GoalsWidget({ data, locale, t }: { data: GoalsOverview; locale: string;
 function DataQualityWidget({ insight, locale, t }: { insight: DataQualityInsight; locale: string; t: TranslateFn }) {
   const totalLabel = formatNumber(insight.totalContacts, locale, { maximumFractionDigits: 0 });
   return (
-    <div>
-      <header className={styles.sectionHeader}>
-        <h3 className={styles.sectionTitle}>{t("sections.owner.quality.title")}</h3>
-        <p className={styles.sectionDescription}>{t("sections.owner.quality.description")}</p>
+    <div style={{ display: "grid", gap: "var(--dx-space-4)" }}>
+      <header style={{ display: "grid", gap: "var(--dx-space-1)" }}>
+        <h3 style={{ font: "var(--dx-font-h3)", margin: 0 as unknown as number }}>{t("sections.owner.quality.title")}</h3>
+        <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>{t("sections.owner.quality.description")}</p>
       </header>
-      <div className={styles.qualityGrid}>
+
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: "var(--dx-space-4)" }}>
         <div>
-          <p className={styles.qualityLabel}>{t("widgets.quality.total")}</p>
-          <p className={styles.qualityValue}>{totalLabel}</p>
+          <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>{t("widgets.quality.total")}</p>
+          <p style={{ font: "var(--dx-font-h4)", margin: 0 as unknown as number }}>{totalLabel}</p>
         </div>
         <div>
-          <p className={styles.qualityLabel}>{t("widgets.quality.stale")}</p>
-          <p className={styles.qualityValue}>{formatPercent(insight.stalePercentage || 0, locale, 0)}</p>
-          <p className={styles.sectionDescription}>
-            {t("widgets.quality.staleCount", {
-              values: {
-                count: formatNumber(insight.staleCount, locale, { maximumFractionDigits: 0 }),
-              },
-            })}
+          <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>{t("widgets.quality.stale")}</p>
+          <p style={{ font: "var(--dx-font-h4)", margin: 0 as unknown as number }}>{formatPercent(insight.stalePercentage || 0, locale, 0)}</p>
+          <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>
+            {t("widgets.quality.staleCount", { values: { count: formatNumber(insight.staleCount, locale, { maximumFractionDigits: 0 }) } })}
           </p>
         </div>
         <div>
-          <p className={styles.qualityLabel}>{t("widgets.quality.critical")}</p>
-          <p className={styles.qualityValue}>{formatPercent(insight.criticalPercentage || 0, locale, 0)}</p>
-          <p className={styles.sectionDescription}>
-            {t("widgets.quality.criticalCount", {
-              values: {
-                count: formatNumber(insight.criticalCount, locale, { maximumFractionDigits: 0 }),
-              },
-            })}
+          <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>{t("widgets.quality.critical")}</p>
+          <p style={{ font: "var(--dx-font-h4)", margin: 0 as unknown as number }}>{formatPercent(insight.criticalPercentage || 0, locale, 0)}</p>
+          <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>
+            {t("widgets.quality.criticalCount", { values: { count: formatNumber(insight.criticalCount, locale, { maximumFractionDigits: 0 }) } })}
           </p>
         </div>
         <div>
-          <p className={styles.qualityLabel}>{t("widgets.quality.duplicates")}</p>
-          <p className={styles.qualityValue}>{formatPercent(insight.duplicatePercentage || 0, locale, 0)}</p>
-          <p className={styles.sectionDescription}>
-            {t("widgets.quality.duplicatesCount", {
-              values: {
-                count: formatNumber(insight.duplicates, locale, { maximumFractionDigits: 0 }),
-              },
-            })}
+          <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>{t("widgets.quality.duplicates")}</p>
+          <p style={{ font: "var(--dx-font-h4)", margin: 0 as unknown as number }}>{formatPercent(insight.duplicatePercentage || 0, locale, 0)}</p>
+          <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number }}>
+            {t("widgets.quality.duplicatesCount", { values: { count: formatNumber(insight.duplicates, locale, { maximumFractionDigits: 0 }) } })}
           </p>
         </div>
       </div>
