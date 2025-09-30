@@ -11,7 +11,8 @@
   display: flex;
   flex-direction: column;
   width: var(--dx-sidebar-width);
-  padding: var(--dx-space-6) var(--dx-space-4);
+  /* Espaço extra para o primeiro item não “grudar” no topbar */
+  padding: calc(var(--dx-space-7)) var(--dx-space-4);
   gap: var(--dx-space-4);
   color: var(--dx-color-text-primary);
   background: var(--dx-sidebar-bg);
@@ -30,6 +31,8 @@
   padding-inline-end: var(--dx-space-1);
   margin-inline-end: calc(-1 * var(--dx-space-1));
   scrollbar-gutter: stable;
+  /* leve afastamento visual do topo */
+  margin-top: var(--dx-space-1);
 }
 
 .navList {
@@ -80,6 +83,14 @@
   box-shadow: none;
 }
 
+/* Hover do item ativo usa o hover-selected */
+.navItemButtonActive:hover,
+.navItemButtonActive:focus-visible {
+  background: var(--primary-selected-hover-color);
+  border-color: var(--primary-selected-hover-color);
+  color: var(--dx-color-text-primary);
+}
+
 .navItemLabel {
   flex: 1;
   overflow: hidden;
@@ -99,7 +110,7 @@
   left: 0;
   z-index: 20;
 
-  /* Align with the layout's rail + content */
+  /* Alinha com o rail + conteúdo */
   display: grid;
   grid-template-columns: var(--dx-rail-current, var(--shell-sidebar-width)) 1fr;
 
@@ -108,9 +119,12 @@
   margin: 0;
   min-height: var(--dx-top-bar-height);
 
-  background: var(--dx-color-surface);
+  /* Fundo ajustado para o tom da referência */
+  background: var(--dx-color-topbar-bg);
   box-shadow: var(--dx-shadow-topbar);
-  padding-inline-end: var(--dx-page-padding-x);
+
+  /* respiro à esquerda e à direita */
+  padding-inline: var(--dx-page-padding-x);
   box-sizing: border-box;
 }
 
@@ -120,8 +134,9 @@
   justify-content: flex-start;
   width: 100%;
   border-right: 1px solid var(--dx-color-border-subtle);
-  background: var(--dx-color-surface);
-  padding-inline: var(--dx-space-4);
+  background: var(--dx-color-topbar-bg);
+  /* alinha com padding externo da topbar */
+  padding-inline: var(--dx-page-padding-x);
   box-sizing: border-box;
 }
 
@@ -132,7 +147,8 @@
   gap: var(--dx-space-6);
   width: 100%;
   margin: 0;
-  padding-inline-start: var(--dx-page-padding-x);
+  /* já temos padding externo na .topbar */
+  padding-inline-start: 0;
   height: var(--dx-top-bar-height);
 }
 
