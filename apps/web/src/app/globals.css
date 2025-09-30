@@ -87,8 +87,21 @@
   --dx-page-padding-y: 20px;
   --dx-page-gap: 16px;
 
+  /* === Paleta primária solicitada ===================================== */
+  --primary-color: #007f9b;
+  --primary-hover-color: #006278;
+  --primary-selected-color: #d1ecef;
+  --primary-selected-hover-color: #c6dfe3;
+  --primary-highlighted-color: #e7f4f6;
+  --primary-surface-color: #e7f4f6;
+
+  /* Alias DX */
+  --primary-background-color: var(--primary-surface-color);
+
+  /* Topbar & Sidebar usando os tons primários */
   --dx-color-topbar-bg: var(--primary-selected-hover-color);
   --dx-color-topbar-hover: var(--primary-selected-color);
+
   --dx-color-border-subtle: var(--layout-border-color);
   --dx-color-badge: var(--primary-background-color);
   --dx-color-badge-border: var(--ui-border-color);
@@ -113,8 +126,8 @@
   --dx-rail-green: var(--positive-color);
   --dx-rail-red: var(--negative-color);
 
+  /* compat legada de variáveis usadas em alguns componentes */
   --surface-color: var(--dx-color-surface-hover);
-  --primary-selected-hover-color: #e1eff2;
 
   --top-bar-height: var(--dx-top-bar-height);
   --top-bar-enlarged-height: var(--dx-top-bar-enlarged-height);
