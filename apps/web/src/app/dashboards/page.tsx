@@ -16,8 +16,9 @@ import {
   type DashboardFilterOption,
   type DashboardRole,
   type DashboardRoleOption,
+  WidgetPlaceholder,
+  WidgetPlaceholderAction,
 } from "@/components/dashboard";
-import { WidgetPlaceholder, WidgetPlaceholderAction } from "@/components/dashboard";
 import { useAppLayout } from "@/components/app-shell/AppShell";
 import { useTranslation, type TranslateFn } from "@/i18n/I18nProvider";
 import {
@@ -47,8 +48,8 @@ import type {
 } from "@/dashboards/selectors";
 
 /**
- * We avoid page-level wrappers that redefine width/padding/scroll.
- * AppShell provides max width, padding and the single scroll container.
+ * This page uses AppShell’s scroller for layout (width, padding, and scroll).
+ * We avoid custom wrappers that fight the shell.
  */
 
 const HEADLINE_KPIS = ["newLeads", "newContacts", "meetings", "whatsappResponse", "conversion"] as const;
@@ -202,7 +203,7 @@ export default function DashboardsPage() {
     };
   }, [isOwnerView, now, period, scope]);
 
-  // Grid gaps derived from dxDashboardTokens (keeps visual rhythm with DX)
+  // Grid gaps derived from dxDashboardTokens (keeps rhythm with DX design)
   const gridStyle = {
     columnGap: dxDashboardTokens.grid.columnGap,
     rowGap: dxDashboardTokens.grid.rowGap,
@@ -221,7 +222,7 @@ export default function DashboardsPage() {
     return `${startLabel} – ${endLabel}`;
   }, [locale, periodRange.end, periodRange.start]);
 
-  // Section styles using DX tokens
+  // Local presentation styles using DX tokens
   const sectionStyle: CSSProperties = { display: "grid", gap: "var(--dx-space-5)" };
   const sectionHeaderStyle: CSSProperties = { display: "grid", gap: "var(--dx-space-2)" };
   const sectionTitleStyle: CSSProperties = {
@@ -230,19 +231,22 @@ export default function DashboardsPage() {
     margin: 0,
   };
   const sectionDescStyle: CSSProperties = { color: "var(--dx-color-text-secondary)", margin: 0 };
+
   const kpiGridClass: CSSProperties = {
     display: "grid",
     gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
     ...kpiGridStyle,
   };
+
   const gridClass: CSSProperties = {
     display: "grid",
     gridTemplateColumns: "repeat(12, minmax(0, 1fr))",
     ...gridStyle,
   };
+
   const span = (n: number): CSSProperties => ({ gridColumn: `span ${n} / span ${n}` });
 
-  // Role-specific placeholders (leader/rep)
+  // Role-specific placeholder definitions
   const commonWidgets = useMemo<WidgetDefinition[]>(
     () => [
       {
@@ -338,150 +342,144 @@ export default function DashboardsPage() {
     return [...commonWidgets, ...roleWidgets];
   }, [commonWidgets, role, widgetsByRole]);
 
- return (
-  <div data-page="dashboards">
-    {/* HERO / FILTERS */}
-    <section aria-labelledby="hero-title" style={sectionStyle}>
-      <header style={sectionHeaderStyle}>
-        <h1
-          id="hero-title"
-          style={{ font: "var(--dx-font-h1)", letterSpacing: "var(--dx-ls-h1)", margin: 0 }}
-        >
-          {tDashboard("hero.title")}
-        </h1>
-        <p style={sectionDescStyle}>{tDashboard("hero.description")}</p>
-        <p style={{ ...sectionDescStyle, font: "var(--dx-font-body-strong)" }}>
-          {tDashboard("hero.roleHint")}
-        </p>
-      </header>
+  return (
+    <div data-page="dashboards">
+      {/* HERO / FILTERS */}
+      <section aria-labelledby="hero-title" style={sectionStyle}>
+        <header style={sectionHeaderStyle}>
+          <h1 id="hero-title" style={{ font: "var(--dx-font-h1)", letterSpacing: "var(--dx-ls-h1)", margin: 0 }}>
+            {tDashboard("hero.title")}
+          </h1>
+          <p style={sectionDescStyle}>{tDashboard("hero.description")}</p>
+          <p style={{ ...sectionDescStyle, font: "var(--dx-font-body-strong)" }}>
+            {tDashboard("hero.roleHint")}
+          </p>
+        </header>
 
-      <DashboardFilterBar
-        sectionLabel={tDashboard("hero.title")}
-        role={role}
-        onRoleChange={setRole}
-        roleOptions={roleOptions}
-        period={period}
-        onPeriodChange={(value) => setPeriod(value as DashboardPeriodKey)}
-        periodOptions={periodOptions}
-        scope={scope}
-        onScopeChange={(value) => setScope(value as DashboardScope)}
-        scopeOptions={scopeOptions}
-        funnelStage={funnelStage}
-        onFunnelStageChange={setFunnelStage}
-        funnelOptions={funnelOptions}
-        labels={{
-          role: tDashboard("filters.role"),
-          period: tDashboard("filters.period"),
-          scope: tDashboard("filters.scope"),
-          funnelStage: tDashboard("filters.funnelStage"),
-        }}
-      />
-    </section>
+        <DashboardFilterBar
+          sectionLabel={tDashboard("hero.title")}
+          role={role}
+          onRoleChange={setRole}
+          roleOptions={roleOptions}
+          period={period}
+          onPeriodChange={(value) => setPeriod(value as DashboardPeriodKey)}
+          periodOptions={periodOptions}
+          scope={scope}
+          onScopeChange={(value) => setScope(value as DashboardScope)}
+          scopeOptions={scopeOptions}
+          funnelStage={funnelStage}
+          onFunnelStageChange={setFunnelStage}
+          funnelOptions={funnelOptions}
+          labels={{
+            role: tDashboard("filters.role"),
+            period: tDashboard("filters.period"),
+            scope: tDashboard("filters.scope"),
+            funnelStage: tDashboard("filters.funnelStage"),
+          }}
+        />
+      </section>
 
-    {/* ATTENTION */}
-    <section aria-labelledby="attention-heading" style={sectionStyle}>
-      <header style={sectionHeaderStyle}>
-        <h2 id="attention-heading" style={sectionTitleStyle}>
-          {tDashboard("sections.attention.title")}
-        </h2>
-        <p style={sectionDescStyle}>{tDashboard("sections.attention.description")}</p>
-        <p style={{ ...sectionDescStyle, font: "var(--dx-font-body-strong)" }}>{tAttention("live")}</p>
-      </header>
+      {/* ATTENTION */}
+      <section aria-labelledby="attention-heading" style={sectionStyle}>
+        <header style={sectionHeaderStyle}>
+          <h2 id="attention-heading" style={sectionTitleStyle}>
+            {tDashboard("sections.attention.title")}
+          </h2>
+          <p style={sectionDescStyle}>{tDashboard("sections.attention.description")}</p>
+          <p style={{ ...sectionDescStyle, font: "var(--dx-font-body-strong)" }}>{tAttention("live")}</p>
+        </header>
 
-      <div role="list" aria-live="polite" style={{ display: "grid", gap: "var(--dx-space-4)" }}>
-        {attentionBoxes.length === 0 ? (
-          <div role="listitem">
-            <DxCard density="compact">
-              <p style={sectionDescStyle}>{tAttention("empty")}</p>
-            </DxCard>
-          </div>
-        ) : (
-          attentionBoxes.map((box) => {
-            const html = markdownToHtml(box.bodyMd);
-            const isPinned = box.pinned;
-            const isRead = attentionStore.readBoxIds.has(box.id);
-            return (
-              <div role="listitem" key={box.id}>
-                <DxCard density="compact" data-pinned={isPinned} data-read={isRead}>
-                  <div style={{ display: "grid", gap: "var(--dx-space-3)" }}>
-                    <div>
-                      {isPinned ? (
-                        <span
-                          style={{
-                            font: "var(--dx-font-body-strong)",
-                            color: "var(--dx-color-text-secondary)",
-                          }}
-                        >
-                          {tAttention("preview.pinned")}
-                        </span>
-                      ) : null}
-                      <h3 style={{ font: "var(--dx-font-h3)", margin: 0 }}>{box.title}</h3>
-                      <div dangerouslySetInnerHTML={{ __html: html }} />
-                    </div>
+        <div role="list" aria-live="polite" style={{ display: "grid", gap: "var(--dx-space-4)" }}>
+          {attentionBoxes.length === 0 ? (
+            <div role="listitem">
+              <DxCard density="compact">
+                <p style={sectionDescStyle}>{tAttention("empty")}</p>
+              </DxCard>
+            </div>
+          ) : (
+            attentionBoxes.map((box) => {
+              const html = markdownToHtml(box.bodyMd);
+              const isPinned = box.pinned;
+              const isRead = attentionStore.readBoxIds.has(box.id);
+              return (
+                <div role="listitem" key={box.id}>
+                  <DxCard density="compact" data-pinned={isPinned} data-read={isRead}>
+                    <div style={{ display: "grid", gap: "var(--dx-space-3)" }}>
+                      <div>
+                        {isPinned ? (
+                          <span
+                            style={{
+                              font: "var(--dx-font-body-strong)",
+                              color: "var(--dx-color-text-secondary)",
+                            }}
+                          >
+                            {tAttention("preview.pinned")}
+                          </span>
+                        ) : null}
+                        <h3 style={{ font: "var(--dx-font-h3)", margin: 0 }}>{box.title}</h3>
+                        <div dangerouslySetInnerHTML={{ __html: html }} />
+                      </div>
 
-                    <div
-                      style={{
-                        display: "flex",
-                        flexWrap: "wrap",
-                        gap: "var(--dx-space-4)",
-                        color: "var(--dx-color-text-secondary)",
-                      }}
-                    >
-                      <span>
-                        {tAttention("meta.summary", {
-                          values: {
-                            label: tAttention("meta.audience"),
-                            value: tAttention(`audiences.${box.audience}` as const),
-                          },
-                        })}
-                      </span>
-                      <span>
-                        {tAttention("meta.summary", {
-                          values: {
-                            label: tAttention("meta.period"),
-                            value: `${new Intl.DateTimeFormat(locale, {
-                              day: "2-digit",
-                              month: "short",
-                            }).format(new Date(box.startAt))} – ${new Intl.DateTimeFormat(locale, {
-                              day: "2-digit",
-                              month: "short",
-                            }).format(new Date(box.endAt))}`,
-                          },
-                        })}
-                      </span>
-                    </div>
-
-                    <div style={{ display: "flex", gap: "var(--dx-space-2)" }}>
-                      <DxButton
-                        density="compact"
-                        size="md"
-                        variant="secondary"
-                        onClick={() => attentionStore.markAsRead(box.id)}
+                      <div
+                        style={{
+                          display: "flex",
+                          flexWrap: "wrap",
+                          gap: "var(--dx-space-4)",
+                          color: "var(--dx-color-text-secondary)",
+                        }}
                       >
-                        {tAttention("actions.markAsRead")}
-                      </DxButton>
-                      {isOwnerView ? (
+                        <span>
+                          {tAttention("meta.summary", {
+                            values: {
+                              label: tAttention("meta.audience"),
+                              value: tAttention(`audiences.${box.audience}` as const),
+                            },
+                          })}
+                        </span>
+                        <span>
+                          {tAttention("meta.summary", {
+                            values: {
+                              label: tAttention("meta.period"),
+                              value: `${new Intl.DateTimeFormat(locale, {
+                                day: "2-digit",
+                                month: "short",
+                              }).format(new Date(box.startAt))} – ${new Intl.DateTimeFormat(locale, {
+                                day: "2-digit",
+                                month: "short",
+                              }).format(new Date(box.endAt))}`,
+                            },
+                          })}
+                        </span>
+                      </div>
+
+                      <div style={{ display: "flex", gap: "var(--dx-space-2)" }}>
                         <DxButton
                           density="compact"
                           size="md"
-                          variant="primary"
-                          onClick={() => router.push("/dashboards/attention")}
+                          variant="secondary"
+                          onClick={() => attentionStore.markAsRead(box.id)}
                         >
-                          {tAttention("actions.manage")}
+                          {tAttention("actions.markAsRead")}
                         </DxButton>
-                      ) : null}
+                        {isOwnerView ? (
+                          <DxButton
+                            density="compact"
+                            size="md"
+                            variant="primary"
+                            onClick={() => router.push("/dashboards/attention")}
+                          >
+                            {tAttention("actions.manage")}
+                          </DxButton>
+                        ) : null}
+                      </div>
                     </div>
-                  </div>
-                </DxCard>
-              </div>
-            );
-          })
-        )}
-      </div>
-    </section>
-  </div>
-);
-
+                  </DxCard>
+                </div>
+              );
+            })
+          )}
+        </div>
+      </section>
 
       {/* HEADLINE KPIs */}
       <section aria-labelledby="headline-kpis" style={sectionStyle}>
@@ -626,7 +624,7 @@ export default function DashboardsPage() {
           </div>
         </section>
       ) : null}
-    </>
+    </div>
   );
 }
 
