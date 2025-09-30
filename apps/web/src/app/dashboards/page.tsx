@@ -739,7 +739,19 @@ function LeaderPerformanceWidget({ rows, locale, t }: { rows: LeaderPerformanceR
         <h3 className={styles.sectionTitle}>{t("sections.owner.leaders.title")}</h3>
         <p className={styles.sectionDescription}>{t("sections.owner.leaders.description")}</p>
       </header>
-      <DxTable columns={columns} rows={tableRows} density="compact" size="sm" />
+      <DxTable
+        columns={columns}
+        rows={tableRows}
+        density="compact"
+        size="sm"
+        dataState={{ isLoading: false, isError: false }}
+        emptyState={<p className={styles.tableMessage}>{t("widgets.leaders.empty")}</p>}
+        errorState={
+          <p role="alert" className={`${styles.tableMessage} ${styles.tableMessageError}`}>
+            {t("widgets.leaders.error")}
+          </p>
+        }
+      />
     </div>
   );
 }
@@ -770,7 +782,19 @@ function MicrositeWidget({ rows, locale, t }: { rows: MicrositePerformanceRow[];
         <h3 className={styles.sectionTitle}>{t("sections.owner.microsites.title")}</h3>
         <p className={styles.sectionDescription}>{t("sections.owner.microsites.description")}</p>
       </header>
-      <DxTable columns={columns} rows={tableRows} density="compact" size="sm" />
+      <DxTable
+        columns={columns}
+        rows={tableRows}
+        density="compact"
+        size="sm"
+        dataState={{ isLoading: false, isError: false }}
+        emptyState={<p className={styles.tableMessage}>{t("widgets.microsites.empty")}</p>}
+        errorState={
+          <p role="alert" className={`${styles.tableMessage} ${styles.tableMessageError}`}>
+            {t("widgets.microsites.error")}
+          </p>
+        }
+      />
     </div>
   );
 }

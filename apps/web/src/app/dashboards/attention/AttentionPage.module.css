@@ -77,6 +77,16 @@
   gap: var(--dx-space-3);
 }
 
+.tableMessage {
+  padding: var(--dx-space-4);
+  font-size: var(--dx-typography-sm);
+  color: var(--dx-color-text-secondary);
+}
+
+.tableMessageError {
+  color: var(--negative-color);
+}
+
 .previewCard {
   background: var(--dx-color-surface);
   border-radius: var(--dx-radius-md);

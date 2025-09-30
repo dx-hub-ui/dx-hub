@@ -172,7 +172,9 @@
         "response": "Resp. 24h",
         "meetings": "Reuniões",
         "conversion": "Conversão"
-      }
+      },
+      "empty": "Nenhum líder com dados para o filtro selecionado.",
+      "error": "Não foi possível carregar o desempenho dos líderes."
     },
     "microsites": {
       "columns": {
@@ -181,7 +183,9 @@
         "leads": "Leads",
         "conversion": "Conversão",
         "topRep": "Rep destaque"
-      }
+      },
+      "empty": "Nenhum microsite possui métricas no período atual.",
+      "error": "Não foi possível carregar os microsites."
     },
     "cadence": {
       "dueSteps": "Etapas pendentes: {{value}}",

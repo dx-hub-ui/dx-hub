@@ -375,7 +375,19 @@ export default function AttentionManagementPage() {
 
         <DxCard className={styles.tableCard}>
           <h2 className={styles.title}>{tAttention("manage.table.heading")}</h2>
-          <DxTable columns={columns} rows={tableRows} density="compact" size="sm" />
+          <DxTable
+            columns={columns}
+            rows={tableRows}
+            density="compact"
+            size="sm"
+            dataState={{ isLoading: false, isError: false }}
+            emptyState={<p className={styles.tableMessage}>{tAttention("manage.table.empty")}</p>}
+            errorState={
+              <p role="alert" className={`${styles.tableMessage} ${styles.tableMessageError}`}>
+                {tAttention("manage.table.error")}
+              </p>
+            }
+          />
         </DxCard>
 
         {selectedBox ? (

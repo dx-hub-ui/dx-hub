@@ -54,7 +54,9 @@
       "variant": "Tipo",
       "audience": "Público",
       "period": "Período",
-      "actions": "Ações"
+      "actions": "Ações",
+      "empty": "Nenhum aviso corresponde aos filtros atuais.",
+      "error": "Não foi possível carregar os avisos. Tente novamente."
     },
     "actions": {
       "new": "Novo aviso",

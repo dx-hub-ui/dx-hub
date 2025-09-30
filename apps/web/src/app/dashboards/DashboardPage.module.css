@@ -45,6 +45,16 @@
   gap: var(--dx-space-3);
 }
 
+.tableMessage {
+  padding: var(--dx-space-4);
+  font-size: var(--dx-typography-sm);
+  color: var(--dx-color-text-secondary);
+}
+
+.tableMessageError {
+  color: var(--negative-color);
+}
+
 .sectionHeader {
   display: flex;
   flex-direction: column;
