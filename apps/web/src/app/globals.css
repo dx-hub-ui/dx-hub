@@ -30,9 +30,49 @@
   --dx-typography-sm: 0.875rem;
   --dx-typography-md: 1rem;
   --dx-typography-lg: 1.25rem;
+  /* Families */
+  --font-family: Figtree, Roboto, Noto Sans Hebrew, Noto Kufi Arabic, Noto Sans JP, sans-serif;
+  --title-font-family: Poppins, Roboto, Noto Sans Hebrew, Noto Kufi Arabic, Noto Sans JP, sans-serif;
+
+  /* Weights */
   --dx-font-weight-regular: 400;
   --dx-font-weight-medium: 500;
   --dx-font-weight-semibold: 600;
+  --dx-font-weight-bold: 700;
+
+  /* Line-heights (px converted to rem at root 16px) */
+  --dx-lh-16: 1rem;
+  --dx-lh-18: 1.125rem;
+  --dx-lh-20: 1.25rem;
+  --dx-lh-22: 1.375rem;
+  --dx-lh-24: 1.5rem;
+  --dx-lh-30: 1.875rem;
+  --dx-lh-32: 2rem;
+  --dx-lh-42: 2.625rem;
+
+  /* Sizes (monday → rem) */
+  --dx-font-12: 0.75rem;
+  --dx-font-14: 0.875rem;
+  --dx-font-16: 1rem;
+  --dx-font-18: 1.125rem;
+  --dx-font-24: 1.5rem;
+  --dx-font-30: 1.875rem;
+
+  /* Body tiers (monday text2 is 14/20) */
+  --dx-font-body: 400 var(--dx-font-14) / var(--dx-lh-20) var(--font-family);
+  --dx-font-body-strong: 600 var(--dx-font-14) / var(--dx-lh-20) var(--font-family);
+
+  /* Heading shorthands (Poppins titles) */
+  --dx-font-h1: 700 var(--dx-font-30) / var(--dx-lh-42) var(--title-font-family);
+  --dx-font-h2: 700 var(--dx-font-24) / var(--dx-lh-30) var(--title-font-family);
+  --dx-font-h3: 700 var(--dx-font-18) / var(--dx-lh-24) var(--title-font-family);
+  --dx-font-h4: 700 var(--dx-font-16) / var(--dx-lh-22) var(--title-font-family);
+  --dx-font-h5: 700 var(--dx-font-14) / var(--dx-lh-20) var(--font-family);
+
+  /* Optional tracking (matches monday’s slight tightening) */
+  --dx-ls-h1: -0.03125rem;
+  --dx-ls-h2: -0.00625rem;
+  --dx-ls-h3: -0.00625rem;
   --dx-top-bar-height: 40px;
   --dx-top-bar-enlarged-height: 56px;
   --dx-sidebar-width: 272px;
@@ -80,14 +120,39 @@
 @theme inline {
   --color-background: var(--dx-color-page-background);
   --color-foreground: var(--dx-color-text-primary);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-family);
   --font-mono: var(--font-geist-mono);
 }
 
 body {
   background: var(--dx-color-page-background);
   color: var(--dx-color-text-primary);
-  font-family: Arial, Helvetica, sans-serif;
+  font: var(--dx-font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.h1 {
+  font: var(--dx-font-h1);
+  letter-spacing: var(--dx-ls-h1);
+}
+
+.h2 {
+  font: var(--dx-font-h2);
+  letter-spacing: var(--dx-ls-h2);
+}
+
+.h3 {
+  font: var(--dx-font-h3);
+  letter-spacing: var(--dx-ls-h3);
+}
+
+.h4 {
+  font: var(--dx-font-h4);
+}
+
+.h5 {
+  font: var(--dx-font-h5);
 }
 
 .dx-text-primary {
