@@ -136,9 +136,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   const appName = config.workspace.appName ?? tCommon("appName");
   const appAcronym = useMemo(() => {
-    if (config.workspace.appAcronym) {
-      return config.workspace.appAcronym;
-    }
+    if (config.workspace.appAcronym) return config.workspace.appAcronym;
     return appName
       .split(" ")
       .filter(Boolean)
@@ -146,9 +144,11 @@ export function AppShell({ children }: { children: ReactNode }) {
       .join("")
       .slice(0, 2);
   }, [appName, config.workspace.appAcronym]);
-  const navigationItems = useMemo(() => {
-    return config.sidebar.sections.flatMap((section) => section.items);
-  }, [config.sidebar.sections]);
+
+  const navigationItems = useMemo(
+    () => config.sidebar.sections.flatMap((section) => section.items),
+    [config.sidebar.sections],
+  );
 
   const primaryNavigationLabel =
     tCommon("navigation.primary") ?? tCommon("navigation") ?? "Navegação principal";
@@ -186,9 +186,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   );
 
   useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
+    if (typeof window === "undefined") return;
 
     const isPinned = window.localStorage.getItem("first_level_control_is_pinned") !== "false";
     const storedWidth = Number.parseInt(window.localStorage.getItem("leftpane_current_width") ?? "", 10);
@@ -201,20 +199,18 @@ export function AppShell({ children }: { children: ReactNode }) {
   }, []);
 
   const firstLevelStyle = useMemo<LayoutCSSProperties | undefined>(() => {
-    if (!railWidth || railWidth <= 0) {
-      return undefined;
-    }
+    if (!railWidth || railWidth <= 0) return undefined;
     return {
-      // eslint-disable-next-line @typescript-eslint/naming-convention -- CSS custom property requires kebab case
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       "--dx-rail-width-expanded": `${railWidth}px`,
     };
   }, [railWidth]);
 
   return (
     <AppLayoutContext.Provider value={contextValue}>
-        <div
-          id="application"
-          className={`application new-layout ${styles.applicationRoot}`}
+      <div
+        id="application"
+        className={`application new-layout ${styles.applicationRoot}`}
         style={{ background: "var(--dx-color-page-background)" }}
       >
         <div id="application-layers" className="application-layers">
@@ -229,6 +225,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             data-leftpane={leftPaneState}
             style={firstLevelStyle}
           >
+            {/* Sidebar / Left rail */}
             <nav
               id="first-level-control"
               className={`first-level-control ${styles.sidebar}`}
@@ -265,91 +262,90 @@ export function AppShell({ children }: { children: ReactNode }) {
               </div>
             </nav>
 
+            {/* TOPBAR now sits directly under the grid and spans both columns */}
+            <header id="first-level-content-header" className={`first-level-content-header ${styles.topbar}`}>
+              <div className={styles.topbarBrandArea} aria-hidden>
+                <div className={styles.brandLogo}>{appAcronym}</div>
+              </div>
+
+              <div className={styles.topbarInner}>
+                <div className={styles.topbarLeft}>
+                  <div className={styles.titleGroup} aria-live="polite">
+                    {config.workspace.title ? (
+                      <h1 className={styles.topbarTitle}>{config.workspace.title}</h1>
+                    ) : null}
+                    {config.workspace.board ? (
+                      <p className={styles.topbarSubtitle}>{config.workspace.board}</p>
+                    ) : null}
+                  </div>
+
+                  {config.workspace.planCta ? (
+                    <button
+                      type="button"
+                      className={styles.pill}
+                      onClick={config.workspace.planCta.onClick}
+                      data-telemetry-id={config.workspace.planCta.telemetryId}
+                    >
+                      {config.workspace.planCta.icon ? (
+                        <Icon icon={config.workspace.planCta.icon} aria-hidden iconSize={14} />
+                      ) : null}
+                      {config.workspace.planCta.label}
+                    </button>
+                  ) : null}
+                </div>
+
+                <div className={styles.topbarControls}>
+                  <button
+                    type="button"
+                    className={styles.iconButton}
+                    aria-label={notificationsLabel}
+                    title={notificationsLabel}
+                    onClick={() => handleTopbarControlClick("notifications")}
+                  >
+                    <Icon icon={NotificationsIcon} aria-hidden iconSize={18} />
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.iconButton}
+                    aria-label={helpLabel}
+                    title={helpLabel}
+                    onClick={() => handleTopbarControlClick("help")}
+                  >
+                    <Icon icon={HelpIcon} aria-hidden iconSize={18} />
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.iconButton}
+                    aria-label={inboxLabel}
+                    title={inboxLabel}
+                    onClick={() => handleTopbarControlClick("inbox")}
+                  >
+                    <Icon icon={InboxIcon} aria-hidden iconSize={18} />
+                  </button>
+
+                  {config.workspace.profile ? (
+                    <button
+                      type="button"
+                      className={styles.avatarButton}
+                      aria-label={avatarLabel}
+                      title={avatarLabel}
+                      onClick={() => handleTopbarControlClick("avatar")}
+                    >
+                      <span aria-hidden className={styles.avatarWrapper}>
+                        <Avatar text={config.workspace.profile.initials} withoutTooltip className={styles.profileAvatar} />
+                      </span>
+                    </button>
+                  ) : null}
+                </div>
+              </div>
+            </header>
+
+            {/* CONTENT RIGHT PANE */}
             <div className="transparent-wrapper">
               <div
                 id="first-level-content-wrapper"
                 className={`first-level-content-wrapper ${styles.contentWrapper}`}
               >
-                <header
-                  id="first-level-content-header"
-                  className={`first-level-content-header ${styles.topbar}`}
-                >
-                  <div className={styles.topbarBrandArea} aria-hidden>
-                    <div className={styles.brandLogo}>{appAcronym}</div>
-                  </div>
-                  <div className={styles.topbarInner}>
-                    <div className={styles.topbarLeft}>
-                      <div className={styles.titleGroup} aria-live="polite">
-                        {config.workspace.title ? (
-                          <h1 className={styles.topbarTitle}>{config.workspace.title}</h1>
-                        ) : null}
-                        {config.workspace.board ? (
-                          <p className={styles.topbarSubtitle}>{config.workspace.board}</p>
-                        ) : null}
-                      </div>
-                      {config.workspace.planCta ? (
-                        <button
-                          type="button"
-                          className={styles.pill}
-                          onClick={config.workspace.planCta.onClick}
-                          data-telemetry-id={config.workspace.planCta.telemetryId}
-                        >
-                          {config.workspace.planCta.icon ? (
-                            <Icon icon={config.workspace.planCta.icon} aria-hidden iconSize={14} />
-                          ) : null}
-                          {config.workspace.planCta.label}
-                        </button>
-                      ) : null}
-                    </div>
-                    <div className={styles.topbarControls}>
-                      <button
-                        type="button"
-                        className={styles.iconButton}
-                        aria-label={notificationsLabel}
-                        title={notificationsLabel}
-                        onClick={() => handleTopbarControlClick("notifications")}
-                      >
-                        <Icon icon={NotificationsIcon} aria-hidden iconSize={18} />
-                      </button>
-                      <button
-                        type="button"
-                        className={styles.iconButton}
-                        aria-label={helpLabel}
-                        title={helpLabel}
-                        onClick={() => handleTopbarControlClick("help")}
-                      >
-                        <Icon icon={HelpIcon} aria-hidden iconSize={18} />
-                      </button>
-                      <button
-                        type="button"
-                        className={styles.iconButton}
-                        aria-label={inboxLabel}
-                        title={inboxLabel}
-                        onClick={() => handleTopbarControlClick("inbox")}
-                      >
-                        <Icon icon={InboxIcon} aria-hidden iconSize={18} />
-                      </button>
-                      {config.workspace.profile ? (
-                        <button
-                          type="button"
-                          className={styles.avatarButton}
-                          aria-label={avatarLabel}
-                          title={avatarLabel}
-                          onClick={() => handleTopbarControlClick("avatar")}
-                        >
-                          <span aria-hidden className={styles.avatarWrapper}>
-                            <Avatar
-                              text={config.workspace.profile.initials}
-                              withoutTooltip
-                              className={styles.profileAvatar}
-                            />
-                          </span>
-                        </button>
-                      ) : null}
-                    </div>
-                  </div>
-                </header>
-
                 <div id="board-view-ui-container" className={styles.boardViewContainer} />
 
                 <main
@@ -377,7 +373,7 @@ export function useAppLayout() {
   const context = useContext(AppLayoutContext);
   if (!context) {
     if (typeof window !== "undefined" && process.env.NODE_ENV !== "production") {
-      // eslint-disable-next-line no-console -- surfaced only during development to help with debugging
+      // eslint-disable-next-line no-console
       console.warn("useAppLayout was called outside of an AppShell provider. Falling back to default layout context.");
     }
     return fallbackContext;
@@ -396,9 +392,7 @@ function mergeConfig(base: AppLayoutConfig, patch: PartialAppLayoutConfig): AppL
   const sidebarChanged = nextSidebar !== base.sidebar;
   const workspaceChanged = nextWorkspace !== base.workspace;
 
-  if (!sidebarChanged && !workspaceChanged) {
-    return base;
-  }
+  if (!sidebarChanged && !workspaceChanged) return base;
 
   return {
     sidebar: sidebarChanged ? nextSidebar : base.sidebar,
@@ -410,9 +404,7 @@ function mergeBranch(base: Record<string, unknown>, patch: Record<string, unknow
   let result: Record<string, unknown> | undefined;
 
   Object.entries(patch).forEach(([key, value]) => {
-    if (value === undefined) {
-      return;
-    }
+    if (value === undefined) return;
 
     const baseValue = base[key];
     let nextValue = value;
@@ -422,9 +414,7 @@ function mergeBranch(base: Record<string, unknown>, patch: Record<string, unknow
     }
 
     if (!Object.is(baseValue, nextValue)) {
-      if (!result) {
-        result = { ...base };
-      }
+      if (!result) result = { ...base };
       result[key] = nextValue;
     } else if (result) {
       result[key] = baseValue;
