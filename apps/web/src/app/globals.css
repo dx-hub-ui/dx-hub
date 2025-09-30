@@ -58,18 +58,17 @@
   --dx-font-24: 1.5rem;
   --dx-font-30: 1.875rem;
 
-  /* Body tiers (monday text2 is 14/20) */
+  /* Body tiers */
   --dx-font-body: 400 var(--dx-font-14) / var(--dx-lh-20) var(--font-family);
   --dx-font-body-strong: 600 var(--dx-font-14) / var(--dx-lh-20) var(--font-family);
 
-  /* Heading shorthands (Poppins titles) */
+  /* Heading shorthands */
   --dx-font-h1: 700 var(--dx-font-30) / var(--dx-lh-42) var(--title-font-family);
   --dx-font-h2: 700 var(--dx-font-24) / var(--dx-lh-30) var(--title-font-family);
   --dx-font-h3: 700 var(--dx-font-18) / var(--dx-lh-24) var(--title-font-family);
   --dx-font-h4: 700 var(--dx-font-16) / var(--dx-lh-22) var(--title-font-family);
   --dx-font-h5: 700 var(--dx-font-14) / var(--dx-lh-20) var(--font-family);
 
-  /* Optional tracking (matches monday’s slight tightening) */
   --dx-ls-h1: -0.03125rem;
   --dx-ls-h2: -0.00625rem;
   --dx-ls-h3: -0.00625rem;
@@ -87,7 +86,7 @@
   --dx-page-padding-y: 20px;
   --dx-page-gap: 16px;
 
-  /* === Paleta primária solicitada ===================================== */
+  /* === paleta primária (tokens do cliente) ============================= */
   --primary-color: #007f9b;
   --primary-hover-color: #006278;
   --primary-selected-color: #d1ecef;
@@ -95,10 +94,10 @@
   --primary-highlighted-color: #e7f4f6;
   --primary-surface-color: #e7f4f6;
 
-  /* Alias DX */
+  /* alias DX */
   --primary-background-color: var(--primary-surface-color);
 
-  /* Topbar & Sidebar usando os tons primários */
+  /* topbar & sidebar */
   --dx-color-topbar-bg: var(--primary-selected-hover-color);
   --dx-color-topbar-hover: var(--primary-selected-color);
 
@@ -126,9 +125,7 @@
   --dx-rail-green: var(--positive-color);
   --dx-rail-red: var(--negative-color);
 
-  /* compat legada de variáveis usadas em alguns componentes */
   --surface-color: var(--dx-color-surface-hover);
-
   --top-bar-height: var(--dx-top-bar-height);
   --top-bar-enlarged-height: var(--dx-top-bar-enlarged-height);
 
