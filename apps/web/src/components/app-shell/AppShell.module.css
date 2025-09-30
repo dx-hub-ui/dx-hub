@@ -159,18 +159,19 @@
   min-width: 0;
 }
 
-.brandLogo {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: calc(var(--dx-icon-button) + var(--dx-space-1));
-  height: calc(var(--dx-icon-button) + var(--dx-space-1));
-  border-radius: var(--dx-radius-md);
-  background: var(--dx-color-accent);
-  color: var(--text-color-on-primary);
-  font-weight: var(--dx-font-weight-semibold);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+brandLogo {
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+   width: calc(var(--dx-icon-button) + var(--dx-space-1));
+   height: calc(var(--dx-icon-button) + var(--dx-space-1));
+   border-radius: var(--dx-radius-md);
+   background: var(--primary-selected-color);
+   color: var(--dx-color-text-primary);
+   border: 1px solid var(--dx-sidebar-border);
+   font-weight: var(--dx-font-weight-semibold);
+   letter-spacing: 0.05em;
+   text-transform: uppercase;
 }
 
 .titleGroup {
