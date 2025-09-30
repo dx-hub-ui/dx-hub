@@ -48,11 +48,12 @@
     "reset": "Limpar filtros"
   },
   "stages": {
-    "prospecting": "Prospecção",
-    "discovery": "Descoberta",
-    "negotiation": "Negociação",
-    "won": "Ganho",
-    "lost": "Perdido"
+    "prospecting": "Novo",
+    "discovery": "Contato Feito",
+    "negotiation": "Apresentado",
+    "blocked": "Bloqueado",
+    "won": "Cadastrado",
+    "lost": "Perdidos"
   },
   "table": {
     "title": "Contatos",

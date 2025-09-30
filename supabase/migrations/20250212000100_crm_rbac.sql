@@ -2,7 +2,7 @@
 create extension if not exists "pgcrypto" with schema public;
 
 create type public.member_role as enum ('owner', 'leader', 'rep');
-create type public.contact_stage as enum ('prospecting', 'discovery', 'negotiation', 'won', 'lost');
+create type public.contact_stage as enum ('prospecting', 'discovery', 'negotiation', 'blocked', 'won', 'lost');
 
 create table if not exists public.organizations (
   id uuid primary key default gen_random_uuid(),

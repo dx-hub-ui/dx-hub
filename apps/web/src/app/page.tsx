@@ -41,11 +41,12 @@ type ContactFormState = {
 type ContactFormErrors = Partial<Record<keyof ContactFormState, string>>;
 
 const STAGE_ACCENT_COLORS: Record<ContactStage, string> = {
-  prospecting: "#cfd7ff",
-  discovery: "#ffcb00",
-  negotiation: "#f65f7c",
-  won: "#00c875",
-  lost: "#8f73ff",
+  prospecting: "var(--color-bright-blue)",
+  discovery: "var(--color-egg_yolk)",
+  negotiation: "var(--color-dark-orange)",
+  blocked: "var(--color-stuck-red)",
+  won: "var(--color-done-green)",
+  lost: "var(--color-dark-red)",
 };
 
 const TOKENS = {
@@ -66,9 +67,10 @@ const TOKENS = {
 };
 
 const STAGE_HEADER_TEXT: Record<ContactStage, string> = {
-  prospecting: TOKENS.textPrimary,
+  prospecting: TOKENS.textOnPrimary,
   discovery: TOKENS.textPrimary,
   negotiation: TOKENS.textOnPrimary,
+  blocked: TOKENS.textOnPrimary,
   won: TOKENS.textOnPrimary,
   lost: TOKENS.textOnPrimary,
 };
@@ -79,9 +81,12 @@ const STAGE_BADGE_VARIANTS: Record<ContactStage, BadgeVariant> = {
   prospecting: "secondary",
   discovery: "primary",
   negotiation: "primary",
+  blocked: "danger",
   won: "secondary",
   lost: "danger",
 };
+
+const KANBAN_STAGE_ORDER = CONTACT_STAGE_ORDER.filter((stage) => stage !== "lost");
 
 const VIEW_MODES = ["table", "kanban"] as const;
 
@@ -580,7 +585,7 @@ export default function HomePage() {
             >
               <span>{tContacts("summary.total", { values: { count: contacts.length } })}</span>
             </div>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
               {CONTACT_STAGE_ORDER.map((stage) => (
                 <div
                   key={stage}
@@ -853,8 +858,8 @@ export default function HomePage() {
                                   </td>
                                   <td className="px-6 py-4 align-middle">
                                     <span
-                                      className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
-                                      style={{ backgroundColor: `${stageColor}1a`, color: stageTextColor, border: `1px solid ${stageColor}` }}
+                                      className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide"
+                                      style={{ backgroundColor: stageColor, color: stageTextColor }}
                                     >
                                       {stageLabels[contact.stage]}
                                     </span>
@@ -890,8 +895,8 @@ export default function HomePage() {
               })}
             </div>
           ) : (
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-              {CONTACT_STAGE_ORDER.map((stage) => {
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+              {KANBAN_STAGE_ORDER.map((stage) => {
                 const stageContacts = filteredContacts.filter((contact) => contact.stage === stage);
                 const headerColor = STAGE_ACCENT_COLORS[stage];
                 const headerText = STAGE_HEADER_TEXT[stage];
@@ -967,7 +972,7 @@ export default function HomePage() {
                                 </button>
                                 <span
                                   className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
-                                  style={{ backgroundColor: `${headerColor}1a`, color: headerText }}
+                                  style={{ backgroundColor: headerColor, color: headerText }}
                                 >
                                   {stageLabels[contact.stage]}
                                 </span>

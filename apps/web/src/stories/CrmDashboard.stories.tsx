@@ -141,10 +141,11 @@ function BoardScenario() {
       {BOARD_COLUMN_ORDER.map((stage) => {
         const items = CRM_CONTACTS_SEED.filter((contact) => contact.stage === stage);
         const theme = CONTACT_STAGE_THEME[stage];
-        const countStyles =
-          theme.headerTextColor.toLowerCase() === "#ffffff"
-            ? { backgroundColor: "rgba(255, 255, 255, 0.18)", color: "#ffffff" }
-            : { backgroundColor: "rgba(255, 255, 255, 0.7)", color: theme.headerTextColor };
+        const usesOnPrimary =
+          theme.headerTextColor.toLowerCase() === "#ffffff" || theme.headerTextColor === "var(--text-color-on-primary)";
+        const countStyles = usesOnPrimary
+          ? { backgroundColor: "rgba(255, 255, 255, 0.18)", color: "var(--text-color-on-primary)" }
+          : { backgroundColor: "rgba(255, 255, 255, 0.7)", color: theme.headerTextColor };
         return (
           <div
             key={stage}

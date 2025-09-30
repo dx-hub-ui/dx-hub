@@ -80,6 +80,44 @@ export const CRM_CONTACTS_SEED: ContactRecord[] = [
     ],
   },
   {
+    id: "contact-renata-alves",
+    name: "Renata Alves",
+    company: "DataPulse",
+    email: "renata.alves@datapulse.ai",
+    phone: "+55 11 95555-2233",
+    stage: "blocked",
+    owner: "Ana Prado",
+    assignedTo: "Paula Ribeiro",
+    orgId: DEMO_ORG_ID,
+    lastInteraction: new Date(now.getTime() - 1000 * 60 * 60 * 36).toISOString(),
+    activities: [
+      {
+        id: "activity-renata-created",
+        type: "created",
+        actor: "Ana Prado",
+        timestamp: new Date(now.getTime() - 1000 * 60 * 60 * 168).toISOString(),
+        summaryKey: "timeline.events.created",
+        summaryValues: { actor: "Ana Prado" },
+      },
+      {
+        id: "activity-renata-followup",
+        type: "note",
+        actor: "Paula Ribeiro",
+        timestamp: new Date(now.getTime() - 1000 * 60 * 60 * 72).toISOString(),
+        summaryKey: "timeline.events.qualifyNote",
+        summaryValues: { actor: "Paula Ribeiro" },
+      },
+      {
+        id: "activity-renata-stage",
+        type: "stage",
+        actor: "Paula Ribeiro",
+        timestamp: new Date(now.getTime() - 1000 * 60 * 60 * 36).toISOString(),
+        summaryKey: "timeline.events.stageChanged",
+        summaryValues: { actor: "Paula Ribeiro", stage: "blocked", from: "negotiation" },
+      },
+    ],
+  },
+  {
     id: "contact-camila-freitas",
     name: "Camila Freitas",
     company: "InovaEdu",
@@ -183,8 +221,9 @@ export const CONTACT_STAGE_VARIANTS: Record<ContactStage, "primary" | "secondary
   prospecting: "secondary",
   discovery: "primary",
   negotiation: "primary",
+  blocked: "danger",
   won: "secondary",
   lost: "danger",
 };
 
-export const BOARD_COLUMN_ORDER = CONTACT_STAGE_ORDER;
+export const BOARD_COLUMN_ORDER = CONTACT_STAGE_ORDER.filter((stage) => stage !== "lost");
