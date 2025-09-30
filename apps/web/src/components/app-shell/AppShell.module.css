@@ -11,7 +11,7 @@
   display: flex;
   flex-direction: column;
   width: var(--dx-sidebar-width);
-  /* Espaço extra para o primeiro item não “grudar” no topbar */
+  /* espaço extra para o primeiro item não “grudar” no topbar */
   padding: calc(var(--dx-space-7)) var(--dx-space-4);
   gap: var(--dx-space-4);
   color: var(--dx-color-text-primary);
@@ -83,7 +83,7 @@
   box-shadow: none;
 }
 
-/* Hover do item ativo usa o hover-selected */
+/* hover do item ativo usa o hover-selected */
 .navItemButtonActive:hover,
 .navItemButtonActive:focus-visible {
   background: var(--primary-selected-hover-color);
@@ -110,7 +110,7 @@
   left: 0;
   z-index: 20;
 
-  /* Alinha com o rail + conteúdo */
+  /* alinha com o rail + conteúdo */
   display: grid;
   grid-template-columns: var(--dx-rail-current, var(--shell-sidebar-width)) 1fr;
 
@@ -119,12 +119,12 @@
   margin: 0;
   min-height: var(--dx-top-bar-height);
 
-  /* Fundo ajustado para o tom da referência */
+  /* fundo no tom solicitado */
   background: var(--dx-color-topbar-bg);
   box-shadow: var(--dx-shadow-topbar);
 
-  /* respiro à esquerda e à direita */
-  padding-inline: var(--dx-page-padding-x);
+  /* só respiro à direita – o da esquerda é tratado por cada coluna */
+  padding-inline: 0 var(--dx-page-padding-x);
   box-sizing: border-box;
 }
 
@@ -133,10 +133,11 @@
   align-items: center;
   justify-content: flex-start;
   width: 100%;
+  min-height: var(--dx-top-bar-height);
   border-right: 1px solid var(--dx-color-border-subtle);
   background: var(--dx-color-topbar-bg);
-  /* alinha com padding externo da topbar */
-  padding-inline: var(--dx-page-padding-x);
+  /* padding local para o bloco da marca; evita “faixa dupla” à esquerda */
+  padding-inline: var(--dx-space-4);
   box-sizing: border-box;
 }
 
@@ -147,8 +148,8 @@
   gap: var(--dx-space-6);
   width: 100%;
   margin: 0;
-  /* já temos padding externo na .topbar */
-  padding-inline-start: 0;
+  /* respiro à esquerda só para a coluna de conteúdo do topbar */
+  padding-inline-start: var(--dx-page-padding-x);
   height: var(--dx-top-bar-height);
 }
 
@@ -160,18 +161,18 @@
 }
 
 .brandLogo {
-   display: inline-flex;
-   align-items: center;
-   justify-content: center;
-   width: calc(var(--dx-icon-button) + var(--dx-space-1));
-   height: calc(var(--dx-icon-button) + var(--dx-space-1));
-   border-radius: var(--dx-radius-md);
-   background: var(--primary-selected-color);
-   color: var(--dx-color-text-primary);
-   border: 1px solid var(--dx-sidebar-border);
-   font-weight: var(--dx-font-weight-semibold);
-   letter-spacing: 0.05em;
-   text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(var(--dx-icon-button) + var(--dx-space-1));
+  height: calc(var(--dx-icon-button) + var(--dx-space-1));
+  border-radius: var(--dx-radius-md);
+  background: var(--primary-selected-color);
+  color: var(--dx-color-text-primary);
+  border: 1px solid var(--dx-sidebar-border);
+  font-weight: var(--dx-font-weight-semibold);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 .titleGroup {
