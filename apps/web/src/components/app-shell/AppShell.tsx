@@ -235,12 +235,6 @@ export function AppShell({ children }: { children: ReactNode }) {
               tabIndex={-1}
               aria-label={primaryNavigationLabel}
             >
-              <div className={styles.sidebarBrand}>
-                <span className={styles.sidebarBadge} aria-hidden>
-                  {appAcronym}
-                </span>
-                <span className={styles.sidebarAppName}>{appName}</span>
-              </div>
               <div className={styles.sidebarNav} role="presentation">
                 <ul className={styles.navList} role="list">
                   {navigationItems.map((item) => {
@@ -280,19 +274,11 @@ export function AppShell({ children }: { children: ReactNode }) {
                   id="first-level-content-header"
                   className={`first-level-content-header ${styles.topbar}`}
                 >
+                  <div className={styles.topbarBrandArea} aria-hidden>
+                    <div className={styles.brandLogo}>{appAcronym}</div>
+                  </div>
                   <div className={styles.topbarInner}>
                     <div className={styles.topbarLeft}>
-                      <div className={styles.brand}>
-                        <div className={styles.brandLogo} aria-hidden>
-                          {appAcronym}
-                        </div>
-                        <div className={styles.brandText}>
-                          <span className={styles.brandName}>{appName}</span>
-                          <span className={styles.brandSub}>
-                            {config.workspace.profile?.label ?? config.workspace.profile?.role ?? "CRM"}
-                          </span>
-                        </div>
-                      </div>
                       <div className={styles.titleGroup} aria-live="polite">
                         {config.workspace.title ? (
                           <h1 className={styles.topbarTitle}>{config.workspace.title}</h1>

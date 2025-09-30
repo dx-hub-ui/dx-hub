@@ -12,44 +12,13 @@
   flex-direction: column;
   width: var(--dx-sidebar-width);
   padding: var(--dx-space-6) var(--dx-space-4);
-  gap: var(--dx-space-5);
+  gap: var(--dx-space-4);
   color: var(--dx-color-text-primary);
   background: var(--dx-sidebar-bg);
   border-right: 1px solid var(--dx-sidebar-border);
   box-shadow: var(--dx-sidebar-inset-shadow);
   min-height: 0;
   height: calc(100dvh - var(--dx-top-bar-height));
-}
-
-.sidebarBrand {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--dx-space-2);
-  font: var(--dx-font-body);
-  font-weight: var(--dx-font-weight-medium);
-  color: var(--dx-color-text-primary);
-}
-
-.sidebarBadge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--dx-space-7);
-  height: var(--dx-space-7);
-  border-radius: var(--dx-radius-md);
-  background: var(--dx-color-accent);
-  color: var(--text-color-on-primary);
-  font-weight: var(--dx-font-weight-semibold);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.sidebarAppName {
-  font: var(--dx-font-body);
-  font-weight: var(--dx-font-weight-medium);
-  color: var(--dx-color-text-primary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 
 .sidebarNav {
@@ -107,10 +76,10 @@
 }
 
 .navItemButtonActive {
-  background: var(--dx-nav-active-bg);
-  border-color: var(--dx-nav-active-border);
+  background: var(--primary-selected-color);
+  border-color: var(--primary-selected-color);
   color: var(--dx-color-text-primary);
-  box-shadow: var(--dx-shadow-soft);
+  box-shadow: none;
 }
 
 .navItemLabel {
@@ -128,15 +97,29 @@
 .topbar {
   position: sticky;
   top: 0;
+  left: 0;
   z-index: 10;
+  display: grid;
+  grid-template-columns: var(--shell-sidebar-width) 1fr;
+  align-items: stretch;
+  width: calc(100% + var(--shell-sidebar-width) + var(--shell-rail-gap, 0px));
+  margin-left: calc((var(--shell-sidebar-width) + var(--shell-rail-gap, 0px)) * -1);
+  min-height: var(--dx-top-bar-height);
+  background: var(--dx-color-surface);
+  box-shadow: var(--dx-shadow-topbar);
+  padding-inline-end: var(--dx-page-padding-x);
+  box-sizing: border-box;
+}
+
+.topbarBrandArea {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  min-height: var(--dx-top-bar-height);
-  padding-inline: var(--dx-page-padding-x);
+  width: var(--shell-sidebar-width);
+  border-right: 1px solid var(--dx-color-border-subtle);
   background: var(--dx-color-surface);
-  box-shadow: var(--dx-shadow-topbar);
-  width: 100%;
+  padding-inline: var(--dx-space-4);
+  box-sizing: border-box;
 }
 
 .topbarInner {
@@ -145,8 +128,8 @@
   justify-content: space-between;
   gap: var(--dx-space-6);
   width: 100%;
-  max-width: none;
   margin: 0;
+  padding-inline-start: var(--dx-page-padding-x);
   height: var(--dx-top-bar-height);
 }
 
@@ -155,14 +138,6 @@
   align-items: center;
   gap: var(--dx-space-4);
   min-width: 0;
-}
-
-.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--dx-space-2);
-  padding-inline-end: var(--dx-space-2);
-  border-inline-end: 1px solid var(--dx-color-border-subtle);
 }
 
 .brandLogo {
@@ -177,26 +152,6 @@
   font-weight: var(--dx-font-weight-semibold);
   letter-spacing: 0.05em;
   text-transform: uppercase;
-}
-
-.brandText {
-  display: flex;
-  flex-direction: column;
-  gap: var(--dx-space-0);
-}
-
-.brandName {
-  font: var(--dx-font-body);
-  font-weight: var(--dx-font-weight-medium);
-  color: var(--dx-color-text-primary);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-.brandSub {
-  font: var(--dx-font-body);
-  color: var(--dx-color-text-secondary);
-  text-transform: capitalize;
 }
 
 .titleGroup {
@@ -320,7 +275,7 @@
   }
 
   .topbarInner {
-    padding-inline: 0;
+    padding-inline-start: var(--dx-space-3);
   }
 }
 

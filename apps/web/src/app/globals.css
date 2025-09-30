@@ -121,7 +121,7 @@
   --color-background: var(--dx-color-page-background);
   --color-foreground: var(--dx-color-text-primary);
   --font-sans: var(--font-family);
-  --font-mono: var(--font-geist-mono);
+  --font-mono: "Roboto Mono", "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 body {
