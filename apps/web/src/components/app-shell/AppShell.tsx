@@ -262,7 +262,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               </div>
             </nav>
 
-            {/* TOPBAR now sits directly under the grid and spans both columns */}
+            {/* TOPBAR */}
             <header id="first-level-content-header" className={`first-level-content-header ${styles.topbar}`}>
               <div className={styles.topbarBrandArea} aria-hidden>
                 <div className={styles.brandLogo}>{appAcronym}</div>
