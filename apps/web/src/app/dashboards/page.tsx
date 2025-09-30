@@ -48,14 +48,11 @@ import type {
 
 /**
  * NOTE:
- * We intentionally avoid importing a page-level stylesheet that redefines page width,
- * paddings, or scrolling. The AppShell already provides:
- *  - a max content width (`--dx-layout-max-width`)
+ * We intentionally avoid page-level wrappers that redefine width/padding/scroll.
+ * The AppShell provides:
+ *  - max content width (`--dx-layout-max-width`)
  *  - horizontal/vertical padding via `.scroller`
- *  - the *only* scroll container
- *
- * If you need to style a local element, prefer inline styles using DX tokens or
- * component props (DxCard, DxTable, etc.).
+ *  - the single scroll container
  */
 
 const HEADLINE_KPIS = ["newLeads", "newContacts", "meetings", "whatsappResponse", "conversion"] as const;
@@ -209,6 +206,36 @@ export default function DashboardsPage() {
     };
   }, [isOwnerView, now, period, scope]);
 
+  // Grid gaps derived from dxDashboardTokens (keeps visual rhythm with DX)
+  const gridStyle = { columnGap: dxDashboardTokens.grid.columnGap, rowGap: dxDashboardTokens.grid.rowGap } as CSSProperties;
+  const kpiGridStyle = { columnGap: dxDashboardTokens.grid.columnGap, rowGap: dxDashboardTokens.grid.rowGap } as CSSProperties;
+
+  const periodRange = resolvePeriodRange(period, now);
+  const periodLabel = useMemo(() => {
+    const formatter = new Intl.DateTimeFormat(locale, { day: "2-digit", month: "short" });
+    const startLabel = formatter.format(periodRange.start);
+    const endLabel = formatter.format(periodRange.end);
+    return `${startLabel} – ${endLabel}`;
+  }, [locale, periodRange.end, periodRange.start]);
+
+  // Section styles using DX tokens
+  const sectionStyle: CSSProperties = { display: "grid", gap: "var(--dx-space-5)" };
+  const sectionHeaderStyle: CSSProperties = { display: "grid", gap: "var(--dx-space-2)" };
+  const sectionTitleStyle: CSSProperties = { font: "var(--dx-font-h2)", letterSpacing: "var(--dx-ls-h2)", margin: 0 as unknown as number };
+  const sectionDescStyle: CSSProperties = { color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number };
+  const kpiGridClass: CSSProperties = {
+    display: "grid",
+    gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
+    ...kpiGridStyle,
+  };
+  const gridClass: CSSProperties = {
+    display: "grid",
+    gridTemplateColumns: "repeat(12, minmax(0, 1fr))",
+    ...gridStyle,
+  };
+  const span = (n: number): CSSProperties => ({ gridColumn: `span ${n} / span ${n}` });
+
+  // Role-specific placeholders (leader/rep) defined last to keep memo small
   const commonWidgets = useMemo<WidgetDefinition[]>(
     () => [
       {
@@ -304,36 +331,6 @@ export default function DashboardsPage() {
     return [...commonWidgets, ...roleWidgets];
   }, [commonWidgets, role, widgetsByRole]);
 
-  // Grid gaps derived from dxDashboardTokens (keeps visual rhythm with DX)
-  const gridStyle = { columnGap: dxDashboardTokens.grid.columnGap, rowGap: dxDashboardTokens.grid.rowGap } as CSSProperties;
-  const kpiGridStyle = { columnGap: dxDashboardTokens.grid.columnGap, rowGap: dxDashboardTokens.grid.rowGap } as CSSProperties;
-
-  const periodRange = resolvePeriodRange(period, now);
-  const periodLabel = useMemo(() => {
-    const formatter = new Intl.DateTimeFormat(locale, { day: "2-digit", month: "short" });
-    const startLabel = formatter.format(periodRange.start);
-    const endLabel = formatter.format(periodRange.end);
-    return `${startLabel} – ${endLabel}`;
-  }, [locale, periodRange.end, periodRange.start]);
-
-  // Inline section wrappers use only spacing tokens, not custom containers.
-  const sectionStyle: CSSProperties = { display: "grid", gap: "var(--dx-space-5)" };
-  const sectionHeaderStyle: CSSProperties = { display: "grid", gap: "var(--dx-space-2)" };
-  const sectionTitleStyle: CSSProperties = { font: "var(--dx-font-h2)", letterSpacing: "var(--dx-ls-h2)", margin: 0 as unknown as number };
-  const sectionDescStyle: CSSProperties = { color: "var(--dx-color-text-secondary)", margin: 0 as unknown as number };
-  const kpiGridClass: CSSProperties = {
-    display: "grid",
-    gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
-    ...kpiGridStyle,
-  };
-  const gridClass: CSSProperties = {
-    display: "grid",
-    gridTemplateColumns: "repeat(12, minmax(0, 1fr))",
-    ...gridStyle,
-  };
-
-  const span = (n: number): CSSProperties => ({ gridColumn: `span ${n} / span ${n}` });
-
   return (
     <>
       {/* HERO / FILTERS */}
@@ -379,55 +376,59 @@ export default function DashboardsPage() {
 
         <div role="list" aria-live="polite" style={{ display: "grid", gap: "var(--dx-space-4)" }}>
           {attentionBoxes.length === 0 ? (
-            <DxCard density="compact" role="listitem">
-              <p style={sectionDescStyle}>{tAttention("empty")}</p>
-            </DxCard>
+            <div role="listitem">
+              <DxCard density="compact">
+                <p style={sectionDescStyle}>{tAttention("empty")}</p>
+              </DxCard>
+            </div>
           ) : (
             attentionBoxes.map((box) => {
               const html = markdownToHtml(box.bodyMd);
               const isPinned = box.pinned;
               const isRead = attentionStore.readBoxIds.has(box.id);
               return (
-                <DxCard key={box.id} density="compact" role="listitem" data-pinned={isPinned} data-read={isRead}>
-                  <div style={{ display: "grid", gap: "var(--dx-space-3)" }}>
-                    <div>
-                      {isPinned ? (
-                        <span style={{ font: "var(--dx-font-body-strong)", color: "var(--dx-color-text-secondary)" }}>
-                          {tAttention("preview.pinned")}
+                <div role="listitem" key={box.id}>
+                  <DxCard density="compact" data-pinned={isPinned} data-read={isRead}>
+                    <div style={{ display: "grid", gap: "var(--dx-space-3)" }}>
+                      <div>
+                        {isPinned ? (
+                          <span style={{ font: "var(--dx-font-body-strong)", color: "var(--dx-color-text-secondary)" }}>
+                            {tAttention("preview.pinned")}
+                          </span>
+                        ) : null}
+                        <h3 style={{ font: "var(--dx-font-h3)", margin: 0 as unknown as number }}>{box.title}</h3>
+                        <div dangerouslySetInnerHTML={{ __html: html }} />
+                      </div>
+
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--dx-space-4)", color: "var(--dx-color-text-secondary)" }}>
+                        <span>
+                          {tAttention("meta.summary", {
+                            values: { label: tAttention("meta.audience"), value: tAttention(`audiences.${box.audience}` as const) },
+                          })}
                         </span>
-                      ) : null}
-                      <h3 style={{ font: "var(--dx-font-h3)", margin: 0 as unknown as number }}>{box.title}</h3>
-                      <div dangerouslySetInnerHTML={{ __html: html }} />
-                    </div>
+                        <span>
+                          {tAttention("meta.summary", {
+                            values: {
+                              label: tAttention("meta.period"),
+                              value: `${new Intl.DateTimeFormat(locale, { day: "2-digit", month: "short" }).format(new Date(box.startAt))} – ${new Intl.DateTimeFormat(locale, { day: "2-digit", month: "short" }).format(new Date(box.endAt))}`,
+                            },
+                          })}
+                        </span>
+                      </div>
 
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--dx-space-4)", color: "var(--dx-color-text-secondary)" }}>
-                      <span>
-                        {tAttention("meta.summary", {
-                          values: { label: tAttention("meta.audience"), value: tAttention(`audiences.${box.audience}` as const) },
-                        })}
-                      </span>
-                      <span>
-                        {tAttention("meta.summary", {
-                          values: {
-                            label: tAttention("meta.period"),
-                            value: `${new Intl.DateTimeFormat(locale, { day: "2-digit", month: "short" }).format(new Date(box.startAt))} – ${new Intl.DateTimeFormat(locale, { day: "2-digit", month: "short" }).format(new Date(box.endAt))}`,
-                          },
-                        })}
-                      </span>
-                    </div>
-
-                    <div style={{ display: "flex", gap: "var(--dx-space-2)" }}>
-                      <DxButton density="compact" size="md" variant="secondary" onClick={() => attentionStore.markAsRead(box.id)}>
-                        {tAttention("actions.markAsRead")}
-                      </DxButton>
-                      {isOwnerView ? (
-                        <DxButton density="compact" size="md" variant="primary" onClick={() => router.push("/dashboards/attention")}>
-                          {tAttention("actions.manage")}
+                      <div style={{ display: "flex", gap: "var(--dx-space-2)" }}>
+                        <DxButton density="compact" size="md" variant="secondary" onClick={() => attentionStore.markAsRead(box.id)}>
+                          {tAttention("actions.markAsRead")}
                         </DxButton>
-                      ) : null}
+                        {isOwnerView ? (
+                          <DxButton density="compact" size="md" variant="primary" onClick={() => router.push("/dashboards/attention")}>
+                            {tAttention("actions.manage")}
+                          </DxButton>
+                        ) : null}
+                      </div>
                     </div>
-                  </div>
-                </DxCard>
+                  </DxCard>
+                </div>
               );
             })
           )}
@@ -541,19 +542,19 @@ export default function DashboardsPage() {
             <p style={sectionDescStyle}>{tDashboard("placeholders.a11y")}</p>
           </header>
 
-          <div style={gridClass}>
-            {placeholderWidgets.map((widget) => (
-              <WidgetPlaceholder
-                key={widget.id}
-                title={widget.title}
-                description={widget.description}
-                caption={widget.caption}
-                variant={widget.variant}
-                style={span(widget.span)}
-                actions={<WidgetPlaceholderAction>{tDashboard("placeholders.drilldown")}</WidgetPlaceholderAction>}
-              />
-            ))}
-          </div>
+        <div style={gridClass}>
+          {placeholderWidgets.map((widget) => (
+            <WidgetPlaceholder
+              key={widget.id}
+              title={widget.title}
+              description={widget.description}
+              caption={widget.caption}
+              variant={widget.variant}
+              style={span(widget.span)}
+              actions={<WidgetPlaceholderAction>{tDashboard("placeholders.drilldown")}</WidgetPlaceholderAction>}
+            />
+          ))}
+        </div>
         </section>
       ) : null}
     </>
