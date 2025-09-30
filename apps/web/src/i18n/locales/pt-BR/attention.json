@@ -17,10 +17,82 @@
     "reps": "Todos os reps",
     "custom": "Segmento personalizado"
   },
+  "variant": {
+    "info": "Informação",
+    "success": "Sucesso",
+    "warning": "Atenção",
+    "danger": "Crítico"
+  },
   "actions": {
     "manage": "Gerenciar avisos",
     "markAsRead": "Marcar como lido"
   },
   "empty": "Nenhum aviso ativo para o filtro atual.",
-  "live": "Atualizações são exibidas automaticamente com aria-live para leitores de tela."
+  "live": "Atualizações são exibidas automaticamente com aria-live para leitores de tela.",
+  "manage": {
+    "workspace": {
+      "title": "Avisos da organização",
+      "board": "Governança de Attention Boxes"
+    },
+    "title": "Central de avisos",
+    "description": "Crie, agende e segmente avisos que serão exibidos no topo dos dashboards.",
+    "filters": {
+      "status": "Status",
+      "variant": "Tipo",
+      "audience": "Público",
+      "all": "Todos"
+    },
+    "status": {
+      "active": "Ativo",
+      "future": "Programado",
+      "expired": "Expirado"
+    },
+    "table": {
+      "heading": "Avisos programados",
+      "title": "Título",
+      "status": "Status",
+      "variant": "Tipo",
+      "audience": "Público",
+      "period": "Período",
+      "actions": "Ações",
+      "empty": "Nenhum aviso corresponde aos filtros atuais.",
+      "error": "Não foi possível carregar os avisos. Tente novamente."
+    },
+    "actions": {
+      "new": "Novo aviso",
+      "preview": "Pré-visualizar",
+      "edit": "Editar",
+      "duplicate": "Duplicar",
+      "delete": "Excluir",
+      "cancel": "Cancelar",
+      "create": "Publicar aviso",
+      "save": "Salvar alterações"
+    },
+    "dialog": {
+      "createTitle": "Criar Attention Box",
+      "editTitle": "Editar Attention Box"
+    },
+    "form": {
+      "title": "Título",
+      "start": "Início",
+      "end": "Fim",
+      "variant": "Tipo",
+      "audience": "Público",
+      "body": "Mensagem (markdown)",
+      "customAudience": "Selecione os membros",
+      "pinned": "Fixar no topo até expirar"
+    },
+    "preview": {
+      "title": "Preview em tempo real"
+    },
+    "previewPlaceholder": "Use markdown para destacar pontos-chave, incluir listas e links contextuais.",
+    "cloneSuffix": "(cópia)",
+    "confirmDelete": "Tem certeza que deseja excluir este aviso? Essa ação não pode ser desfeita.",
+    "validation": {
+      "title": "Informe um título",
+      "body": "Insira o conteúdo do aviso",
+      "period": "Defina um intervalo válido (início antes do fim)",
+      "audience": "Selecione ao menos um membro para o público personalizado"
+    }
+  }
 }

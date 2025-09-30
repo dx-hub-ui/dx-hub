@@ -135,5 +135,75 @@
     "draft": "Rascunho de layout preparado para implementação de dados reais.",
     "drilldown": "Clique para abrir uma visão detalhada com a query filtrada.",
     "a11y": "Todos os gráficos terão descrições textuais e suporte a teclado."
+  },
+  "metrics": {
+    "delta": {
+      "label": "vs período anterior",
+      "new": "Novo"
+    },
+    "samples": {
+      "whatsappResponse": "Respondidos em 24h: {{responded}} de {{contacted}} leads",
+      "conversion": "Convertidos no período: {{converted}} de {{leads}} leads"
+    }
+  },
+  "widgets": {
+    "funnel": {
+      "stages": {
+        "visitors": "Visitantes",
+        "leads": "Leads",
+        "contacts": "Contatos",
+        "meetings": "Reuniões",
+        "sales": "Vendas"
+      },
+      "conversion": "Conversão da etapa: {{value}}"
+    },
+    "heatmap": {
+      "ariaLabel": "Heatmap de atividades da equipe",
+      "cellLabel": "{{day}} às {{hour}} — {{value}} atividades",
+      "legend": {
+        "low": "Menor volume",
+        "high": "Maior volume"
+      }
+    },
+    "leaders": {
+      "columns": {
+        "leader": "Líder",
+        "leads": "Leads",
+        "response": "Resp. 24h",
+        "meetings": "Reuniões",
+        "conversion": "Conversão"
+      },
+      "empty": "Nenhum líder com dados para o filtro selecionado.",
+      "error": "Não foi possível carregar o desempenho dos líderes."
+    },
+    "microsites": {
+      "columns": {
+        "microsite": "Microsite",
+        "visits": "Visitas",
+        "leads": "Leads",
+        "conversion": "Conversão",
+        "topRep": "Rep destaque"
+      },
+      "empty": "Nenhum microsite possui métricas no período atual.",
+      "error": "Não foi possível carregar os microsites."
+    },
+    "cadence": {
+      "dueSteps": "Etapas pendentes: {{value}}",
+      "completion": "Conclusão: {{value}}",
+      "overdue": "Atraso: {{value}}"
+    },
+    "goals": {
+      "onTrack": "Reps no ritmo: {{count}} de {{total}}",
+      "progress": "Contatos {{contacts}} • Reuniões {{meetings}} • Vendas {{sales}}"
+    },
+    "quality": {
+      "total": "Contatos monitorados",
+      "stale": "Sem follow-up (>7d)",
+      "staleCount": "Sem ação recente: {{count}}",
+      "critical": "Criticamente atrasados",
+      "criticalCount": "Escalar imediatos: {{count}}",
+      "duplicates": "Possíveis duplicidades",
+      "duplicatesCount": "Registros duplicados: {{count}}"
+    }
   }
 }
