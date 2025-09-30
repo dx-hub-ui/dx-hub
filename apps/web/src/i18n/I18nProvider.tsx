@@ -39,11 +39,11 @@ const resources: ResourceMap = {
   },
 };
 
-type TranslateOptions = {
+export type TranslateOptions = {
   values?: Record<string, string | number>;
 };
 
-type TranslateFn = (key: string, options?: TranslateOptions) => string;
+export type TranslateFn = (key: string, options?: TranslateOptions) => string;
 
 type I18nContextValue = {
   locale: Locale;

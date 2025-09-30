@@ -19,7 +19,7 @@ import {
 } from "@/components/dashboard";
 import { WidgetPlaceholder, WidgetPlaceholderAction } from "@/components/dashboard";
 import { useAppLayout } from "@/components/app-shell/AppShell";
-import { useTranslation } from "@/i18n/I18nProvider";
+import { useTranslation, type TranslateFn } from "@/i18n/I18nProvider";
 import {
   getActivityHeatmap,
   getCadenceEfficiency,
@@ -624,7 +624,7 @@ function FunnelWidget({
 }: {
   stages: FunnelStageMetric[];
   locale: string;
-  t: (key: string, options?: { values?: Record<string, unknown> }) => string;
+  t: TranslateFn;
   activeStage: string;
 }) {
   return (
@@ -670,7 +670,7 @@ function FunnelWidget({
   );
 }
 
-function HeatmapWidget({ data, locale, t }: { data: HeatmapData; locale: string; t: (key: string, options?: { values?: Record<string, unknown> }) => string }) {
+function HeatmapWidget({ data, locale, t }: { data: HeatmapData; locale: string; t: TranslateFn }) {
   const dayFormatter = useMemo(() => new Intl.DateTimeFormat(locale, { weekday: "short" }), [locale]);
   const dateFormatter = useMemo(() => new Intl.DateTimeFormat(locale, { day: "2-digit", month: "short" }), [locale]);
 
@@ -723,7 +723,7 @@ function HeatmapWidget({ data, locale, t }: { data: HeatmapData; locale: string;
   );
 }
 
-function LeaderPerformanceWidget({ rows, locale, t }: { rows: LeaderPerformanceRow[]; locale: string; t: (key: string) => string }) {
+function LeaderPerformanceWidget({ rows, locale, t }: { rows: LeaderPerformanceRow[]; locale: string; t: TranslateFn }) {
   const columns: DxTableColumn[] = [
     { id: "leader", title: t("widgets.leaders.columns.leader"), accessor: "leader" },
     { id: "leads", title: t("widgets.leaders.columns.leads"), accessor: "leads" },
@@ -766,7 +766,7 @@ function LeaderPerformanceWidget({ rows, locale, t }: { rows: LeaderPerformanceR
   );
 }
 
-function MicrositeWidget({ rows, locale, t }: { rows: MicrositePerformanceRow[]; locale: string; t: (key: string) => string }) {
+function MicrositeWidget({ rows, locale, t }: { rows: MicrositePerformanceRow[]; locale: string; t: TranslateFn }) {
   const columns: DxTableColumn[] = [
     { id: "microsite", title: t("widgets.microsites.columns.microsite"), accessor: "microsite" },
     { id: "visits", title: t("widgets.microsites.columns.visits"), accessor: "visits" },
@@ -809,7 +809,7 @@ function MicrositeWidget({ rows, locale, t }: { rows: MicrositePerformanceRow[];
   );
 }
 
-function CadenceWidget({ rows, locale, t }: { rows: CadenceEfficiencyRow[]; locale: string; t: (key: string) => string }) {
+function CadenceWidget({ rows, locale, t }: { rows: CadenceEfficiencyRow[]; locale: string; t: TranslateFn }) {
   return (
     <div>
       <header className={styles.sectionHeader}>
@@ -848,7 +848,7 @@ function CadenceWidget({ rows, locale, t }: { rows: CadenceEfficiencyRow[]; loca
   );
 }
 
-function GoalsWidget({ data, locale, t }: { data: GoalsOverview; locale: string; t: (key: string) => string }) {
+function GoalsWidget({ data, locale, t }: { data: GoalsOverview; locale: string; t: TranslateFn }) {
   return (
     <div>
       <header className={styles.sectionHeader}>
@@ -891,7 +891,7 @@ function GoalsWidget({ data, locale, t }: { data: GoalsOverview; locale: string;
   );
 }
 
-function DataQualityWidget({ insight, locale, t }: { insight: DataQualityInsight; locale: string; t: (key: string) => string }) {
+function DataQualityWidget({ insight, locale, t }: { insight: DataQualityInsight; locale: string; t: TranslateFn }) {
   const totalLabel = formatNumber(insight.totalContacts, locale, { maximumFractionDigits: 0 });
   return (
     <div>
