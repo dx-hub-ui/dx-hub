@@ -47,10 +47,49 @@ import type {
   MicrositePerformanceRow,
 } from "@/dashboards/selectors";
 
-/**
- * This page uses AppShell’s scroller for layout (width, padding, and scroll).
- * We avoid custom wrappers that fight the shell.
- */
+/* -------------------------------------------------------------------------- */
+/*  Safety helpers: locale, Intl, tokens, dates, markdown                      */
+/* -------------------------------------------------------------------------- */
+
+function normalizeLocale(input?: string): string {
+  const candidate = (input || "en-US").replace("_", "-").trim();
+  try {
+    // Validates the tag
+    // eslint-disable-next-line no-new
+    new Intl.DateTimeFormat(candidate);
+    return candidate;
+  } catch {
+    return "en-US";
+  }
+}
+
+function makeDTF(locale: string, opts: Intl.DateTimeFormatOptions, fallback = "en-US") {
+  try {
+    return new Intl.DateTimeFormat(locale, opts);
+  } catch {
+    return new Intl.DateTimeFormat(fallback, opts);
+  }
+}
+
+function safeDateLabel(locale: string, input?: string | number | Date) {
+  const d = new Date(input as any);
+  if (Number.isNaN(d.getTime())) return "—";
+  return makeDTF(locale, { day: "2-digit", month: "short" }).format(d);
+}
+
+function safeMarkdownToHtml(md?: string) {
+  try {
+    return markdownToHtml(md || "");
+  } catch {
+    return "";
+  }
+}
+
+function safeToken<T>(value: T | undefined, fallback: T): T {
+  return value === undefined || value === null ? fallback : value;
+}
+
+/* -------------------------------------------------------------------------- */
 
 const HEADLINE_KPIS = ["newLeads", "newContacts", "meetings", "whatsappResponse", "conversion"] as const;
 
@@ -89,7 +128,8 @@ export default function DashboardsPage() {
 
   const dashboardDictionary = useTranslation("dashboard");
   const tDashboard = dashboardDictionary.t;
-  const locale = dashboardDictionary.locale;
+  const rawLocale = dashboardDictionary.locale;
+  const safeLocale = useMemo(() => normalizeLocale(rawLocale), [rawLocale]);
 
   const { t: tAttention } = useTranslation("attention");
   const { t: tKpis } = useTranslation("kpis");
@@ -101,7 +141,7 @@ export default function DashboardsPage() {
   const now = useMemo(() => new Date(), []);
 
   const attentionStore = useAttentionBoxStore(CURRENT_MEMBER.id);
-  const attentionBoxes = attentionStore.visibleBoxes;
+  const attentionBoxes = attentionStore?.visibleBoxes ?? [];
 
   const navigationItems = useMemo(
     () => [
@@ -158,10 +198,10 @@ export default function DashboardsPage() {
   );
 
   const scopeOptions = scopeOptionsByRole[role];
-  const defaultScope = useMemo<DashboardScope>(() => toDashboardScope(scopeOptions[0]?.value) ?? scope, [scope, scopeOptions]);
+  const defaultScope = useMemo<DashboardScope>(() => toDashboardScope(scopeOptions?.[0]?.value) ?? scope, [scope, scopeOptions]);
 
   useEffect(() => {
-    if (!scopeOptions.some((option) => option.value === scope)) setScope(defaultScope);
+    if (!scopeOptions?.some((option) => option.value === scope)) setScope(defaultScope);
   }, [defaultScope, scope, scopeOptions]);
 
   const layoutRoleLabel = tDashboard(`filters.roleOptions.${role}` as const);
@@ -203,24 +243,27 @@ export default function DashboardsPage() {
     };
   }, [isOwnerView, now, period, scope]);
 
-  // Grid gaps derived from dxDashboardTokens (keeps rhythm with DX design)
+  // Grid gaps derived from dxDashboardTokens (guarded)
+  const colGap = safeToken(dxDashboardTokens?.grid?.columnGap, "var(--dx-space-4)");
+  const rowGap = safeToken(dxDashboardTokens?.grid?.rowGap, "var(--dx-space-4)");
+
   const gridStyle = {
-    columnGap: dxDashboardTokens.grid.columnGap,
-    rowGap: dxDashboardTokens.grid.rowGap,
+    columnGap: colGap,
+    rowGap: rowGap,
   } as CSSProperties;
 
   const kpiGridStyle = {
-    columnGap: dxDashboardTokens.grid.columnGap,
-    rowGap: dxDashboardTokens.grid.rowGap,
+    columnGap: colGap,
+    rowGap: rowGap,
   } as CSSProperties;
 
   const periodRange = resolvePeriodRange(period, now);
   const periodLabel = useMemo(() => {
-    const formatter = new Intl.DateTimeFormat(locale, { day: "2-digit", month: "short" });
+    const formatter = makeDTF(safeLocale, { day: "2-digit", month: "short" });
     const startLabel = formatter.format(periodRange.start);
     const endLabel = formatter.format(periodRange.end);
     return `${startLabel} – ${endLabel}`;
-  }, [locale, periodRange.end, periodRange.start]);
+  }, [safeLocale, periodRange.end, periodRange.start]);
 
   // Local presentation styles using DX tokens
   const sectionStyle: CSSProperties = { display: "grid", gap: "var(--dx-space-5)" };
@@ -398,8 +441,8 @@ export default function DashboardsPage() {
             </div>
           ) : (
             attentionBoxes.map((box) => {
-              const html = markdownToHtml(box.bodyMd);
-              const isPinned = box.pinned;
+              const html = safeMarkdownToHtml(box.bodyMd);
+              const isPinned = !!box.pinned;
               const isRead = attentionStore.readBoxIds.has(box.id);
               return (
                 <div role="listitem" key={box.id}>
@@ -440,13 +483,10 @@ export default function DashboardsPage() {
                           {tAttention("meta.summary", {
                             values: {
                               label: tAttention("meta.period"),
-                              value: `${new Intl.DateTimeFormat(locale, {
-                                day: "2-digit",
-                                month: "short",
-                              }).format(new Date(box.startAt))} – ${new Intl.DateTimeFormat(locale, {
-                                day: "2-digit",
-                                month: "short",
-                              }).format(new Date(box.endAt))}`,
+                              value: `${safeDateLabel(safeLocale, box.startAt)} – ${safeDateLabel(
+                                safeLocale,
+                                box.endAt,
+                              )}`,
                             },
                           })}
                         </span>
@@ -505,8 +545,8 @@ export default function DashboardsPage() {
                 if (metric.id === "whatsappResponse" && metric.numerator !== undefined) {
                   detail = tDashboard("metrics.samples.whatsappResponse", {
                     values: {
-                      responded: formatNumber(metric.numerator, locale, { maximumFractionDigits: 0 }),
-                      contacted: formatNumber(metric.denominator ?? 0, locale, {
+                      responded: formatNumber(metric.numerator, safeLocale, { maximumFractionDigits: 0 }),
+                      contacted: formatNumber(metric.denominator ?? 0, safeLocale, {
                         maximumFractionDigits: 0,
                       }),
                     },
@@ -515,8 +555,8 @@ export default function DashboardsPage() {
                 if (metric.id === "conversion" && metric.numerator !== undefined) {
                   detail = tDashboard("metrics.samples.conversion", {
                     values: {
-                      converted: formatNumber(metric.numerator, locale, { maximumFractionDigits: 0 }),
-                      leads: formatNumber(metric.denominator ?? 0, locale, {
+                      converted: formatNumber(metric.numerator, safeLocale, { maximumFractionDigits: 0 }),
+                      leads: formatNumber(metric.denominator ?? 0, safeLocale, {
                         maximumFractionDigits: 0,
                       }),
                     },
@@ -528,7 +568,7 @@ export default function DashboardsPage() {
                     key={metric.id}
                     metric={metric}
                     label={label}
-                    locale={locale}
+                    locale={safeLocale}
                     deltaLabel={tDashboard("metrics.delta.label")}
                     newLabel={tDashboard("metrics.delta.new")}
                     detail={detail}
@@ -562,34 +602,34 @@ export default function DashboardsPage() {
             <DxCard style={span(6)} density="compact">
               <FunnelWidget
                 stages={ownerMetrics.funnel}
-                locale={locale}
+                locale={safeLocale}
                 t={tDashboard}
                 activeStage={funnelStage}
               />
             </DxCard>
 
             <DxCard style={span(6)} density="compact">
-              <HeatmapWidget data={ownerMetrics.heatmap} locale={locale} t={tDashboard} />
+              <HeatmapWidget data={ownerMetrics.heatmap} locale={safeLocale} t={tDashboard} />
             </DxCard>
 
             <DxCard style={span(6)} density="compact">
-              <LeaderPerformanceWidget rows={ownerMetrics.leaders} locale={locale} t={tDashboard} />
+              <LeaderPerformanceWidget rows={ownerMetrics.leaders} locale={safeLocale} t={tDashboard} />
             </DxCard>
 
             <DxCard style={span(6)} density="compact">
-              <MicrositeWidget rows={ownerMetrics.microsites} locale={locale} t={tDashboard} />
+              <MicrositeWidget rows={ownerMetrics.microsites} locale={safeLocale} t={tDashboard} />
             </DxCard>
 
             <DxCard style={span(4)} density="compact">
-              <CadenceWidget rows={ownerMetrics.cadences} locale={locale} t={tDashboard} />
+              <CadenceWidget rows={ownerMetrics.cadences} locale={safeLocale} t={tDashboard} />
             </DxCard>
 
             <DxCard style={span(4)} density="compact">
-              <DataQualityWidget insight={ownerMetrics.quality} locale={locale} t={tDashboard} />
+              <DataQualityWidget insight={ownerMetrics.quality} locale={safeLocale} t={tDashboard} />
             </DxCard>
 
             <DxCard style={span(4)} density="compact">
-              <GoalsWidget data={ownerMetrics.goals} locale={locale} t={tDashboard} />
+              <GoalsWidget data={ownerMetrics.goals} locale={safeLocale} t={tDashboard} />
             </DxCard>
           </div>
         </section>
@@ -766,8 +806,8 @@ function FunnelWidget({
 }
 
 function HeatmapWidget({ data, locale, t }: { data: HeatmapData; locale: string; t: TranslateFn }) {
-  const dayFormatter = useMemo(() => new Intl.DateTimeFormat(locale, { weekday: "short" }), [locale]);
-  const dateFormatter = useMemo(() => new Intl.DateTimeFormat(locale, { day: "2-digit", month: "short" }), [locale]);
+  const dayFormatter = useMemo(() => makeDTF(locale, { weekday: "short" }), [locale]);
+  const dateFormatter = useMemo(() => makeDTF(locale, { day: "2-digit", month: "short" }), [locale]);
 
   return (
     <div style={{ display: "grid", gap: "var(--dx-space-4)" }}>
@@ -781,8 +821,8 @@ function HeatmapWidget({ data, locale, t }: { data: HeatmapData; locale: string;
       <div role="grid" aria-label={t("widgets.heatmap.ariaLabel") ?? "Heatmap"} style={{ display: "grid", gap: "var(--dx-space-2)" }}>
         {data.days.map((dayIso, dayIndex) => {
           const date = new Date(dayIso);
-          const dayLabel = dayFormatter.format(date);
-          const dateLabel = dateFormatter.format(date);
+          const dayLabel = Number.isNaN(date.getTime()) ? "—" : dayFormatter.format(date);
+          const dateLabel = Number.isNaN(date.getTime()) ? "—" : dateFormatter.format(date);
           return (
             <div
               key={dayIso}
@@ -803,13 +843,15 @@ function HeatmapWidget({ data, locale, t }: { data: HeatmapData; locale: string;
                     <span
                       key={`${dayIso}-${hour}`}
                       role="gridcell"
-                      aria-label={t("widgets.heatmap.cellLabel", {
-                        values: {
-                          day: `${dayLabel} ${dateLabel}`,
-                          hour: `${hour.toString().padStart(2, "0")}:00`,
-                          value: formatNumber(value, locale, { maximumFractionDigits: 0 }),
-                        },
-                      })}
+                      aria-label={
+                        t("widgets.heatmap.cellLabel", {
+                          values: {
+                            day: `${dayLabel} ${dateLabel}`,
+                            hour: `${hour.toString().padStart(2, "0")}:00`,
+                            value: formatNumber(value, locale, { maximumFractionDigits: 0 }),
+                          },
+                        }) ?? `${dayLabel} ${dateLabel} • ${hour.toString().padStart(2, "0")}:00`
+                      }
                       title={`${dayLabel} ${dateLabel} • ${hour.toString().padStart(2, "0")}:00`}
                       style={{
                         width: "100%",
@@ -852,14 +894,20 @@ function LeaderPerformanceWidget({ rows, locale, t }: { rows: LeaderPerformanceR
     { id: "conversion", title: t("widgets.leaders.columns.conversion"), accessor: "conversion" },
   ];
 
-  const tableRows: DxTableRow[] = rows.map((row) => ({
-    id: row.id,
+  const tableRows: DxTableRow[] = rows.map((row) => ([
+    row.name,
+    formatNumber(row.leads, locale, { maximumFractionDigits: 0 }),
+    formatPercent(row.responseRate || 0, locale, 0),
+    formatNumber(row.meetings, locale, { maximumFractionDigits: 0 }),
+    formatPercent(row.conversion || 0, locale, 0),
+  ] as const)).map((cells, idx) => ({
+    id: rows[idx].id,
     cells: {
-      leader: row.name,
-      leads: formatNumber(row.leads, locale, { maximumFractionDigits: 0 }),
-      response: formatPercent(row.responseRate || 0, locale, 0),
-      meetings: formatNumber(row.meetings, locale, { maximumFractionDigits: 0 }),
-      conversion: formatPercent(row.conversion || 0, locale, 0),
+      leader: cells[0],
+      leads: cells[1],
+      response: cells[2],
+      meetings: cells[3],
+      conversion: cells[4],
     },
   }));
 
@@ -1031,74 +1079,6 @@ function GoalsWidget({ data, locale, t }: { data: GoalsOverview; locale: string;
           </li>
         ))}
       </ul>
-    </div>
-  );
-}
-
-function DataQualityWidget({ insight, locale, t }: { insight: DataQualityInsight; locale: string; t: TranslateFn }) {
-  const totalLabel = formatNumber(insight.totalContacts, locale, { maximumFractionDigits: 0 });
-  return (
-    <div style={{ display: "grid", gap: "var(--dx-space-4)" }}>
-      <header style={{ display: "grid", gap: "var(--dx-space-1)" }}>
-        <h3 style={{ font: "var(--dx-font-h3)", margin: 0 }}>{t("sections.owner.quality.title")}</h3>
-        <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 }}>
-          {t("sections.owner.quality.description")}
-        </p>
-      </header>
-
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: "var(--dx-space-4)" }}>
-        <div>
-          <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 }}>
-            {t("widgets.quality.total")}
-          </p>
-          <p style={{ font: "var(--dx-font-h4)", margin: 0 }}>{totalLabel}</p>
-        </div>
-        <div>
-          <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 }}>
-            {t("widgets.quality.stale")}
-          </p>
-          <p style={{ font: "var(--dx-font-h4)", margin: 0 }}>
-            {formatPercent(insight.stalePercentage || 0, locale, 0)}
-          </p>
-          <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 }}>
-            {t("widgets.quality.staleCount", {
-              values: {
-                count: formatNumber(insight.staleCount, locale, { maximumFractionDigits: 0 }),
-              },
-            })}
-          </p>
-        </div>
-        <div>
-          <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 }}>
-            {t("widgets.quality.critical")}
-          </p>
-          <p style={{ font: "var(--dx-font-h4)", margin: 0 }}>
-            {formatPercent(insight.criticalPercentage || 0, locale, 0)}
-          </p>
-          <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 }}>
-            {t("widgets.quality.criticalCount", {
-              values: {
-                count: formatNumber(insight.criticalCount, locale, { maximumFractionDigits: 0 }),
-              },
-            })}
-          </p>
-        </div>
-        <div>
-          <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 }}>
-            {t("widgets.quality.duplicates")}
-          </p>
-          <p style={{ font: "var(--dx-font-h4)", margin: 0 }}>
-            {formatPercent(insight.duplicatePercentage || 0, locale, 0)}
-          </p>
-          <p style={{ color: "var(--dx-color-text-secondary)", margin: 0 }}>
-            {t("widgets.quality.duplicatesCount", {
-              values: {
-                count: formatNumber(insight.duplicates, locale, { maximumFractionDigits: 0 }),
-              },
-            })}
-          </p>
-        </div>
-      </div>
     </div>
   );
 }
