@@ -542,19 +542,19 @@ export default function DashboardsPage() {
             <p style={sectionDescStyle}>{tDashboard("placeholders.a11y")}</p>
           </header>
 
-        <div style={gridClass}>
-          {placeholderWidgets.map((widget) => (
-            <WidgetPlaceholder
-              key={widget.id}
-              title={widget.title}
-              description={widget.description}
-              caption={widget.caption}
-              variant={widget.variant}
-              style={span(widget.span)}
-              actions={<WidgetPlaceholderAction>{tDashboard("placeholders.drilldown")}</WidgetPlaceholderAction>}
-            />
-          ))}
-        </div>
+      <div style={gridClass}>
++          {placeholderWidgets.map((widget) => (
++            <div key={widget.id} style={span(widget.span)}>
++              <WidgetPlaceholder
++                title={widget.title}
++                description={widget.description}
++                caption={widget.caption}
++                variant={widget.variant}
++                actions={<WidgetPlaceholderAction>{tDashboard("placeholders.drilldown")}</WidgetPlaceholderAction>}
++              />
++            </div>
++          ))}
++        </div>
         </section>
       ) : null}
     </>
