@@ -25,21 +25,9 @@ import { useTelemetry } from "@dx/ui";
 import { useTranslation } from "@/i18n/I18nProvider";
 import styles from "./AppShell.module.css";
 
-type NavigationItem = {
-  id: string;
-  label: string;
-};
-
-type NavigationSection = {
-  id: string;
-  label: string;
-  items: NavigationItem[];
-};
-
-type SidebarFooter = {
-  title?: string;
-  description?: string;
-};
+type NavigationItem = { id: string; label: string; };
+type NavigationSection = { id: string; label: string; items: NavigationItem[]; };
+type SidebarFooter = { title?: string; description?: string; };
 
 type SidebarConfig = {
   activeItemId?: string;
@@ -81,34 +69,24 @@ type WorkspaceConfig = {
   planCta?: WorkspacePlanCta;
 };
 
-type AppLayoutConfig = {
-  sidebar: SidebarConfig;
-  workspace: WorkspaceConfig;
-};
+type AppLayoutConfig = { sidebar: SidebarConfig; workspace: WorkspaceConfig; };
 
 type AppLayoutContextValue = {
   config: AppLayoutConfig;
   setConfig: (patch: PartialAppLayoutConfig | ((prev: AppLayoutConfig) => PartialAppLayoutConfig)) => void;
 };
 
-type PartialAppLayoutConfig = Partial<{ sidebar: Partial<SidebarConfig>; workspace: Partial<WorkspaceConfig> }>;
+type PartialAppLayoutConfig = Partial<{
+  sidebar: Partial<SidebarConfig>;
+  workspace: Partial<WorkspaceConfig>;
+}>;
 
-const defaultLayout: AppLayoutConfig = {
-  sidebar: {
-    sections: [],
-  },
-  workspace: {},
-};
+const defaultLayout: AppLayoutConfig = { sidebar: { sections: [] }, workspace: {} };
 
 const AppLayoutContext = createContext<AppLayoutContextValue | undefined>(undefined);
-const fallbackContext: AppLayoutContextValue = {
-  config: defaultLayout,
-  setConfig: () => undefined,
-};
+const fallbackContext: AppLayoutContextValue = { config: defaultLayout, setConfig: () => undefined };
 
-type LayoutCSSProperties = CSSProperties & {
-  "--dx-rail-width-expanded"?: string;
-};
+type LayoutCSSProperties = CSSProperties & { "--dx-rail-width-expanded"?: string; };
 
 const NAVIGATION_ICONS: Record<string, SubIcon> = {
   overview: DashboardIcon,
@@ -150,58 +128,34 @@ export function AppShell({ children }: { children: ReactNode }) {
     [config.sidebar.sections],
   );
 
-  const primaryNavigationLabel =
-    tCommon("navigation.primary") ?? tCommon("navigation") ?? "Navegação principal";
+  const primaryNavigationLabel = tCommon("navigation.primary") ?? tCommon("navigation") ?? "Navegação principal";
   const mainRegionLabel = tCommon("regions.main") ?? tCommon("mainContent") ?? "Conteúdo principal";
 
-  const notificationsLabel =
-    config.workspace.notificationsLabel ?? tCommon("topbar.notifications") ?? "Notificações";
+  const notificationsLabel = config.workspace.notificationsLabel ?? tCommon("topbar.notifications") ?? "Notificações";
   const helpLabel = tCommon("topbar.help") ?? "Ajuda";
   const inboxLabel = tCommon("topbar.inbox") ?? "Inbox";
   const avatarLabel =
-    config.workspace.profile?.label ??
-    config.workspace.profile?.name ??
-    tCommon("topbar.account") ??
-    "Conta";
+    config.workspace.profile?.label ?? config.workspace.profile?.name ?? tCommon("topbar.account") ?? "Conta";
 
-  const handleNavigationClick = useCallback(
-    (item: NavigationItem) => {
-      // telemetria de clique na navegação
-      captureTelemetry("ui_navigation_item_click", {
-        origin: "sidebar",
-        label: item.label,
-        destination: item.id,
-      });
-    },
-    [captureTelemetry],
-  );
+  const handleNavigationClick = useCallback((item: NavigationItem) => {
+    captureTelemetry("ui_navigation_item_click", { origin: "sidebar", label: item.label, destination: item.id });
+  }, [captureTelemetry]);
 
-  const handleTopbarControlClick = useCallback(
-    (control: "notifications" | "help" | "inbox" | "avatar") => {
-      captureTelemetry("ui_topbar_click", { origin: "topbar", control });
-    },
-    [captureTelemetry],
-  );
+  const handleTopbarControlClick = useCallback((control: "notifications" | "help" | "inbox" | "avatar") => {
+    captureTelemetry("ui_topbar_click", { origin: "topbar", control });
+  }, [captureTelemetry]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-
     const isPinned = window.localStorage.getItem("first_level_control_is_pinned") !== "false";
     const storedWidth = Number.parseInt(window.localStorage.getItem("leftpane_current_width") ?? "", 10);
-
     setLeftPaneState(isPinned ? "expanded" : "collapsed");
-
-    if (isPinned && Number.isFinite(storedWidth)) {
-      setRailWidth(storedWidth);
-    }
+    if (isPinned && Number.isFinite(storedWidth)) setRailWidth(storedWidth);
   }, []);
 
   const firstLevelStyle = useMemo<LayoutCSSProperties | undefined>(() => {
     if (!railWidth || railWidth <= 0) return undefined;
-    return {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      "--dx-rail-width-expanded": `${railWidth}px`,
-    };
+    return { "--dx-rail-width-expanded": `${railWidth}px` };
   }, [railWidth]);
 
   return (
@@ -238,9 +192,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                     const buttonClassName = [
                       styles.navItemButton,
                       isActive ? styles.navItemButtonActive : undefined,
-                    ]
-                      .filter(Boolean)
-                      .join(" ");
+                    ].filter(Boolean).join(" ");
 
                     return (
                       <li key={item.id} className={styles.navListItem}>
@@ -269,12 +221,8 @@ export function AppShell({ children }: { children: ReactNode }) {
               <div className={styles.topbarInner}>
                 <div className={styles.topbarLeft}>
                   <div className={styles.titleGroup} aria-live="polite">
-                    {config.workspace.title ? (
-                      <h1 className={styles.topbarTitle}>{config.workspace.title}</h1>
-                    ) : null}
-                    {config.workspace.board ? (
-                      <p className={styles.topbarSubtitle}>{config.workspace.board}</p>
-                    ) : null}
+                    {config.workspace.title ? <h1 className={styles.topbarTitle}>{config.workspace.title}</h1> : null}
+                    {config.workspace.board ? <p className={styles.topbarSubtitle}>{config.workspace.board}</p> : null}
                   </div>
 
                   {config.workspace.planCta ? (
@@ -284,9 +232,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                       onClick={config.workspace.planCta.onClick}
                       data-telemetry-id={config.workspace.planCta.telemetryId}
                     >
-                      {config.workspace.planCta.icon ? (
-                        <Icon icon={config.workspace.planCta.icon} aria-hidden iconSize={14} />
-                      ) : null}
+                      {config.workspace.planCta.icon ? <Icon icon={config.workspace.planCta.icon} aria-hidden iconSize={14} /> : null}
                       {config.workspace.planCta.label}
                     </button>
                   ) : null}
@@ -338,7 +284,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               </div>
             </header>
 
-            {/* CONTENT RIGHT PANE */}
+            {/* CONTENT RIGHT PANE (única área rolável) */}
             <div className="transparent-wrapper">
               <div
                 id="first-level-content-wrapper"
@@ -380,37 +326,19 @@ export function useAppLayout() {
 }
 
 function mergeConfig(base: AppLayoutConfig, patch: PartialAppLayoutConfig): AppLayoutConfig {
-  const nextSidebar = patch.sidebar
-    ? (mergeBranch(base.sidebar, patch.sidebar) as SidebarConfig)
-    : base.sidebar;
-  const nextWorkspace = patch.workspace
-    ? (mergeBranch(base.workspace, patch.workspace) as WorkspaceConfig)
-    : base.workspace;
-
-  const sidebarChanged = nextSidebar !== base.sidebar;
-  const workspaceChanged = nextWorkspace !== base.workspace;
-
-  if (!sidebarChanged && !workspaceChanged) return base;
-
-  return {
-    sidebar: sidebarChanged ? nextSidebar : base.sidebar,
-    workspace: workspaceChanged ? nextWorkspace : base.workspace,
-  };
+  const nextSidebar = patch.sidebar ? (mergeBranch(base.sidebar, patch.sidebar) as SidebarConfig) : base.sidebar;
+  const nextWorkspace = patch.workspace ? (mergeBranch(base.workspace, patch.workspace) as WorkspaceConfig) : base.workspace;
+  if (nextSidebar === base.sidebar && nextWorkspace === base.workspace) return base;
+  return { sidebar: nextSidebar, workspace: nextWorkspace };
 }
 
 function mergeBranch(base: Record<string, unknown>, patch: Record<string, unknown>): Record<string, unknown> {
   let result: Record<string, unknown> | undefined;
-
   Object.entries(patch).forEach(([key, value]) => {
     if (value === undefined) return;
-
     const baseValue = base[key];
     let nextValue = value;
-
-    if (isPlainObject(baseValue) && isPlainObject(value)) {
-      nextValue = mergeBranch(baseValue, value as Record<string, unknown>);
-    }
-
+    if (isPlainObject(baseValue) && isPlainObject(value)) nextValue = mergeBranch(baseValue, value as Record<string, unknown>);
     if (!Object.is(baseValue, nextValue)) {
       if (!result) result = { ...base };
       result[key] = nextValue;
@@ -418,7 +346,6 @@ function mergeBranch(base: Record<string, unknown>, patch: Record<string, unknow
       result[key] = baseValue;
     }
   });
-
   return result ?? base;
 }
 
