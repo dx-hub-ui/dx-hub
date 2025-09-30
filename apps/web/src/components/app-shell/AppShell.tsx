@@ -104,6 +104,10 @@ const fallbackContext: AppLayoutContextValue = {
   setConfig: () => undefined,
 };
 
+type LayoutCSSProperties = CSSProperties & {
+  "--dx-rail-width-expanded"?: string;
+};
+
 const NAVIGATION_ICONS: Record<string, SubIcon> = {
   overview: DashboardIcon,
   crm: BoardIcon,
@@ -161,7 +165,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const firstLevelStyle = useMemo<CSSProperties | undefined>(() => {
+  const firstLevelStyle = useMemo<LayoutCSSProperties | undefined>(() => {
     if (!railWidth || railWidth <= 0) {
       return undefined;
     }
