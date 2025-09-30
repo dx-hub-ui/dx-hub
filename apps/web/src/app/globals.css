@@ -30,17 +30,15 @@
   --dx-typography-sm: 0.875rem;
   --dx-typography-md: 1rem;
   --dx-typography-lg: 1.25rem;
-  /* Families */
+
   --font-family: Figtree, Roboto, Noto Sans Hebrew, Noto Kufi Arabic, Noto Sans JP, sans-serif;
   --title-font-family: Poppins, Roboto, Noto Sans Hebrew, Noto Kufi Arabic, Noto Sans JP, sans-serif;
 
-  /* Weights */
   --dx-font-weight-regular: 400;
   --dx-font-weight-medium: 500;
   --dx-font-weight-semibold: 600;
   --dx-font-weight-bold: 700;
 
-  /* Line-heights (px converted to rem at root 16px) */
   --dx-lh-16: 1rem;
   --dx-lh-18: 1.125rem;
   --dx-lh-20: 1.25rem;
@@ -50,7 +48,6 @@
   --dx-lh-32: 2rem;
   --dx-lh-42: 2.625rem;
 
-  /* Sizes (monday → rem) */
   --dx-font-12: 0.75rem;
   --dx-font-14: 0.875rem;
   --dx-font-16: 1rem;
@@ -58,11 +55,9 @@
   --dx-font-24: 1.5rem;
   --dx-font-30: 1.875rem;
 
-  /* Body tiers */
   --dx-font-body: 400 var(--dx-font-14) / var(--dx-lh-20) var(--font-family);
   --dx-font-body-strong: 600 var(--dx-font-14) / var(--dx-lh-20) var(--font-family);
 
-  /* Heading shorthands */
   --dx-font-h1: 700 var(--dx-font-30) / var(--dx-lh-42) var(--title-font-family);
   --dx-font-h2: 700 var(--dx-font-24) / var(--dx-lh-30) var(--title-font-family);
   --dx-font-h3: 700 var(--dx-font-18) / var(--dx-lh-24) var(--title-font-family);
@@ -86,7 +81,7 @@
   --dx-page-padding-y: 20px;
   --dx-page-gap: 16px;
 
-  /* === paleta primária (tokens do cliente) ============================= */
+  /* === paleta primária do cliente ===================================== */
   --primary-color: #007f9b;
   --primary-hover-color: #006278;
   --primary-selected-color: #d1ecef;
@@ -126,6 +121,7 @@
   --dx-rail-red: var(--negative-color);
 
   --surface-color: var(--dx-color-surface-hover);
+
   --top-bar-height: var(--dx-top-bar-height);
   --top-bar-enlarged-height: var(--dx-top-bar-enlarged-height);
 
@@ -137,19 +133,22 @@
   --shell-rail-gap: 0px;
 }
 
+/* travamos o scroll no body: só o pane de conteúdo rola */
+html, body { height: 100%; }
+body {
+  background: var(--dx-color-page-background);
+  color: var(--dx-color-text-primary);
+  font: var(--dx-font-body);
+  overflow: hidden; /* <- impede rolagem do documento */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 @theme inline {
   --color-background: var(--dx-color-page-background);
   --color-foreground: var(--dx-color-text-primary);
   --font-sans: var(--font-family);
   --font-mono: "Roboto Mono", "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-}
-
-body {
-  background: var(--dx-color-page-background);
-  color: var(--dx-color-text-primary);
-  font: var(--dx-font-body);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 .h1 { font: var(--dx-font-h1); letter-spacing: var(--dx-ls-h1); }
@@ -198,16 +197,16 @@ body {
   display: grid;
   grid-template-columns: minmax(0, var(--dx-rail-current, var(--dx-sidebar-width))) 1fr;
   grid-template-rows: var(--dx-top-bar-height) 1fr;
-  min-height: 100dvh;
+  height: 100dvh; /* garante viewport cheia para travar o scroll do body */
   color: var(--dx-color-text-primary);
 }
 
-/* Sidebar (left rail) sits under the top bar */
+/* Sidebar (left rail) sob o topbar */
 .first-level-control {
   grid-row: 2;
   grid-column: 1;
   border-right: 1px solid var(--dx-color-border);
-  background: var(--dx-color-surface);
+  background: var(--dx-sidebar-bg); /* <- não deixa ficar branco */
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -217,7 +216,7 @@ body {
   height: calc(100dvh - var(--dx-top-bar-height));
 }
 
-/* Topbar spans both columns on row 1 */
+/* Topbar ocupa a linha 1 inteira com a cor de topbar */
 .first-level-content-header {
   grid-row: 1;
   grid-column: 1 / -1;
@@ -226,12 +225,12 @@ body {
   align-items: center;
   padding: 0;
   border-bottom: none;
-  background: transparent;
+  background: var(--dx-color-topbar-bg); /* <- força a cor no header todo */
   position: relative;
   z-index: 1;
 }
 
-/* Right pane content lives entirely on row 2, column 2 */
+/* Pane direito é quem rola */
 .transparent-wrapper {
   grid-row: 2;
   grid-column: 2;
@@ -239,7 +238,6 @@ body {
   display: contents;
 }
 
-/* No longer reserves a header row inside */
 .first-level-content-wrapper {
   display: grid;
   grid-template-rows: 1fr;
@@ -256,8 +254,10 @@ body {
   flex-direction: column;
 }
 
+/* ÚNICO SCROLL DA PÁGINA */
 .first-level-content > .scroller {
   min-height: 0;
+  height: 100%;
   overflow: auto;
   padding: var(--dx-page-padding-y) var(--dx-page-padding-x);
   display: flex;
@@ -266,6 +266,7 @@ body {
   background: inherit;
 }
 
+/* estados do rail */
 .first-level[data-leftpane="collapsed"] {
   --dx-rail-current: calc(var(--shell-sidebar-collapsed-width) + var(--shell-rail-gap));
 }
@@ -273,19 +274,14 @@ body {
   --dx-rail-current: calc(var(--shell-sidebar-width) + var(--shell-rail-gap));
 }
 
-body.light-app-theme .first-level-control,
-body.light-app-theme .first-level-content,
-body.light-app-theme .first-level-content-header {
-  background: var(--dx-color-surface);
-  color: var(--dx-color-text-primary);
-}
+/* Temas: não sobrescrever a cor do header/rail com surface branca */
+body.light-app-theme .first-level-control { background: var(--dx-sidebar-bg); color: var(--dx-color-text-primary); }
+body.light-app-theme .first-level-content { background: var(--dx-color-surface); color: var(--dx-color-text-primary); }
+body.light-app-theme .first-level-content-header { background: var(--dx-color-topbar-bg); color: var(--dx-color-text-primary); }
 
-body.dark-app-theme .first-level-control,
-body.dark-app-theme .first-level-content,
-body.dark-app-theme .first-level-content-header {
-  background: var(--dx-color-surface);
-  color: var(--dx-color-text-primary);
-}
+body.dark-app-theme .first-level-control { background: var(--dx-sidebar-bg); color: var(--dx-color-text-primary); }
+body.dark-app-theme .first-level-content { background: var(--dx-color-surface); color: var(--dx-color-text-primary); }
+body.dark-app-theme .first-level-content-header { background: var(--dx-color-topbar-bg); color: var(--dx-color-text-primary); }
 
 .first-level-control,
 .first-level-content-header { border-color: var(--dx-color-border); }
