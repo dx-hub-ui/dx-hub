@@ -35,8 +35,17 @@
   --dx-font-weight-semibold: 600;
   --dx-top-bar-height: 40px;
   --dx-top-bar-enlarged-height: 56px;
+  --dx-icon-button: 32px;
+  --dx-icon-size: 18px;
+  --dx-color-topbar-bg: #e9f5f7;
+  --dx-color-topbar-hover: #dff0f3;
+  --dx-color-border-subtle: color-mix(in oklab, var(--dx-color-text-primary) 10%, #ffffff);
+  --dx-color-badge: #ffffff;
+  --dx-color-badge-border: rgba(0, 0, 0, 0.06);
+  --dx-radius-pill: 9999px;
+  --dx-shadow-topbar: 0 2px 8px rgba(0, 0, 0, 0.06);
   --surface-color: var(--dx-color-surface-hover);
-  --primary-selected-hover-color: var(--dx-color-surface-hover);
+  --primary-selected-hover-color: #e1eff2;
   --top-bar-height: var(--dx-top-bar-height);
   --top-bar-enlarged-height: var(--dx-top-bar-enlarged-height);
   --box-shadow-xs: 0px 4px 6px -4px rgba(0, 0, 0, 0.1);

@@ -1,10 +1,8 @@
 "use client";
 
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
-import { DxButton } from "@dx/ui";
 import {
   Avatar,
-  Flex,
   Heading,
   Icon,
   IconButton,
@@ -60,6 +58,13 @@ type WorkspaceProfileConfig = {
   initials?: string;
 };
 
+type WorkspacePlanCta = {
+  label: string;
+  telemetryId?: string;
+  icon?: SubIcon;
+  onClick?: () => void;
+};
+
 type WorkspaceConfig = {
   appName?: string;
   appAcronym?: string;
@@ -70,6 +75,7 @@ type WorkspaceConfig = {
   notificationsLabel?: string;
   notificationsIcon?: string;
   profile?: WorkspaceProfileConfig;
+  planCta?: WorkspacePlanCta;
 };
 
 type AppLayoutConfig = {
@@ -167,6 +173,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       .join("")
       .slice(0, 2);
   }, [appName, config.workspace.appAcronym]);
+  const hasUtilityIcons = Boolean(config.workspace.inviteLabel || config.workspace.notificationsLabel);
 
   return (
     <AppLayoutContext.Provider value={contextValue}>
@@ -214,61 +221,91 @@ export function AppShell({ children }: { children: ReactNode }) {
         </aside>
         <div className={styles.layout}>
           <header className={styles.topbar}>
-            <Flex align={Flex.align.CENTER} className={styles.topbarInfo} aria-live="polite">
-              <div className={styles.appBadge}>{appAcronym}</div>
-              <div className={styles.topbarTitles}>
-                {config.workspace.title ? (
-                  <Heading
-                    type={Heading.types.H3}
-                    weight={Heading.weights.BOLD}
-                    color={Heading.colors.PRIMARY}
-                    className={styles.topbarTitle}
+            <div className={styles.topbarInner}>
+              <div className={styles.topbarLeft}>
+                <div className={styles.brand}>
+                  <div className={styles.brandMark} aria-hidden>
+                    {appAcronym}
+                  </div>
+                  <div className={styles.brandText}>
+                    <span className={styles.brandName}>{appName}</span>
+                    <span className={styles.brandSub}>
+                      {config.workspace.profile?.label ?? config.workspace.profile?.role ?? "CRM"}
+                    </span>
+                  </div>
+                </div>
+                <div className={styles.titleGroup} aria-live="polite">
+                  {config.workspace.title ? (
+                    <Heading
+                      type={Heading.types.H3}
+                      weight={Heading.weights.BOLD}
+                      color={Heading.colors.PRIMARY}
+                      className={styles.topbarTitle}
+                    >
+                      {config.workspace.title}
+                    </Heading>
+                  ) : null}
+                  {config.workspace.board ? (
+                    <Text type={Text.types.TEXT2} color={Text.colors.SECONDARY} className={styles.topbarSubtitle}>
+                      {config.workspace.board}
+                    </Text>
+                  ) : null}
+                </div>
+                {config.workspace.planCta ? (
+                  <button
+                    type="button"
+                    className={styles.pill}
+                    onClick={config.workspace.planCta.onClick}
+                    data-telemetry-id={config.workspace.planCta.telemetryId}
                   >
-                    {config.workspace.title}
-                  </Heading>
-                ) : null}
-                {config.workspace.board ? (
-                  <Text type={Text.types.TEXT2} color={Text.colors.SECONDARY} className={styles.topbarSubtitle}>
-                    {config.workspace.board}
-                  </Text>
+                    {config.workspace.planCta.icon ? (
+                      <Icon icon={config.workspace.planCta.icon} aria-hidden iconSize={14} />
+                    ) : null}
+                    {config.workspace.planCta.label}
+                  </button>
                 ) : null}
               </div>
-            </Flex>
-            <div className={styles.topbarActions}>
-              {config.workspace.search ? (
-                <Search
-                  value={config.workspace.search.value}
-                  onChange={(value) => config.workspace.search?.onChange?.(value)}
-                  placeholder={config.workspace.search.placeholder}
-                  className={styles.search}
-                  size="small"
-                />
-              ) : null}
-              {config.workspace.inviteLabel ? (
-                <DxButton
-                  variant="secondary"
-                  size="sm"
-                  telemetryId="workspace.invite"
-                  leftIcon={InviteIcon}
-                >
-                  {config.workspace.inviteLabel}
-                </DxButton>
-              ) : null}
-              {config.workspace.notificationsLabel ? (
-                <IconButton
-                  icon={NotificationsIcon}
-                  ariaLabel={config.workspace.notificationsLabel}
-                  tooltipContent={config.workspace.notificationsLabel}
-                />
-              ) : null}
-              {config.workspace.profile ? (
-                <Avatar
-                  text={config.workspace.profile.initials}
-                  withoutTooltip
-                  ariaLabel={config.workspace.profile.name}
-                  className={styles.profileAvatar}
-                />
-              ) : null}
+              <div className={styles.topbarRight}>
+                {config.workspace.search ? (
+                  <Search
+                    value={config.workspace.search.value}
+                    onChange={(value) => config.workspace.search?.onChange?.(value)}
+                    placeholder={config.workspace.search.placeholder}
+                    className={styles.search}
+                    size="small"
+                  />
+                ) : null}
+                <div className={styles.iconCluster}>
+                  {config.workspace.inviteLabel ? (
+                    <IconButton
+                      className={styles.iconBtn}
+                      icon={InviteIcon}
+                      ariaLabel={config.workspace.inviteLabel}
+                      tooltipContent={config.workspace.inviteLabel}
+                    />
+                  ) : null}
+                  {config.workspace.notificationsLabel ? (
+                    <IconButton
+                      className={`${styles.iconBtn} ${styles.iconBtnDot}`}
+                      icon={NotificationsIcon}
+                      ariaLabel={config.workspace.notificationsLabel}
+                      tooltipContent={config.workspace.notificationsLabel}
+                    />
+                  ) : null}
+                  {hasUtilityIcons ? <span className={styles.divider} aria-hidden /> : null}
+                  <div className={styles.iconBtn} aria-hidden>
+                    <div className={`${styles.brandMark} ${styles.brandMarkSmall}`}>{appAcronym}</div>
+                  </div>
+                  {config.workspace.profile ? (
+                    <Avatar
+                      text={config.workspace.profile.initials}
+                      withoutTooltip
+                      ariaLabel={config.workspace.profile.name}
+                      className={styles.profileAvatar}
+                    />
+                  ) : null}
+                </div>
+              </div>
             </div>
           </header>
           <main className={styles.main}>{children}</main>
