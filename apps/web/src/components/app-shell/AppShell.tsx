@@ -166,6 +166,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   const handleNavigationClick = useCallback(
     (item: NavigationItem) => {
+      // telemetria de clique na navegação
       captureTelemetry("ui_navigation_item_click", {
         origin: "sidebar",
         label: item.label,
@@ -177,10 +178,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   const handleTopbarControlClick = useCallback(
     (control: "notifications" | "help" | "inbox" | "avatar") => {
-      captureTelemetry("ui_topbar_click", {
-        origin: "topbar",
-        control,
-      });
+      captureTelemetry("ui_topbar_click", { origin: "topbar", control });
     },
     [captureTelemetry],
   );
