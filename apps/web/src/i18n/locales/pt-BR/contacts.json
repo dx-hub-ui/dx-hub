@@ -1,178 +1,199 @@
 {
-  "hero": {
-    "title": "Contatos",
-    "subtitle": "Organize os relacionamentos do seu CRM em uma experiência inspirada no monday.com, com tabelas e Kanban alinhados ao design system do DX Hub."
-  },
-  "navigation": {
-    "main": "Favoritos",
-    "workspace": "Workspace",
-    "overview": "Visão geral",
-    "crm": "CRM de contatos",
-    "automations": "Automações",
-    "dashboards": "Dashboards",
-    "marketing": "Marketing"
-  },
-  "workspace": {
-    "title": "Workspace DX Hub",
-    "board": "CRM de contatos",
-    "members": "Contatos ativos: {{count}}"
-  },
-  "header": {
-    "searchPlaceholder": "Pesquisar no workspace",
-    "invite": "Convidar membros",
-    "notifications": "Abrir notificações",
-    "notificationsIcon": "🔔",
-    "profile": "Abrir perfil de {{name}}",
-    "role": {
-      "owner": "Administrador"
-    }
-  },
-  "actions": {
-    "newContact": "Novo contato",
-    "newContactTooltip": "Registrar contato com telemetria e RLS",
-    "openDetails": "Abrir detalhes"
-  },
+  "title": "Contatos",
+  "description": "Gerencie prospects do MMN em uma experiência inspirada no monday.com, com telemetria PostHog e observabilidade Sentry.",
   "views": {
-    "table": "Tabela principal",
-    "kanban": "Kanban"
+    "table": "Tabela",
+    "kanban": "Kanban",
+    "create": "+"
   },
-  "summary": {
-    "total": "{{count}} contato(s) ativos",
-    "stageChip": "{{stage}} ({{count}})"
+  "tabs": {
+    "table": "Tabela",
+    "kanban": "Kanban",
+    "new": "+"
+  },
+  "toolbar": {
+    "new": "Novo contato",
+    "newMenu": {
+      "import": "Importar CSV",
+      "template": "Do template"
+    },
+    "search": "Pesquisar",
+    "owner": "Responsável",
+    "filter": "Filtro",
+    "group": "Agrupar por",
+    "sort": "Ordenar",
+    "more": "Mais",
+    "exportAll": "Exportar todos",
+    "columnSettings": "Configurar colunas",
+    "statusManager": "Gerenciar status",
+    "viewPreferences": "Preferências da vista",
+    "help": "Ajuda",
+    "progress": "Carregando contatos"
   },
   "filters": {
-    "stageGroupLabel": "Filtrar por etapa",
-    "stages": {
-      "all": "Todas"
+    "status": "Status",
+    "interest": "Nível de interesse",
+    "origin": "Origem",
+    "period": "Período",
+    "tags": "Etiquetas",
+    "saved": {
+      "today": "Follow-ups de hoje",
+      "missed": "Follow-ups perdidos"
     },
-    "reset": "Limpar filtros"
+    "clear": "Limpar filtros"
   },
-  "stages": {
-    "prospecting": "Novo",
-    "discovery": "Contato Feito",
-    "negotiation": "Apresentado",
-    "blocked": "Bloqueado",
-    "won": "Cadastrado",
-    "lost": "Perdidos"
+  "groupBy": {
+    "none": "Sem agrupamento",
+    "responsible": "Responsável",
+    "status": "Status",
+    "origin": "Origem",
+    "tag": "Etiqueta"
+  },
+  "sort": {
+    "name": "Nome",
+    "status": "Status",
+    "nextFollowUp": "Próximo follow-up",
+    "interest": "Nível de interesse",
+    "recent": "Atualizado recentemente"
+  },
+  "status": {
+    "novo": "Novo",
+    "em_andamento": "Em Andamento",
+    "cadastrado": "Cadastrado",
+    "rejeitado": "Rejeitado"
+  },
+  "interest": {
+    "nao_tao_interessado": "Não tão interessado",
+    "interessado": "Interessado",
+    "muito_interessado": "Muito interessado"
+  },
+  "origins": {
+    "instagram": "Instagram",
+    "indicacao": "Indicação",
+    "evento": "Evento",
+    "funil": "Funil",
+    "outros": "Outros"
+  },
+  "sections": {
+    "active": "Contatos Ativos",
+    "inactive": "Contatos Inativos"
   },
   "table": {
-    "title": "Contatos",
-    "empty": "Nenhum contato cadastrado ainda.",
-    "error": "Não foi possível carregar os contatos.",
-    "headers": {
-      "contact": "Contato",
+    "empty": {
+      "title": "Nenhum prospect cadastrado ainda",
+      "description": "Adicione prospects manualmente, importe um CSV ou utilize um template para acelerar o onboarding.",
+      "primary": "Novo contato",
+      "secondary": "Importar CSV"
+    },
+    "columns": {
+      "select": "Selecionar",
+      "name": "Contato",
       "email": "E-mail",
-      "timeline": "Timeline",
-      "accounts": "Contas",
-      "deals": "Negócios",
       "phone": "Telefone",
-      "owner": "Responsável",
-      "actions": "Ações"
+      "timeline": "Linha do tempo",
+      "interest": "Nível de interesse",
+      "origin": "Origem",
+      "tags": "Etiquetas",
+      "nextFollowUp": "Próximo follow-up",
+      "status": "Status"
     },
-    "labels": {
-      "owner": "Responsável"
+    "group": {
+      "add": "+ Adicionar contato"
     },
-    "filters": {
-      "searchPlaceholder": "Buscar por nome, empresa ou e-mail"
-    },
-    "pagination": {
-      "summary": "Exibindo {{start}}-{{end}} de {{total}}",
-      "previous": "Anterior",
-      "next": "Próxima",
-      "current": "{{page}} / {{total}}"
-    },
-    "groups": {
-      "active": "Contatos ativos",
-      "inactive": "Contatos inativos",
-      "count": "{{count}} contato(s)",
-      "addContact": "+ Adicionar contato"
-    },
-    "actions": {
-      "more": "Mais"
+    "selection": {
+      "count": "{{count}} contato(s) selecionado(s)"
     }
   },
   "kanban": {
-    "columnLabel": "Coluna {{stage}} com {{count}} contato(s)",
-    "listLabel": "Contatos na etapa {{stage}}",
-    "empty": "Sem cartões nesta etapa.",
-    "lastInteraction": "Última interação em {{timestamp}}",
-    "actions": {
-      "advance": "Avançar para {{stage}}",
-      "completed": "Funil concluído"
-    },
-    "announcement": {
-      "stageChanged": "{{name}} movido para {{stage}}"
+    "add": "+ Adicionar contato",
+    "empty": "Sem prospects neste status.",
+    "count": "{{count}} prospect(s)",
+    "tooltip": "Arraste para atualizar o status",
+    "header": {
+      "novo": "Novos",
+      "em_andamento": "Em andamento",
+      "cadastrado": "Cadastrados",
+      "rejeitado": "Rejeitados"
     }
   },
-  "toolbar": {
-    "person": "Pessoa",
-    "team": "Equipe",
-    "filter": "Filtrar",
-    "sort": "Ordenar",
-    "group": "Agrupar",
-    "hide": "Ocultar",
-    "more": "Mais"
-  },
-  "details": {
-    "title": "Detalhes do contato",
-    "mode": {
-      "table": "Tabela",
-      "kanban": "Kanban"
-    },
-    "stage": "Etapa atual",
-    "email": "E-mail",
+  "modal": {
+    "title": "Contato",
+    "details": "Detalhes",
+    "activities": "Atividades",
+    "timeline": "Linha do tempo",
+    "files": "Arquivos",
+    "history": "Histórico",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "duplicar": "Duplicar",
+    "arquivar": "Arquivar",
+    "desarquivar": "Desarquivar",
+    "excluir": "Excluir",
+    "converter": "Converter em Membro",
+    "nextFollowUp": "Próximo follow-up",
+    "notes": "Notas",
+    "tags": "Etiquetas",
+    "owner": "Responsável",
+    "status": "Status",
+    "interest": "Nível de interesse",
+    "origin": "Origem",
     "phone": "Telefone",
-    "assigned": "Responsável",
-    "lastInteraction": "Última interação",
-    "empty": "Selecione um contato para visualizar detalhes."
-  },
-  "timeline": {
-    "title": "Timeline",
-    "count": "{{count}} atividade(s)",
-    "empty": "Sem atividades registradas.",
-    "types": {
-      "created": "Criação",
-      "stage": "Etapa",
-      "email": "E-mail",
-      "meeting": "Reunião",
-      "note": "Nota"
-    },
-    "events": {
-      "created": "{{actor}} criou o contato",
-      "stageChanged": "{{actor}} moveu o contato de {{from}} para {{stage}}",
-      "discoveryCall": "{{actor}} conduziu call de descoberta",
-      "proposalSent": "{{actor}} enviou proposta comercial",
-      "demoCompleted": "{{actor}} apresentou a demo",
-      "qualifyNote": "{{actor}} registrou nota de qualificação"
+    "email": "E-mail",
+    "name": "Nome completo",
+    "timelineEmpty": "Nenhuma atividade registrada ainda.",
+    "activitiesPlaceholder": "Registre uma nota rápida...",
+    "activitiesTypes": {
+      "nota": "Nota",
+      "ligacao": "Ligação",
+      "mensagem": "Mensagem",
+      "reuniao": "Reunião",
+      "apresentacao": "Apresentação",
+      "follow_up": "Follow-up",
+      "sistema": "Sistema"
     }
   },
-  "form": {
-    "title": "Novo contato",
-    "subtitle": "Preencha os campos obrigatórios para registrar um contato dentro da organização.",
-    "fields": {
-      "name": "Nome",
-      "company": "Empresa",
-      "email": "E-mail",
-      "phone": "Telefone",
-      "stage": "Etapa"
-    },
-    "actions": {
-      "submit": "Salvar contato",
-      "cancel": "Cancelar"
-    },
-    "validation": {
-      "nameRequired": "Informe o nome do contato.",
-      "companyRequired": "Informe a empresa.",
-      "emailRequired": "Informe o e-mail.",
-      "emailInvalid": "Formato de e-mail inválido.",
-      "phoneRequired": "Informe um telefone de contato."
+  "bulk": {
+    "email": "E-mail em massa",
+    "duplicate": "Duplicar",
+    "export": "Exportar",
+    "archive": "Arquivar",
+    "delete": "Excluir",
+    "convert": "Converter em Membro",
+    "move": "Mover para",
+    "sidekick": "Sidekick (IA)",
+    "apps": "Apps",
+    "clear": "Limpar seleção"
+  },
+  "columnSettings": {
+    "title": "Configurar colunas",
+    "description": "Defina quais colunas deseja visualizar, a ordem e se devem ficar fixas.",
+    "visible": "Visíveis",
+    "hidden": "Ocultas",
+    "pinLeft": "Fixar à esquerda",
+    "pinRight": "Fixar à direita",
+    "reset": "Redefinir",
+    "save": "Salvar preferências"
+  },
+  "toasts": {
+    "saved": "Contato atualizado com sucesso.",
+    "created": "Contato criado.",
+    "deleted": "Contato excluído.",
+    "archived": "Contato arquivado.",
+    "unarchived": "Contato restaurado.",
+    "converted": "Prospect convertido em membro.",
+    "bulk": {
+      "success": "Ação em massa concluída.",
+      "error": "Algo deu errado."
     }
   },
-  "toast": {
-    "created": "Contato {{name}} cadastrado com sucesso."
+  "emptyActivities": {
+    "title": "Nenhuma atividade ainda",
+    "description": "Comece registrando notas, ligações ou follow-ups para criar um histórico completo."
   },
-  "footer": {
-    "title": "Referências rápidas",
-    "link": "monday.com Vibe"
+  "performance": {
+    "table": "Tabela pronta em {{ms}}ms",
+    "kanban": "Kanban carregado em {{ms}}ms",
+    "modal": "Modal aberto em {{ms}}ms",
+    "bulk": "Ação executada em {{ms}}ms"
   }
 }
